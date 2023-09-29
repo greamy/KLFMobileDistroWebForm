@@ -1,0 +1,83 @@
+<style>
+body {
+  width: auto;
+  height: auto;
+  margin: 0;
+  background-image: linear-gradient(rgb(255,255,255), rgb(78,135,111), rgb(50,107,90));
+  color: ;
+  font-family: Tahoma;
+  font-size: 16px;
+padding: 20px;
+}
+h2{
+margin: 1em auto;
+text-align:center;
+}
+img{
+  display: flex;
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 10px 10px;
+}
+div{
+margin: 0 auto;
+width: 60vw;
+max-width: 800px;
+min-width:300px;
+}
+.foreground{
+background-color: #c2c4c3;
+width: 80%
+margin-left: auto;
+margin-right: auto;
+padding: 20px;
+max-width: 800px
+ 
+}
+input{
+  vertical-align: middle;
+  width: 100%;
+  max-width: 800px;
+  min-width: 300px;
+  margin: 0 auto;
+  padding-bottom: 1em auto;
+  min-height: 2em;
+}
+button{
+  display: block;
+  border-radius: 12px;
+  margin: 1em auto;
+  height: 2em;
+  font-size: 1.1rem;
+  min-width: 300px;
+  max-width: 500px;
+}
+</style>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="width=device-width, initial-scale=1.0">
+	</head>
+	<div class="foreground">
+		<img src="https://kzoolf.org/files/2014/08/klf-logo.png">
+		<h2>Mobile Distribution Form</h2>
+		<form>
+			<div>
+				<p>First Name<span style="color:red">*</span></p>
+				<input id= "Fname" placeholder="First Name" type="text"  required>
+				<p>Last Name<span style="color:red">*</span></p>
+				<input id= "Lname" placeholder="Last Name" type="text"  required>
+				<p>Email Address<span style="color:red">*</span></p>
+				<input id= "Email" placeholder="Email" type="email" required>
+				<p>Number in Household<span style="color:red">*</span></p>
+				<input id= "HHold" placeholder="Number in Household" type="number" min="1" required>
+				<p>Street Address<span style="color:red">*</span></p>
+				<input id= "Address" placeholder="Address" required>
+				<p>ZIP Code<span style="color:red">*</span></p>
+				<input id= "Zip" placeholder="ZIP" max="99999" min="10000" type="number" required>
+			</div>
+			<button class="btn btn-block btn-danger">Submit</button>
+		</form>
+	</div>
+</html>
