@@ -52,6 +52,11 @@ button{
   min-width: 300px;
   max-width: 500px;
 }
+label{
+  display: block;
+  padding-top: 1em;
+
+}
 </style>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,17 +69,17 @@ button{
 		<h2>Mobile Distribution Form</h2>
 		<form>
 			<div>
-				<p>First Name<span style="color:red">*</span></p>
+				<label for="Fname">First Name<span style="color:red">*</span></label>
 				<input id= "Fname" placeholder="First Name" type="text"  required>
-				<p>Last Name<span style="color:red">*</span></p>
+				<label for="Lname">Last Name<span style="color:red">*</span></label>
 				<input id= "Lname" placeholder="Last Name" type="text"  required>
-				<p>Email Address<span style="color:red">*</span></p>
+				<label for="Email">Email Address<span style="color:red">*</span></label>
 				<input id= "Email" placeholder="Email" type="email" required>
-				<p>Number in Household<span style="color:red">*</span></p>
+				<label for="HHold">Number in Household<span style="color:red">*</span></label>
 				<input id= "HHold" placeholder="Number in Household" type="number" min="1" required>
-				<p>Street Address<span style="color:red">*</span></p>
+				<label for="Address">Street Address<span style="color:red">*</span></label>
 				<input id= "Address" placeholder="Address" required>
-				<p>ZIP Code<span style="color:red">*</span></p>
+				<label for="Zip">ZIP Code<span style="color:red">*</span></label>
 				<input id= "Zip" placeholder="ZIP" max="99999" min="10000" type="number" required>
 			</div>
 			<button class="btn btn-block btn-danger">Submit</button>
