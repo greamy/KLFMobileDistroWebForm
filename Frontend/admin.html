@@ -1,0 +1,140 @@
+<html lang="en">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+  <style>
+body {
+  width: auto;
+  height: auto;
+  margin: 0;
+  background-image: linear-gradient(rgb(255,255,255), rgb(78,135,111), rgb(50,107,90));
+  color: ;
+  font-family: Tahoma;
+  font-size: 16px;
+  padding: 20px;
+}
+h2{
+  margin: 1em auto;
+  text-align:center;
+}
+img{
+  display: flex;
+  max-width: 2000px;
+  margin: 0 auto;
+  padding: 10px 10px;
+}
+div{
+  margin: 0 auto;
+  width: 60vw;
+  max-width: 800px;
+  min-width:300px;
+}
+.foreground{
+  background-color: #c2c4c3;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  max-width: 800px
+}
+
+label{
+  display: block;
+  padding-top: 1em;
+}
+.dropbtn {
+  background-color: rgb(50,107,90);
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+width: 300px
+}
+.DL {
+  position: relative;
+  display: inline-block;
+
+}
+.locations {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  width: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.locations a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.locations a:hover {background-color: #ddd;}
+.DL:hover .locations {display: block;}
+.DL:hover .dropbtn {background-color: #3e8e41;}
+#l1, #l2, #l3, #l4, #l5{
+display: none;
+}
+</style>
+
+
+<script>
+function L1(){
+document.getElementById("l1").style.display = "block";
+document.getElementById("l2").style.display = "none";
+document.getElementById("l3").style.display = "none";
+document.getElementById("l4").style.display = "none";
+document.getElementById("l5").style.display = "none";
+}
+function L2(){
+document.getElementById("l1").style.display = "none";
+document.getElementById("l2").style.display = "block";
+document.getElementById("l3").style.display = "none";
+document.getElementById("l4").style.display = "none";
+document.getElementById("l5").style.display = "none";
+}
+function L3(){
+document.getElementById("l1").style.display = "none";
+document.getElementById("l2").style.display = "none";
+document.getElementById("l3").style.display = "block";
+document.getElementById("l4").style.display = "none";
+document.getElementById("l5").style.display = "none";
+}
+function L4(){
+document.getElementById("l1").style.display = "none";
+document.getElementById("l2").style.display = "none";
+document.getElementById("l3").style.display = "none";
+document.getElementById("l4").style.display = "block";
+document.getElementById("l5").style.display = "none";
+}
+function L5(){
+document.getElementById("l1").style.display = "none";
+document.getElementById("l2").style.display = "none";
+document.getElementById("l3").style.display = "none";
+document.getElementById("l4").style.display = "none";
+document.getElementById("l5").style.display = "block";
+}
+</script>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="width=device-width, initial-scale=1.0">
+	</head>
+	<div class="foreground">
+		<img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
+		<h2>Admin Panel</h2>
+                <div class="DL">
+                   <button class="dropbtn">Location</button>
+		   <div class="locations">
+                   <a href="#" onclick="L1()">Comstock</a>
+                   <a href="#" onclick="L2()">Galesburg</a>
+                   <a href="#" onclick="L3()">Kalamazoo</a>
+                   <a href="#" onclick="L4()">Portage</a>
+                   <a href="#" onclick="L5()">Vicksburg</a>
+                   </div>
+                </div>
+<div id="l1" class="page"><h2>Comstock</h2></div>
+<div id="l2" class="page"><h2>Galesburg</h2></div>
+<div id="l3" class="page"><h2>Kalamazoo</h2></div>
+<div id="l4" class="page"><h2>Portage</h2></div>
+<div id="l5" class="page"><h2>Vicksburg<h2></div>
+	</div>
+</html>
