@@ -86,14 +86,14 @@ function downloadPDF() {
 	<div class="foreground">
 		<img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
 		<h2>Mobile Distribution Form</h2>
-		<form>
+		<form action="javascript:downloadPDF()">
 			<div>
 				<label for="Fname">First Name<span style="color:red">*</span></label>
 				<input id= "Fname" placeholder="First Name" type="text"  required>
 				<label for="Lname">Last Name<span style="color:red">*</span></label>
 				<input id= "Lname" placeholder="Last Name" type="text"  required>
 				<label for="Email">Email Address<span style="color:red">*</span></label>
-				<input id= "Email" placeholder="Email" type="email" required>
+				<input id= "Email" placeholder="Email" type="email">
 				<label for="HHold">Number in Household<span style="color:red">*</span></label>
 				<input id= "HHold" placeholder="Number in Household" type="number" min="1" required>
 				<label for="Address">Street Address<span style="color:red">*</span></label>
@@ -101,7 +101,7 @@ function downloadPDF() {
 				<label for="Zip">ZIP Code<span style="color:red">*</span></label>
 				<input id= "Zip" placeholder="ZIP" max="99999" min="10000" type="number" required>
 			</div>
-			<button onclick="downloadPDF()" class="btn btn-block btn-danger" id="Submit">Submit</button>
+			<button class="btn btn-block btn-danger" id="Submit">Submit</button>
 		</form>
 	</div>
 </html>
