@@ -1,6 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse	#HttpResponse is an object, we need to point this object to the form html file
 from django.template import loader
+from .Scripts.ExcelHandler import ExcelFile
+
+
+
+
 
 def index(request):
 	return render(request, "WebForm/index.html", {})
@@ -13,9 +18,17 @@ def admin(request):
 def submit(request):
 	if request.method == "POST":
 		template = loader.get_template('WebForm/Sindex.html')
-		print("First Name = " + str(request.POST['Fname']))
-		print("Last Name = " + str(request.POST.get("Lname")))
-		print("Email = " + str(request.POST.get("Email")))
+		user_data = [request.POST.get("Fname"), 
+					 request.POST.get("Lname"), 
+					 request.POST.get("Email"), 
+					 request.POST.get("HHold"), 
+					 request.POST.get("Address"), 
+					 request.POST.get("Zip")
+					]
+		headers = ["First Name", "Last Name", "Email", "# in House", "Address", "Zip"]
+		datafile = ExcelFile("MobileFoodDistro.xlsx", headers)
+		datafile.addData(user_data)
+		datafile.saveFile()
 		return HttpResponse(template.render({}, request))
 	else:
 		return HttpResponse("Howd you do dat?")
