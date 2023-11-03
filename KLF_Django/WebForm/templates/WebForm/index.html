@@ -59,25 +59,6 @@ label{
   padding-top: 1em;
 }</style>
 
-<script>
-function downloadPDF() {
-  var Fname = document.getElementById("Fname").value;
-  var Lname = document.getElementById("Lname").value;
-  var Email = document.getElementById("Email").value;
-  var HHold = document.getElementById("HHold").value;
-  var Address = document.getElementById("Address").value;
-  var Zip = document.getElementById("Zip").value;
-
-  var file = new jsPDF();
-  file.text(20, 20, Fname);
-  file.text(20, 30, Lname);
-  file.text(20, 40, Email);
-  file.text(20, 50, HHold);
-  file.text(20, 60, Address);
-  file.text(20, 70, Zip);
-  file.save("data.pdf");
-}
-</script>
 
 	<head>
 		<meta charset="utf-8">
@@ -86,22 +67,24 @@ function downloadPDF() {
 	<div class="foreground">
 		<img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
 		<h2>Mobile Distribution Form</h2>
-		<form>
+		<form method="POST" action="/form/submit/">
+			{% csrf_token %}
 			<div>
 				<label for="Fname">First Name<span style="color:red">*</span></label>
-				<input id= "Fname" placeholder="First Name" type="text"  required>
+				<input id= "Fname" placeholder="First Name" type="text" name="Fname" required>
 				<label for="Lname">Last Name<span style="color:red">*</span></label>
-				<input id= "Lname" placeholder="Last Name" type="text"  required>
-				<label for="Email">Email Address<span style="color:red">*</span></label>
-				<input id= "Email" placeholder="Email" type="email" required>
+				<input id= "Lname" placeholder="Last Name" type="text" name="Lname" required>
+				<label for="Email">Email Address</label>
+				<input id= "Email" placeholder="Email" type="email" name="Email">
 				<label for="HHold">Number in Household<span style="color:red">*</span></label>
-				<input id= "HHold" placeholder="Number in Household" type="number" min="1" required>
+				<input id= "HHold" placeholder="Number in Household" type="number" min="1" name="HHold" required>
 				<label for="Address">Street Address<span style="color:red">*</span></label>
-				<input id= "Address" placeholder="Address" required>
+				<input id= "Address" placeholder="Address" name="Address" required>
 				<label for="Zip">ZIP Code<span style="color:red">*</span></label>
-				<input id= "Zip" placeholder="ZIP" max="99999" min="10000" type="number" required>
+				<input id= "Zip" placeholder="ZIP" max="99999" min="10000" type="number" name="Zip" required>
 			</div>
-			<button onclick="downloadPDF()" class="btn btn-block btn-danger" id="Submit">Submit</button>
+			<button class="btn btn-block btn-danger" id="Submit" type="submit">Submit </button>
+
 		</form>
 	</div>
 </html>
