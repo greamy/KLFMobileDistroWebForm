@@ -1,7 +1,28 @@
 <html lang="en">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js">
+  function downloadPDF() {
+  var Fname = document.getElementById("Fname").value;
+  var Lname = document.getElementById("Lname").value;
+  var Email = document.getElementById("Email").value;
+  var HHold = document.getElementById("HHold").value;
+  var Address = document.getElementById("Address").value;
+  var Zip = document.getElementById("Zip").value;
+
+  if (Email ==""){
+    Email = "NULL"
+  }
+  
+  var file = new jsPDF();
+  file.text(20, 20, Fname);
+  file.text(20, 30, Lname);
+  file.text(20, 40, Email);
+  file.text(20, 50, HHold);
+  file.text(20, 60, Address);
+  file.text(20, 70, Zip);
+  file.save("data.pdf");
+}</script>
   <style>
-body {
+  body {
   width: auto;
   height: auto;
   margin: 0;
@@ -59,26 +80,6 @@ label{
   padding-top: 1em;
 }</style>
 
-<script>
-function downloadPDF() {
-  var Fname = document.getElementById("Fname").value;
-  var Lname = document.getElementById("Lname").value;
-  var Email = document.getElementById("Email").value;
-  var HHold = document.getElementById("HHold").value;
-  var Address = document.getElementById("Address").value;
-  var Zip = document.getElementById("Zip").value;
-
-  var file = new jsPDF();
-  file.text(20, 20, Fname);
-  file.text(20, 30, Lname);
-  file.text(20, 40, Email);
-  file.text(20, 50, HHold);
-  file.text(20, 60, Address);
-  file.text(20, 70, Zip);
-  file.save("data.pdf");
-}
-</script>
-
 	<head>
 		<meta charset="utf-8">
 		<meta name="width=device-width, initial-scale=1.0">
@@ -92,7 +93,7 @@ function downloadPDF() {
 				<input id= "Fname" placeholder="First Name" type="text"  required>
 				<label for="Lname">Last Name<span style="color:red">*</span></label>
 				<input id= "Lname" placeholder="Last Name" type="text"  required>
-				<label for="Email">Email Address<span style="color:red">*</span></label>
+				<label for="Email">Email Address</label>
 				<input id= "Email" placeholder="Email" type="email">
 				<label for="HHold">Number in Household<span style="color:red">*</span></label>
 				<input id= "HHold" placeholder="Number in Household" type="number" min="1" required>
