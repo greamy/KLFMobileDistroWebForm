@@ -1,36 +1,63 @@
 import openpyxl
+import os #added by ben 11/10
+from django.conf import settings
 
 class ExcelFile:
 
-    def __init__(self, fileName, headers):
-        self.name = fileName
-        self.headers = headers
-        self.wb = self.generateFile()
+	def __init__(self, fileName, headers):
+		self.name = fileName
+		self.headers = headers
+		self.wb = self.generateFile()
 
-    def generateFile(self):
-        try:
-            wb = openpyxl.load_workbook(self.name)
-        except FileNotFoundError:
-            wb = openpyxl.Workbook()
-            wb.active.append(self.headers)
+	
+	def generateFile(self):
+		try:
+			# Assuming 'ExcelDocs' is the subdirectory you want to save the Excel file in
+			directory = 'WebForm/ExcelDocs'
+			if not os.path.exists(directory):
+				os.makedirs(directory)
 
-        ws = wb.active
-        ws.title = self.name.split(".")[0]
-        return wb
+			file_path = os.path.join(directory, self.name)
+			if os.path.exists(file_path):
+				wb = openpyxl.load_workbook(file_path)
+			else:
+				wb = openpyxl.Workbook()
+				ws = wb.active
+				ws.append(self.headers)
+				wb.save(file_path)
+				wb = openpyxl.load_workbook(file_path)
+		except FileNotFoundError:
+			wb = openpyxl.Workbook()
+			ws = wb.active
+			ws.append(self.headers)
+			wb.save(file_path)
+			wb = openpyxl.load_workbook(file_path)
 
-    def addData(self, data):
-        ws = self.wb.active
-        # check if multiple rows in data input
-        print("Data"+ str(data))
+		ws = wb.active
+		ws.title = self.name.split(".")[0]
+		return wb
 
-        if isinstance(data[0], list):
-            for row in data:
-                ws.append(row)
-        else:
-            ws.append(data)
-            #print("Else:")
-		
+	def addData(self, data):
+		ws = self.wb.active
+		# check if multiple rows in data input
+		print("Data"+ str(data))
 
-    def saveFile(self):
-        self.wb.save(self.name)
-        #print("savefile")
+		if isinstance(data[0], list):
+			for row in data:
+				ws.append(row)
+		else:
+			ws.append(data)
+			#print("Else:")
+
+
+	def saveFile(self):
+		directory = 'WebForm/ExcelDocs'
+		file_path = os.path.join(settings.BASE_DIR, directory, self.name)
+		self.wb.save(file_path)
+
+
+
+
+
+#Below is the original Generate Files definition
+#Ben modified this definition on 11/17

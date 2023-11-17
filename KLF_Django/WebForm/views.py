@@ -17,6 +17,11 @@ def admin(request):
 
 def submit(request):
 	if request.method == "POST":
+		
+		#folder_path = "/WebForm/ExcelDocs/"	#Ben added this 11/10
+		#file_path = folder_path + "MobileFoodDistro.xlsx"	#Ben added this 11/10
+		
+
 		template = loader.get_template('WebForm/Sindex.html')
 		user_data = [request.POST.get("Fname"), 
 					 request.POST.get("Lname"), 
@@ -26,8 +31,8 @@ def submit(request):
 					 request.POST.get("Zip")
 					]
 		headers = ["First Name", "Last Name", "Email", "# in House", "Address", "Zip"]
-		datafile = ExcelFile("MobileFoodDistro.xlsx", headers)
-		datafile.addData(user_data)
+		datafile = ExcelFile("MobileFoodDistro.xlsx", headers)	#Ben added changed this 11/10
+		datafile.addData(user_data)		
 		datafile.saveFile()
 		return HttpResponse(template.render({}, request))
 	else:
