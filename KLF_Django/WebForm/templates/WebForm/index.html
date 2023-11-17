@@ -57,6 +57,13 @@ button{
 label{
   display: block;
   padding-top: 1em;
+}
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
 }</style>
 
 	<head>
@@ -67,12 +74,12 @@ label{
 		<img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
 		<h2>Mobile Distribution Form</h2>
 		<form method="POST" action="/form/submit/">
-			{% csrf_token %}
+			<!-- {% csrf_token %} -->
 			<div>
 				<label for="Fname">First Name<span style="color:red">*</span></label>
-				<input id= "Fname" placeholder="First Name" type="text" name="Fname" required>
+				<input id= "Fname" placeholder="First Name" type="text" name="Fname" pattern="[A-Za-z]{1,}" required>
 				<label for="Lname">Last Name<span style="color:red">*</span></label>
-				<input id= "Lname" placeholder="Last Name" type="text" name="Lname" required>
+				<input id= "Lname" placeholder="Last Name" type="text" name="Lname" pattern="[A-Za-z]{1,}" required>
 				<label for="Email">Email Address</label>
 				<input id= "Email" placeholder="Email" type="email" name="Email">
 				<label for="HHold">Number in Household<span style="color:red">*</span></label>
