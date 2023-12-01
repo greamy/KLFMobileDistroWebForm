@@ -4,20 +4,22 @@ from django.conf import settings
 
 class ExcelFile:
 
-	def __init__(self, fileName, headers):
+	def __init__(self, fileName, headers, directory):
 		self.name = fileName
 		self.headers = headers
+		self.directory = directory
 		self.wb = self.generateFile()
+		
 
 	
 	def generateFile(self):
 		try:
 			# Assuming 'ExcelDocs' is the subdirectory you want to save the Excel file in
-			directory = 'WebForm/ExcelDocs'
-			if not os.path.exists(directory):
-				os.makedirs(directory)
+			#directory = 'WebForm/ExcelDocs'
+			if not os.path.exists(self.directory):
+				os.makedirs(self.directory)
 
-			file_path = os.path.join(directory, self.name)
+			file_path = os.path.join(self.directory, self.name)
 			if os.path.exists(file_path):
 				wb = openpyxl.load_workbook(file_path)
 			else:
