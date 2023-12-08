@@ -21,5 +21,6 @@ from . import views
 urlpatterns = [
     path('', views.index, name = "index"),		#path(route, view)
     path('admin/', views.admin, name = 'admin'),
-	path('submit/', views.submit, name = 'submit')
+	path('submit/', views.submit, name = 'submit'),
+	path('QR/', views.GenerateQR, name = 'QR'),
 ]

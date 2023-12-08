@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse	#HttpResponse is an object, we need to point this object to the form html file
 from django.template import loader
 from .Scripts.ExcelHandler import ExcelFile
-
+from .Scripts.QRCode import QRCode
 
 
 
@@ -14,12 +14,14 @@ def index(request):
 def admin(request):
 	return render(request, "WebForm/admin.html", {})
 
+def GenerateQR(request):
+	QR = QRCode("data")
+	QR.saveImage("WebForm/QR_Codes/QR.png")
+	return HttpResponse("test")
 
 def submit(request):
 	if request.method == "POST":
 		
-		#folder_path = "/WebForm/ExcelDocs/"	#Ben added this 11/10
-		#file_path = folder_path + "MobileFoodDistro.xlsx"	#Ben added this 11/10
 		
 
 		template = loader.get_template('WebForm/Sindex.html')

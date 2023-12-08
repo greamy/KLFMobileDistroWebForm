@@ -1,4 +1,3 @@
-import * as d3 from "https://cdn.skypack.dev/d3@7.3.0";
 //2D array of Sites
 const Sites = [
   ["Comstock Middle School"],
@@ -48,11 +47,21 @@ function CreatePage(array, string) {
   filelist.appendChild(filename);
   filelist.appendChild(Update);
   
+  const QR = document.createElement("button");
+  QR.setAttribute("onClick","GenerateQR()");
+  QR.appendChild(document.createTextNode("Generate QR Code"));
+  
+  
+
+
+
+
   
   const div = document.createElement("div");
   div.setAttribute("id", array +"P");
   div.setAttribute("class", "page");
   div.appendChild(div1);
+  div.appendChild(QR);
   div.appendChild(filelist);
 
   const loc = document.getElementById("main");
@@ -93,9 +102,15 @@ function createSites(array, string) {
   CreatePage(array, string);
 }
 
+//generate qr
+function GenerateQR() {
+  console.log("hello whats up");
+  var httpreq = new XMLHttpRequest();
+  httpreq.open("GET", "/form/QR", true);
+  httpreq.send();
+}
 
 
-console.log("CONSOLE TESTING LOG")
 //Creates All appropiate Locations with its listed sites as drop down menus
 for (var i = 0; i < Locations.length; i++) {
   CreateLoc(Locations[i]);
