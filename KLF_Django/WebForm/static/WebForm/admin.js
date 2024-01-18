@@ -14,12 +14,6 @@ const Sites = [
   ["Vicksburg United Methodist Church"]
 ];
 
-
-
-
-
-
-
 $(document).ready(function () {
 	// Make an AJAX request to get the CSV file
 	$.ajax({
@@ -53,11 +47,6 @@ $(document).ready(function () {
 	  return Locations;
 	}
 });
-
-
-
-
-
 
 //Array of Locations
 //const Locations = [
@@ -94,13 +83,8 @@ function CreatePage(array, string) {
   const QR = document.createElement("button");
   QR.setAttribute("onClick","GenerateQR()");
   QR.appendChild(document.createTextNode("Generate QR Code"));
-  
-  
 
 
-
-
-  
   const div = document.createElement("div");
   div.setAttribute("id", array +"P");
   div.setAttribute("class", "page");
@@ -115,7 +99,7 @@ function CreatePage(array, string) {
 //creates Location Button and Divider for Drop Down Menu for Side Nav Bar
 function CreateLoc(string) {
   const da = document.createElement("i");
-  da.setAttribute("class", "fa fa-caret-down");
+  da.setAttribute("class", "fa fa-caret-right");
   da.setAttribute("id", string);
 
   const Loc = document.createElement("button");
