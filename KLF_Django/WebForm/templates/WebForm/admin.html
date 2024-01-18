@@ -141,8 +141,15 @@ img{
 #Update{
   margin-left: 250px;
 }
-.QR{
+.btn-group{
   margin-top: 10px;
+}
+.btn-group:after{
+  content: "";
+  clear: both;
+  display: table;
+}
+.QR{
   margin-left: 5%;
   border:none;
   background-color:white;
@@ -156,6 +163,23 @@ img{
 }
 .QR:hover{
   background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+.delete{
+  margin-left: 65%;
+  border:none;
+  background-color:white;
+  font-size:15px;
+  background-color: rgb(150,0,0);
+  border: none;
+  color: white;
+  padding: 10px 32px;
+  border-radius: 12px;
+  transition-duration: 0.4s;
+}
+.delete:hover{
+  background-color: red;
   color: white;
   cursor: pointer;
 }
