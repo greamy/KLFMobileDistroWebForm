@@ -34,6 +34,7 @@ body {
 }
 .sidenav button:hover{
   color: #f1f1f1;
+  transition-duration: 0.4s;
 }
 #main {
   margin-left: 290px; 
@@ -57,10 +58,17 @@ img{
   background-color: #262626;
   padding-left: 8px;
 }
-.fa-caret-down {
+.fa-caret-right {
   float: right;
   padding-right: 8px;
+  transition: .4s
 }
+
+.dropdown-btn:hover > .fa-caret-right{
+  transform: rotate(90deg);
+  transition: .4s
+}
+
 #main #homeP .Create{
   background-color: rgb(50,107,90);
   border: none;
@@ -119,7 +127,7 @@ img{
   border-color:rgb(50,107,90);
 }
 .FileList{
-  margin-top: 100px;
+  margin-top: 10px;
   margin-left: 5%;
   width:90%;
   height: 25px;
@@ -132,6 +140,24 @@ img{
 }
 #Update{
   margin-left: 250px;
+}
+.QR{
+  margin-top: 10px;
+  margin-left: 5%;
+  border:none;
+  background-color:white;
+  font-size:15px;
+  background-color: rgb(50,107,90);
+  border: none;
+  color: white;
+  padding: 10px 32px;
+  border-radius: 12px;
+  transition-duration: 0.4s;
+}
+.QR:hover{
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
 }
 </style>
 
