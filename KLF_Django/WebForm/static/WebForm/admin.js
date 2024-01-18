@@ -1,180 +1,153 @@
-//2D array of Sites
-const Sites = [
-  ["Comstock Middle School"],
-  ["Galesburg United Methodist Church"],
-  [
-    "Saint Andrew Community Church",
-    "Heritage Christian Reformed Church",
-    "Haven Church",
-    "Douglass Community Association",
-    "Sunnyside United Methodist Church",
-    "The Salvation Army"
-  ],
-  ["Chapel Hill United Methodist Church"],
-  ["Vicksburg United Methodist Church"]
-];
-
 $(document).ready(function () {
 	// Make an AJAX request to get the CSV file
 	$.ajax({
-	  type: "GET",
-	  url: "/form/get-location-data", // Replace with the actual path to your CSV file on the server
-	  dataType: "text",
-	  success: function (data) {
-		// Process the CSV data
-		let Locations = processData(data);
-		populateLocations(Locations);
-	  }
+		type: "GET",
+		url: "/form/get-location-data", // Replace with the actual path to your CSV file on the server
+		dataType: "text",
+		success: function (data) {
+			// Process the CSV data
+			let locations = processData(data);
+			populateLocations(locations[0], locations[1]);
+		}
 	});
 
+	function processData(data) {
+		var locations = [];
+		var sites = [];
+   		var rows = JSON.parse(data);
 
-	function processData(csvData) {
-	  const Locations=[];
-	  rows = JSON.parse(csvData);
-	  rows = rows["locations"];
-	  // Assuming your CSV file has a column named 'Location'
-	  // Adjust the column index accordingly
-	  const columnIndex = 0;
+		for (var location in rows) {
+			if (rows.hasOwnProperty(location)) {
+				locations.push(location);
+				sites.push(rows[location]); // Assuming rows[location] is an array
+			}
+    	}
 
-	  for (let i = 0; i < rows.length; i++) {
-		const columns = rows[i].split(',');
-		const location = columns[columnIndex].trim();
-		Locations.push(location);
-	  }
-
-	  // Now 'locations' array contains the locations from the CSV file
-	  console.log(Locations);
-	  return Locations;
+		// Now 'locations' array contains the locations from the CSV file
+		console.log(locations);
+		console.log(sites);
+		return [locations, sites];
 	}
 });
 
-//Array of Locations
-//const Locations = [
-  //"Comstock",
-  //"Galesburg",
-  //"Kalamazoo",
-  //"Portage",
-  //"Vicksburg"
-//];
-
 //creates page for each location and site
 function CreatePage(array, string) {
-  const textH2 = document.createTextNode(string + ": " + array);
+	const textH2 = document.createTextNode(string + ": " + array);
 
-  const h2 = document.createElement("h2");
-  h2.appendChild(textH2);
-  
-  const div1 = document.createElement("div");
-  div1.setAttribute("class", "Top-Color");
-  div1.appendChild(h2);
+	const h2 = document.createElement("h2");
+	h2.appendChild(textH2);
 
-  const filename = document.createElement("a");
-  filename.appendChild(document.createTextNode("File Name"));
-  
-  const Update = document.createElement("a");
-  Update.setAttribute("id", "Update");
-  Update.appendChild(document.createTextNode("Last Modified"));
-  
-  const filelist = document.createElement("div");
-  filelist.setAttribute("class","FileList");
-  filelist.appendChild(filename);
-  filelist.appendChild(Update);
-  
-  const QR = document.createElement("button");
-  QR.setAttribute("onClick","GenerateQR()");
-  QR.appendChild(document.createTextNode("Generate QR Code"));
+	const div1 = document.createElement("div");
+	div1.setAttribute("class", "Top-Color");
+	div1.appendChild(h2);
+
+	const filename = document.createElement("a");
+	filename.appendChild(document.createTextNode("File Name"));
+
+	const Update = document.createElement("a");
+	Update.setAttribute("id", "Update");
+	Update.appendChild(document.createTextNode("Last Modified"));
+
+	const filelist = document.createElement("div");
+	filelist.setAttribute("class","FileList");
+	filelist.appendChild(filename);
+	filelist.appendChild(Update);
+
+	const QR = document.createElement("button");
+	QR.setAttribute("onClick","GenerateQR()");
+	QR.appendChild(document.createTextNode("Generate QR Code"));
 
 
-  const div = document.createElement("div");
-  div.setAttribute("id", array +"P");
-  div.setAttribute("class", "page");
-  div.appendChild(div1);
-  div.appendChild(QR);
-  div.appendChild(filelist);
+	const div = document.createElement("div");
+	div.setAttribute("id", array +"P");
+	div.setAttribute("class", "page");
+	div.appendChild(div1);
+	div.appendChild(QR);
+	div.appendChild(filelist);
 
-  const loc = document.getElementById("main");
-  loc.appendChild(div);
-  div.style.display = "none";
+	const loc = document.getElementById("main");
+	loc.appendChild(div);
+	div.style.display = "none";
 }
 //creates Location Button and Divider for Drop Down Menu for Side Nav Bar
 function CreateLoc(string) {
-  const da = document.createElement("i");
-  da.setAttribute("class", "fa fa-caret-right");
-  da.setAttribute("id", string);
+	const da = document.createElement("i");
+	da.setAttribute("class", "fa fa-caret-right");
+	da.setAttribute("id", string);
 
-  const Loc = document.createElement("button");
-  Loc.setAttribute("id", string);
-  Loc.setAttribute("class", "dropdown-btn");
-  const text = document.createTextNode(string);
-  Loc.appendChild(text);
-  Loc.appendChild(da);
+	const Loc = document.createElement("button");
+	Loc.setAttribute("id", string);
+	Loc.setAttribute("class", "dropdown-btn");
+	const text = document.createTextNode(string);
+	Loc.appendChild(text);
+	Loc.appendChild(da);
 
-  const Sit = document.createElement("div");
-  Sit.setAttribute("id", "d" + string);
-  Sit.setAttribute("class", "drop");
+	const Sit = document.createElement("div");
+	Sit.setAttribute("id", "d" + string);
+	Sit.setAttribute("class", "drop");
 
-  const element = document.getElementById("loc");
-  element.appendChild(Loc);
-  element.appendChild(Sit);
+	const element = document.getElementById("loc");
+	element.appendChild(Loc);
+	element.appendChild(Sit);
 }
 
 //creates all Site within Divider in Side Nav Bar
 function createSites(array, string) {
-  const text = document.createTextNode(array);
-  const Site = document.createElement("button");
-  Site.setAttribute("id", array);
-  Site.setAttribute("class","PageB");
-  Site.appendChild(text);
-  const element = document.getElementById("d" + string);
-  element.appendChild(Site);
-  CreatePage(array, string);
+	const text = document.createTextNode(array);
+	const Site = document.createElement("button");
+	Site.setAttribute("id", array);
+	Site.setAttribute("class","PageB");
+	Site.appendChild(text);
+	const element = document.getElementById("d" + string);
+	element.appendChild(Site);
+	CreatePage(array, string);
 }
 
 //generate qr
 function GenerateQR() {
-  console.log("hello whats up");
-  var httpreq = new XMLHttpRequest();
-  httpreq.open("GET", "/form/QR", true);
-  httpreq.send();
+	console.log("hello whats up");
+	var httpreq = new XMLHttpRequest();
+	httpreq.open("GET", "/form/QR", true);
+	httpreq.send();
 }
 
-function populateLocations(Locations) {
-	//Creates All appropiate Locations with its listed sites as drop down menus
-	for (var i = 0; i < Locations.length; i++) {
-	  CreateLoc(Locations[i]);
-	  for (var x = 0; x < Sites[i].length; x++) {
-		createSites(Sites[i][x], Locations[i]);
-	  }
+function populateLocations(locations, sites) {
+	//Creates All appropriate Locations with its listed sites as drop down menus
+	for (var i = 0; i < locations.length; i++) {
+    	CreateLoc(locations[i]);
+		for (var x = 0; x < sites[i].length; x++) {
+			createSites(sites[i][x], locations[i]);
+		}
 	}
 	//Creates functional Drop Down Menus
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var last = 0;
-for (var i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function () {
-    var dropdownContent = this.nextElementSibling;
-      if (last != 0){
-        last.style.display = "none";
-      }
-      if (last != dropdownContent){
-        dropdownContent.style.display = "block";
-      }
-      if (last == dropdownContent){
-        last = 0;
-      }
-      else{
-        last = dropdownContent;
-      }
-  });
-}
+	var dropdown = document.getElementsByClassName("dropdown-btn");
+	var last = 0;
+	for (var i = 0; i < dropdown.length; i++) {
+		dropdown[i].addEventListener("click", function () {
+			var dropdownContent = this.nextElementSibling;
+			if (last != 0) {
+				last.style.display = "none";
+			}
+			if (last != dropdownContent) {
+				dropdownContent.style.display = "block";
+			}
+			if (last == dropdownContent) {
+				last = 0;
+			}
+			else {
+				last = dropdownContent;
+			}
+		});
+	}
 	//Adds listen event on site buttons to change main page
 	var Cpage = document.getElementById("homeP");
 	var pages = document.getElementsByClassName("PageB");
 	for (var i = 0; i < pages.length; i++){
-	  pages[i].addEventListener("click", function (e){
-		var Npage = document.getElementById(e.target.id + "P");
-		Cpage.style.display = "none";
-		Npage.style.display = "block";
-		Cpage = Npage;
-	  });
+		pages[i].addEventListener("click", function (e){
+			var Npage = document.getElementById(e.target.id + "P");
+			Cpage.style.display = "none";
+			Npage.style.display = "block";
+			Cpage = Npage;
+		});
 	}
 }

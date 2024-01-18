@@ -3,14 +3,12 @@ from django.http import HttpResponse	#HttpResponse is an object, we need to poin
 from django.template import loader
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.QRCode import QRCode
-import csv
+import json
 from django.http import JsonResponse
-
 
 
 def index(request):
 	return render(request, "WebForm/index.html", {})
-
 
 def admin(request):
 	return render(request, "WebForm/admin.html", {})
@@ -42,15 +40,13 @@ def submit(request):
 #this will generate responses from these functions, for instance, calling the html file for the user form.
 
 def getLocations(request):
-	csv_file_path = 'WebForm/locations.csv'  # Update with the actual path to your CSV file
-
+	file_path = 'WebForm/locations.json'  # Update with the actual path to your CSV file
 	try:
-		with open(csv_file_path, 'r') as csv_file:
-			csv_reader = csv.DictReader(csv_file)
-			locations = [row['Location'].strip() for row in csv_reader]
+		with open(file_path, 'r') as csv_file:
+			locations = json.load(csv_file)
 			print(locations)
 
-		return JsonResponse({'locations': locations})
+		return JsonResponse(locations, safe=False)
 	except FileNotFoundError:
 		return JsonResponse({'error': 'CSV file not found'}, status=404)
 
