@@ -22,9 +22,6 @@ def GenerateQR(request):
 
 def submit(request):
 	if request.method == "POST":
-		
-		
-
 		template = loader.get_template('WebForm/Sindex.html')
 		user_data = [request.POST.get("Fname"), 
 					 request.POST.get("Lname"), 
@@ -42,14 +39,10 @@ def submit(request):
 		return HttpResponse("Howd you do dat?")
 
 #create functions, urls,py calls these functions to handle urls like /admin, /about, etc
-#this will generate responses from thes functions, for instance, calling the html file for the user form. 
-
-# Create your views here.
-
-
+#this will generate responses from these functions, for instance, calling the html file for the user form.
 
 def getLocations(request):
-	csv_file_path = 'WebForm/test.csv'  # Update with the actual path to your CSV file
+	csv_file_path = 'WebForm/locations.csv'  # Update with the actual path to your CSV file
 
 	try:
 		with open(csv_file_path, 'r') as csv_file:

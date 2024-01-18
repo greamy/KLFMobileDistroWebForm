@@ -18,7 +18,7 @@ $(document).ready(function () {
 	// Make an AJAX request to get the CSV file
 	$.ajax({
 	  type: "GET",
-	  url: "/form/location-data", // Replace with the actual path to your CSV file on the server
+	  url: "/form/get-location-data", // Replace with the actual path to your CSV file on the server
 	  dataType: "text",
 	  success: function (data) {
 		// Process the CSV data
