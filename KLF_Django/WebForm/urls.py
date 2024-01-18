@@ -20,7 +20,9 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name = "index"),		#path(route, view)
+	path('location-data/', views.getLocations, name = 'Locations'),
     path('admin/', views.admin, name = 'admin'),
 	path('submit/', views.submit, name = 'submit'),
 	path('QR/', views.GenerateQR, name = 'QR'),
+	#path('admin/', include("WebForm.urls"))	#assuming this request is coming from a user at /forms, redirect to WebForm ap
 ]

@@ -21,11 +21,16 @@ class ExcelFile:
     def addData(self, data):
         ws = self.wb.active
         # check if multiple rows in data input
+        print("Data"+ str(data))
+
         if isinstance(data[0], list):
             for row in data:
                 ws.append(row)
         else:
             ws.append(data)
+            #print("Else:")
+		
 
     def saveFile(self):
         self.wb.save(self.name)
+        #print("savefile")

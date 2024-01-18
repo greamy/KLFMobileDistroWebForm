@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('djangoadmin/', admin.site.urls),
 
-    path('form/', include("WebForm.urls"))	#assuming this request is coming from a user at /forms, redirect to WebForm app
+    path('form/', include("WebForm.urls"))	#assuming this request is coming from a user at /forms, redirect to WebForm ap
     						#testing means running the server then going to /form, this will populate the form
     						#with the message contained in WebForm.views.py
 ]

@@ -16,14 +16,58 @@ const Sites = [
 
 
 
+
+
+
+
+$(document).ready(function () {
+	// Make an AJAX request to get the CSV file
+	$.ajax({
+	  type: "GET",
+	  url: "/form/location-data", // Replace with the actual path to your CSV file on the server
+	  dataType: "text",
+	  success: function (data) {
+		// Process the CSV data
+		let Locations = processData(data);
+		populateLocations(Locations);
+	  }
+	});
+
+
+	function processData(csvData) {
+	  const Locations=[];
+	  rows = JSON.parse(csvData);
+	  rows = rows["locations"];
+	  // Assuming your CSV file has a column named 'Location'
+	  // Adjust the column index accordingly
+	  const columnIndex = 0;
+
+	  for (let i = 0; i < rows.length; i++) {
+		const columns = rows[i].split(',');
+		const location = columns[columnIndex].trim();
+		Locations.push(location);
+	  }
+
+	  // Now 'locations' array contains the locations from the CSV file
+	  console.log(Locations);
+	  return Locations;
+	}
+});
+
+
+
+
+
+
 //Array of Locations
-const Locations = [
-  "Comstock",
-  "Galesburg",
-  "Kalamazoo",
-  "Portage",
-  "Vicksburg"
-];
+//const Locations = [
+  //"Comstock",
+  //"Galesburg",
+  //"Kalamazoo",
+  //"Portage",
+  //"Vicksburg"
+//];
+
 //creates page for each location and site
 function CreatePage(array, string) {
   const textH2 = document.createTextNode(string + ": " + array);
@@ -110,35 +154,35 @@ function GenerateQR() {
   httpreq.send();
 }
 
-
-//Creates All appropiate Locations with its listed sites as drop down menus
-for (var i = 0; i < Locations.length; i++) {
-  CreateLoc(Locations[i]);
-  for (var x = 0; x < Sites[i].length; x++) {
-	createSites(Sites[i][x], Locations[i]);
-  }
-}
-//Creates functional Drop Down Menus
-var dropdown = document.getElementsByClassName("dropdown-btn");
-for (var i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function () {
-	var dropdownContent = this.nextElementSibling;
-	if (dropdownContent.style.display === "block") {
-	  dropdownContent.style.display = "none";
-	} else {
-	  dropdownContent.style.display = "block";
+function populateLocations(Locations) {
+	//Creates All appropiate Locations with its listed sites as drop down menus
+	for (var i = 0; i < Locations.length; i++) {
+	  CreateLoc(Locations[i]);
+	  for (var x = 0; x < Sites[i].length; x++) {
+		createSites(Sites[i][x], Locations[i]);
+	  }
 	}
-  });
+	//Creates functional Drop Down Menus
+	var dropdown = document.getElementsByClassName("dropdown-btn");
+	for (var i = 0; i < dropdown.length; i++) {
+	  dropdown[i].addEventListener("click", function () {
+		var dropdownContent = this.nextElementSibling;
+		if (dropdownContent.style.display === "block") {
+		  dropdownContent.style.display = "none";
+		} else {
+		  dropdownContent.style.display = "block";
+		}
+	  });
+	}
+	//Adds listen event on site buttons to change main page
+	var Cpage = document.getElementById("homeP");
+	var pages = document.getElementsByClassName("PageB");
+	for (var i = 0; i < pages.length; i++){
+	  pages[i].addEventListener("click", function (e){
+		var Npage = document.getElementById(e.target.id + "P");
+		Cpage.style.display = "none";
+		Npage.style.display = "block";
+		Cpage = Npage;
+	  });
+	}
 }
-//Adds listen event on site buttons to change main page
-var Cpage = document.getElementById("homeP");
-var pages = document.getElementsByClassName("PageB");
-for (var i = 0; i < pages.length; i++){
-  pages[i].addEventListener("click", function (e){
-	var Npage = document.getElementById(e.target.id + "P");
-	Cpage.style.display = "none";
-	Npage.style.display = "block";
-	Cpage = Npage;
-  });
-}
-

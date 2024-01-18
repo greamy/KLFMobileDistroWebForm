@@ -3,7 +3,8 @@ from django.http import HttpResponse	#HttpResponse is an object, we need to poin
 from django.template import loader
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.QRCode import QRCode
-
+import csv
+from django.http import JsonResponse
 
 
 
@@ -44,3 +45,20 @@ def submit(request):
 #this will generate responses from thes functions, for instance, calling the html file for the user form. 
 
 # Create your views here.
+
+
+
+def getLocations(request):
+	csv_file_path = 'WebForm/test.csv'  # Update with the actual path to your CSV file
+
+	try:
+		with open(csv_file_path, 'r') as csv_file:
+			csv_reader = csv.DictReader(csv_file)
+			locations = [row['Location'].strip() for row in csv_reader]
+			print(locations)
+
+		return JsonResponse({'locations': locations})
+	except FileNotFoundError:
+		return JsonResponse({'error': 'CSV file not found'}, status=404)
+
+
