@@ -163,17 +163,25 @@ function populateLocations(Locations) {
 	  }
 	}
 	//Creates functional Drop Down Menus
-	var dropdown = document.getElementsByClassName("dropdown-btn");
-	for (var i = 0; i < dropdown.length; i++) {
-	  dropdown[i].addEventListener("click", function () {
-		var dropdownContent = this.nextElementSibling;
-		if (dropdownContent.style.display === "block") {
-		  dropdownContent.style.display = "none";
-		} else {
-		  dropdownContent.style.display = "block";
-		}
-	  });
-	}
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var last = 0;
+for (var i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function () {
+    var dropdownContent = this.nextElementSibling;
+      if (last != 0){
+        last.style.display = "none";
+      }
+      if (last != dropdownContent){
+        dropdownContent.style.display = "block";
+      }
+      if (last == dropdownContent){
+        last = 0;
+      }
+      else{
+        last = dropdownContent;
+      }
+  });
+}
 	//Adds listen event on site buttons to change main page
 	var Cpage = document.getElementById("homeP");
 	var pages = document.getElementsByClassName("PageB");
