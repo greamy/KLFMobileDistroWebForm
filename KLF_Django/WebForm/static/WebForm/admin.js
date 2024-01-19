@@ -58,11 +58,21 @@ function CreatePage(array, string) {
 	QR.appendChild(document.createTextNode("Generate QR Code"));
 
 
+	const Delete = document.createElement("button");
+  	Delete.setAttribute("onClick","Delete('"+string+"','"+array+"')");
+  	Delete.setAttribute("class","delete");
+  	Delete.appendChild(document.createTextNode("Delete Site"));
+  
+  	const bgroup = document.createElement("div");
+  	bgroup.setAttribute("class","btn-group");
+  	bgroup.appendChild(QR);
+  	bgroup.appendChild(Delete);
+	
 	const div = document.createElement("div");
 	div.setAttribute("id", array +"P");
 	div.setAttribute("class", "page");
 	div.appendChild(div1);
-	div.appendChild(QR);
+	div.appendChild(bgroup);
 	div.appendChild(filelist);
 
 	const loc = document.getElementById("main");
@@ -109,6 +119,11 @@ function GenerateQR() {
 	var httpreq = new XMLHttpRequest();
 	httpreq.open("GET", "/form/QR", true);
 	httpreq.send();
+}
+
+function Delete(string,array){
+  console.log(string);
+  console.log(array);
 }
 
 function populateLocations(locations, sites) {
