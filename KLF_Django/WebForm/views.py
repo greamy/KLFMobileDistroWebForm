@@ -29,7 +29,8 @@ def submit(request):
 					 request.POST.get("Zip")
 					]
 		headers = ["First Name", "Last Name", "Email", "# in House", "Address", "Zip"]
-		datafile = ExcelFile("MobileFoodDistro.xlsx", headers, "WebForm/ExcelDocs")	#Hardcoded reference for now, this will end up being split between the different locations so they save in different folders. 
+		# TODO: Dynamically update file path based on location
+		datafile = ExcelFile("MobileFoodDistro.xlsx", headers, "WebForm/ExcelDocs")
 		datafile.addData(user_data)		
 		datafile.saveFile()
 		return HttpResponse(template.render({}, request))
@@ -40,10 +41,10 @@ def submit(request):
 #this will generate responses from these functions, for instance, calling the html file for the user form.
 
 def getLocations(request):
-	file_path = 'WebForm/locations.json'  # Update with the actual path to your CSV file
+	file_path = 'WebForm/locations.json'
 	try:
-		with open(file_path, 'r') as csv_file:
-			locations = json.load(csv_file)
+		with open(file_path, 'r') as json_file:
+			locations = json.load(json_file)
 			print(locations)
 
 		return JsonResponse(locations, safe=False)
