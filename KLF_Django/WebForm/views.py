@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse	#HttpResponse is an object, we need to point this object to the form html file
 from django.template import loader
 from .Scripts.ExcelHandler import ExcelFile
+from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
-import json
 from django.http import JsonResponse
 
 
@@ -43,13 +43,12 @@ def submit(request):
 def getLocations(request):
 	file_path = 'WebForm/locations.json'
 	try:
-		with open(file_path, 'r') as json_file:
-			locations = json.load(json_file)
-			print(locations)
+		handler = JsonHandler(file_path)
+		locations = handler.get_data()
 
 		return JsonResponse(locations, safe=False)
 	except FileNotFoundError:
-		return JsonResponse({'error': 'CSV file not found'}, status=404)
+		return JsonResponse({'error': 'Locations JSON file not found'}, status=404)
 
 
 def postLocations(request):

@@ -22,10 +22,6 @@ $(document).ready(function () {
 				sites.push(rows[location]); // Assuming rows[location] is an array
 			}
     	}
-
-		// Now 'locations' array contains the locations from the CSV file
-		console.log(locations);
-		console.log(sites);
 		return [locations, sites];
 	}
 });
