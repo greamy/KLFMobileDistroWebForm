@@ -209,14 +209,15 @@ img{
     <div id="homeP" class="page">
       <div class="Top-Color"><h2>Welcome Home, Admin</h2></div>
       <a id="LocCreate">Create a New Location(s) &/or Site(s) <a class="CreateInfo"><b>&#9432</b><i class="info">To add a New Location, you must add a new Site. To add a new Site, type an existing Location and input the new Site.</i></a></a>
-      <form action="javascript:void(0);">
+      <form action="javascript:createSite();">
         <button class="Create">Create</button>
-        <input type="text" placeholder="Location" name="Location" required>
-        <input type="text" placeholder="Site" name="Site" required>
+        <input type="text" placeholder="Location" name="Location" id="InputLocation" required>
+        <input type="text" placeholder="Site" name="Site" id="InputSite" required>
       </form>
     </div>
   </div>
 </body>
 {% load static %}
 <script src="{% static 'WebForm/admin.js' %}" type="text/javascript"></script>
+
 </html>

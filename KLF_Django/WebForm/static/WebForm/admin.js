@@ -1,8 +1,8 @@
 $(document).ready(function () {
-	// Make an AJAX request to get the CSV file
+	// Make an AJAX request to get the JSON file
 	$.ajax({
 		type: "GET",
-		url: "/form/get-location-data", // Replace with the actual path to your CSV file on the server
+		url: "/form/get-location-data", // Replace with the actual path to your JSON file on the server
 		dataType: "text",
 		success: function (data) {
 			// Process the CSV data
@@ -29,6 +29,49 @@ $(document).ready(function () {
 		return [locations, sites];
 	}
 });
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?            
+		if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+
+
+function createSite() {
+	const loc = document.getElementById("InputLocation");
+	const site = document.getElementById("InputSite");
+	console.log(loc.value);
+	console.log(site.value);
+
+	// Make an AJAX request to get the JSON file
+	$.ajax({
+		type: "POST",
+		url: "/form/post-location-data/", // Replace with the actual path to your JSON file on the server
+		headers: {'X-CSRFToken': getCookie("csrftoken")},        
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"newLocation": loc.value, "newSite": site.value}, 
+		success: function (data) {
+		// Process the CSV data
+		}
+	});
+}
+
+
 
 //creates page for each location and site
 function CreatePage(array, string) {

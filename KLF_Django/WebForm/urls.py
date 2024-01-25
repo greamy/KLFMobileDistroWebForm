@@ -20,7 +20,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name = "index"),		#path(route, view)
-	path('get-location-data/', views.getLocations, name = 'Locations'),
+	path('get-location-data/', views.getLocations, name = 'getLocations'),
+	path('post-location-data/', views.postLocations, name = 'postLocations'),
     path('admin/', views.admin, name = 'admin'),
 	path('submit/', views.submit, name = 'submit'),
 	path('QR/', views.GenerateQR, name = 'QR'),

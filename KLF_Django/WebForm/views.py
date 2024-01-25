@@ -52,3 +52,18 @@ def getLocations(request):
 		return JsonResponse({'error': 'CSV file not found'}, status=404)
 
 
+def postLocations(request):
+	file_path = 'WebForm/locations.json'
+	#try:
+		#with open(file_path, 'r') as json_file:
+			#locations = json.load(json_file)
+			#print(locations)
+	newLoc = request.POST.get("newLocation")
+	newSite = request.POST.get("newSite")
+	print(request.POST.get("newLocation"))
+	print(request.POST.get("newSite"))
+		#return JsonResponse(locations, safe=False)
+	#except FileNotFoundError:
+		#return JsonResponse({'error': 'CSV file not found'}, status=404)
+	return HttpResponse("Howd you do dat again?")
+
