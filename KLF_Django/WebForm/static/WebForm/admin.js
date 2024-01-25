@@ -1,11 +1,11 @@
 $(document).ready(function () {
-	// Make an AJAX request to get the CSV file
+	// Make an AJAX request to get the locations and sites json file
 	$.ajax({
 		type: "GET",
-		url: "/form/get-location-data", // Replace with the actual path to your CSV file on the server
+		url: "/form/get-location-data",
 		dataType: "text",
 		success: function (data) {
-			// Process the CSV data
+			// Process the json data
 			let locations = processData(data);
 			populateLocations(locations[0], locations[1]);
 		}

@@ -14,7 +14,7 @@ def admin(request):
 	return render(request, "WebForm/admin.html", {})
 
 def GenerateQR(request):
-	QR = QRCode("data")
+	QR = QRCode("google.com")
 	QR.saveImage("WebForm/QR_Codes/QR.png")
 	return HttpResponse("test")
 

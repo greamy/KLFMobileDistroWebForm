@@ -9,8 +9,6 @@ class ExcelFile:
 		self.headers = headers
 		self.directory = directory
 		self.wb = self.generateFile()
-		
-
 	
 	def generateFile(self):
 		try:
