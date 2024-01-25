@@ -21,6 +21,7 @@ class JsonHandler:
                     self.json_object[key] = data[key]
                 else:
                     self.json_object[key].extend(data[key])
+
         else:
             print("JsonHandler Error: Data must be a dictionary")
             return -1

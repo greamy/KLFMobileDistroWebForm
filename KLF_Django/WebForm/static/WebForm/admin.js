@@ -30,6 +30,44 @@ $(document).ready(function () {
 	}
 });
 
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?            
+		if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function createSite() {
+	const loc = document.getElementById("InputLocation");
+	const site = document.getElementById("InputSite");
+	console.log(loc.value);
+	console.log(site.value);
+
+	// Make an AJAX request to get the JSON file
+	$.ajax({
+		type: "POST",
+		url: "/form/post-location-data/", // Replace with the actual path to your JSON file on the server
+		headers: {'X-CSRFToken': getCookie("csrftoken")},        
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"newLocation": loc.value, "newSite": site.value}, 
+		success: function (data) {
+		// Process the CSV data
+		}
+	});
+}
+
+
+
 //creates page for each location and site
 function CreatePage(array, string) {
 	const textH2 = document.createTextNode(string + ": " + array);
@@ -79,6 +117,7 @@ function CreatePage(array, string) {
 	loc.appendChild(div);
 	div.style.display = "none";
 }
+
 //creates Location Button and Divider for Drop Down Menu for Side Nav Bar
 function CreateLoc(string) {
 	const da = document.createElement("i");
