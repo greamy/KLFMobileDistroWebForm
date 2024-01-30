@@ -47,7 +47,7 @@ function createSite() {
 	const site = document.getElementById("InputSite");
 	console.log(loc.value);
 	console.log(site.value);
-
+	document.getElementById("loader").style.display="inline-block"; // for loading animation on page
 	// Make an AJAX request to get the JSON file
 	$.ajax({
 		type: "POST",
