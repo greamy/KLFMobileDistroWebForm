@@ -25,13 +25,20 @@ class JsonHandler:
             return -1
         return self.json_object
 
+
+
     def remove_data(self, key, value):
+        print(key)
         if key in self.json_object:
             self.json_object[key].remove(value)
+            if self.json_object[key] == []:
+                self.json_object.pop(key)
         else:
             print("JsonHandler Error: Key not found")
             return -1
         return self.json_object
+
+
 
     def get_data(self):
         return self.json_object
@@ -40,3 +47,7 @@ class JsonHandler:
         with open(fileName, 'w') as outfile:
             json.dump(self.json_object, outfile, indent=4)
         return fileName
+
+
+
+

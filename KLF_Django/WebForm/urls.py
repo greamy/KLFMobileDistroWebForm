@@ -22,7 +22,8 @@ urlpatterns = [
     path('', views.index, name = "index"),		#path(route, view)
 	path('get-location-data/', views.getLocations, name = 'getLocations'),
 	path('post-location-data/', views.postLocations, name = 'postLocations'),
-    path('admin/', views.admin, name = 'admin'),
+	path('delete-location-data/', views.deleteSite, name = 'deleteSite'),
+    	path('admin/', views.admin, name = 'admin'),
 	path('submit/', views.submit, name = 'submit'),
 	path('QR/', views.GenerateQR, name = 'QR'),
 	#path('admin/', include("WebForm.urls"))	#assuming this request is coming from a user at /forms, redirect to WebForm ap

@@ -53,16 +53,32 @@ def getLocations(request):
 
 def postLocations(request):
 	file_path = 'WebForm/locations.json'
-	#try:
-		#with open(file_path, 'r') as json_file:
-			#locations = json.load(json_file)
-			#print(locations)
 	newLoc = request.POST.get("newLocation")
 	newSite = request.POST.get("newSite")
-	print(request.POST.get("newLocation"))
-	print(request.POST.get("newSite"))
-		#return JsonResponse(locations, safe=False)
-	#except FileNotFoundError:
-		#return JsonResponse({'error': 'CSV file not found'}, status=404)
+	newLocDict = {newLoc: [newSite]}
+	
+	try:
+		handler = JsonHandler(file_path)
+		handler.add_data(newLocDict)
+		handler.save_json(file_path)
+		return JsonResponse(handler.get_data(), safe=False)
+	except FileNotFoundError:
+		return JsonResponse({'error': 'Locations JSON file not found'}, status=404)
 	return HttpResponse("Howd you do dat again?")
+
+
+def deleteSite(request):
+	file_path = 'WebForm/locations.json'
+	loc = request.POST.get("location")
+	site = request.POST.get("site")
+	try:
+		handler = JsonHandler(file_path)
+		handler.remove_data(loc, site)
+		handler.save_json(file_path)
+		return JsonResponse(handler.get_data(), safe=False)
+	except FileNotFoundError:
+		return JsonResponse({'error': 'Locations JSON file not found'}, status=404)
+	return HttpResponse("Howd you do dat again?")
+
+
 

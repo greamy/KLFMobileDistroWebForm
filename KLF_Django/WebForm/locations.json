@@ -1,22 +1,25 @@
 {
-  "Comstock": [
-    "Comstock Middle School"
-  ],
-  "Galesburg": [
-    "Galesburg United Methodist Church"
-  ],
-  "Kalamazoo": [
-    "Saint Andrew Community Church",
-    "Heritage Christian Reformed Church",
-    "Haven Church",
-    "Douglass Community Association",
-    "Sunnyside United Methodist Church",
-    "The Salvation Army"
-  ],
-  "Portage": [
-    "Chapel Hill United Methodist Church"
-  ],
-  "Vicksburg": [
-    "Vicksburg United Methodist Church"
-  ]
+    "Comstock": [
+        "Comstock Middle School"
+    ],
+    "Galesburg": [
+        "Galesburg United Methodist Church"
+    ],
+    "Kalamazoo": [
+        "Saint Andrew Community Church",
+        "Heritage Christian Reformed Church",
+        "Haven Church",
+        "Douglass Community Association",
+        "Sunnyside United Methodist Church",
+        "The Salvation Army"
+    ],
+    "Portage": [
+        "Chapel Hill United Methodist Church"
+    ],
+    "Vicksburg": [
+        "Vicksburg United Methodist Church"
+    ],
+    "test2": [
+        "test22"
+    ]
 }

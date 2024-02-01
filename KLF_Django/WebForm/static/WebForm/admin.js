@@ -3,28 +3,29 @@ $(document).ready(function () {
 	$.ajax({
 		type: "GET",
 		url: "/form/get-location-data",
-		dataType: "text",
+		dataType: "json",
 		success: function (data) {
 			// Process the json data
 			let locations = processData(data);
 			populateLocations(locations[0], locations[1]);
 		}
 	});
-
-	function processData(data) {
-		var locations = [];
-		var sites = [];
-   		var rows = JSON.parse(data);
-
-		for (var location in rows) {
-			if (rows.hasOwnProperty(location)) {
-				locations.push(location);
-				sites.push(rows[location]); // Assuming rows[location] is an array
-			}
-    	}
-		return [locations, sites];
-	}
 });
+
+function processData(data) {
+	var rows = data;
+	var locations = [];
+	var sites = [];
+	
+	for (var location in rows) {
+		if (rows.hasOwnProperty(location)) {
+			locations.push(location);
+			sites.push(rows[location]); // Assuming rows[location] is an array
+		}
+	}
+	return [locations, sites];
+}
+
 
 function getCookie(name) {
     var cookieValue = null;
@@ -51,18 +52,20 @@ function createSite() {
 	// Make an AJAX request to get the JSON file
 	$.ajax({
 		type: "POST",
-		url: "/form/post-location-data/", // Replace with the actual path to your JSON file on the server
+		url: "/form/post-location-data/", 
+		dataType: "json",
 		headers: {'X-CSRFToken': getCookie("csrftoken")},        
 		mode: 'same-origin',
 		// Do not send CSRF token to another domain.
 		data: {"newLocation": loc.value, "newSite": site.value}, 
 		success: function (data) {
-		// Process the CSV data
+			let locations = processData(data);
+			ResetLocations();
+			populateLocations(locations[0], locations[1]);
+			document.getElementById("loader").style.display = "none";
 		}
 	});
 }
-
-
 
 //creates page for each location and site
 function CreatePage(array, string) {
@@ -93,7 +96,7 @@ function CreatePage(array, string) {
 
 
 	const Delete = document.createElement("button");
-  	Delete.setAttribute("onClick","Delete('"+string+"','"+array+"')");
+  	Delete.setAttribute("onClick","DeleteSite('"+string+"','"+array+"')");
   	Delete.setAttribute("class","delete");
   	Delete.appendChild(document.createTextNode("Delete Site"));
   
@@ -136,6 +139,7 @@ function CreateLoc(string) {
 	element.appendChild(Sit);
 }
 
+
 //creates all Site within Divider in Side Nav Bar
 function createSites(array, string) {
 	const text = document.createTextNode(array);
@@ -156,10 +160,48 @@ function GenerateQR() {
 	httpreq.send();
 }
 
-function Delete(string,array){
-  console.log(string);
-  console.log(array);
+function DeleteSite(string,array){
+
+	var pages = document.getElementsByClassName("PageB");
+	var location = "";
+	var site = "";
+
+	for (let page of pages) {
+		var Npage = document.getElementById(page.id + "P");
+		if (Npage.style.display != "none"){
+			let siteName = Npage.childNodes[0].innerText;
+			let temp = siteName.split(": ");
+			location = temp[0];
+			site = temp[1];
+			Npage.remove();
+		}
+	}
+	
+	$.ajax({
+		type: "POST",
+		url: "/form/delete-location-data/", 
+		dataType: "json",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},        
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"location": location, "site": site}, 
+		success: function (data) {
+			let locations = processData(data);
+			ResetLocations();
+			populateLocations(locations[0], locations[1]);
+			let homeP = document.getElementById("homeP");
+			homeP.style.display="block";
+		}
+	});
 }
+
+function ResetLocations() {
+	const sideBar = document.getElementById("loc");
+  	while (sideBar.firstChild) {
+    		sideBar.removeChild(sideBar.lastChild);
+  	}
+}
+
 
 function populateLocations(locations, sites) {
 	//Creates All appropriate Locations with its listed sites as drop down menus
