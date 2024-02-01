@@ -67,7 +67,7 @@ function createSite() {
 }
 
 function DeleteSite(string,array){
-
+	document.getElementById("dloader").style.display="inline-block";
 	var pages = document.getElementsByClassName("PageB");
 	var location = "";
 	var site = "";
@@ -128,7 +128,11 @@ function CreatePage(array, string) {
 	QR.setAttribute("onClick","GenerateQR()");
 	QR.appendChild(document.createTextNode("Generate QR Code"));
 
-
+	const loader = document.createElement("div");
+ 	loader.setAttribute("class", "dloader");
+	loader.setAttribute("id", "dloader");
+	Delete.appendChild(loader);
+	
 	const Delete = document.createElement("button");
   	Delete.setAttribute("onClick","DeleteSite('"+string+"','"+array+"')");
   	Delete.setAttribute("class","delete");
