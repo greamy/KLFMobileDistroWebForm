@@ -26,7 +26,6 @@ function processData(data) {
 	return [locations, sites];
 }
 
-
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -49,7 +48,7 @@ function createSite() {
 	console.log(loc.value);
 	console.log(site.value);
 	document.getElementById("loader").style.display="inline-block"; // for loading animation on page
-	// Make an AJAX request to get the JSON file
+
 	$.ajax({
 		type: "POST",
 		url: "/form/post-location-data/", 
@@ -63,6 +62,41 @@ function createSite() {
 			ResetLocations();
 			populateLocations(locations[0], locations[1]);
 			document.getElementById("loader").style.display = "none";
+		}
+	});
+}
+
+function DeleteSite(string,array){
+	document.getElementById(string + array).style.display="inline-block";
+	var pages = document.getElementsByClassName("PageB");
+	var location = "";
+	var site = "";
+
+	for (let page of pages) {
+		var Npage = document.getElementById(page.id + "P");
+		if (Npage.style.display != "none"){
+			let siteName = Npage.childNodes[0].innerText;
+			let temp = siteName.split(": ");
+			location = temp[0];
+			site = temp[1];
+			Npage.remove();
+		}
+	}
+
+	$.ajax({
+		type: "POST",
+		url: "/form/delete-location-data/",
+		dataType: "json",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"location": location, "site": site},
+		success: function (data) {
+			let locations = processData(data);
+			ResetLocations();
+			populateLocations(locations[0], locations[1]);
+			let homeP = document.getElementById("homeP");
+			homeP.style.display="block";
 		}
 	});
 }
@@ -94,7 +128,11 @@ function CreatePage(array, string) {
 	QR.setAttribute("onClick","GenerateQR()");
 	QR.appendChild(document.createTextNode("Generate QR Code"));
 
-
+	const loader = document.createElement("div");
+ 	loader.setAttribute("class", "dloader");
+	loader.setAttribute("id", string + array);
+	Delete.appendChild(loader);
+	
 	const Delete = document.createElement("button");
   	Delete.setAttribute("onClick","DeleteSite('"+string+"','"+array+"')");
   	Delete.setAttribute("class","delete");
@@ -139,7 +177,6 @@ function CreateLoc(string) {
 	element.appendChild(Sit);
 }
 
-
 //creates all Site within Divider in Side Nav Bar
 function createSites(array, string) {
 	const text = document.createTextNode(array);
@@ -160,48 +197,12 @@ function GenerateQR() {
 	httpreq.send();
 }
 
-function DeleteSite(string,array){
-
-	var pages = document.getElementsByClassName("PageB");
-	var location = "";
-	var site = "";
-
-	for (let page of pages) {
-		var Npage = document.getElementById(page.id + "P");
-		if (Npage.style.display != "none"){
-			let siteName = Npage.childNodes[0].innerText;
-			let temp = siteName.split(": ");
-			location = temp[0];
-			site = temp[1];
-			Npage.remove();
-		}
-	}
-	
-	$.ajax({
-		type: "POST",
-		url: "/form/delete-location-data/", 
-		dataType: "json",
-		headers: {'X-CSRFToken': getCookie("csrftoken")},        
-		mode: 'same-origin',
-		// Do not send CSRF token to another domain.
-		data: {"location": location, "site": site}, 
-		success: function (data) {
-			let locations = processData(data);
-			ResetLocations();
-			populateLocations(locations[0], locations[1]);
-			let homeP = document.getElementById("homeP");
-			homeP.style.display="block";
-		}
-	});
-}
-
 function ResetLocations() {
 	const sideBar = document.getElementById("loc");
   	while (sideBar.firstChild) {
     		sideBar.removeChild(sideBar.lastChild);
   	}
 }
-
 
 function populateLocations(locations, sites) {
 	//Creates All appropriate Locations with its listed sites as drop down menus
