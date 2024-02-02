@@ -67,7 +67,7 @@ function createSite() {
 }
 
 function DeleteSite(string,array){
-	document.getElementById("dloader").style.display="inline-block";
+	document.getElementById(string + array).style.display="inline-block";
 	var pages = document.getElementsByClassName("PageB");
 	var location = "";
 	var site = "";
@@ -130,7 +130,7 @@ function CreatePage(array, string) {
 
 	const loader = document.createElement("div");
  	loader.setAttribute("class", "dloader");
-	loader.setAttribute("id", "dloader");
+	loader.setAttribute("id", string + array);
 	Delete.appendChild(loader);
 	
 	const Delete = document.createElement("button");
