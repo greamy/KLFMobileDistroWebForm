@@ -127,16 +127,16 @@ function CreatePage(array, string) {
 	const QR = document.createElement("button");
 	QR.setAttribute("onClick","GenerateQR()");
 	QR.appendChild(document.createTextNode("Generate QR Code"));
-
-	const loader = document.createElement("div");
- 	loader.setAttribute("class", "dloader");
-	loader.setAttribute("id", string + array);
-	Delete.appendChild(loader);
 	
 	const Delete = document.createElement("button");
   	Delete.setAttribute("onClick","DeleteSite('"+string+"','"+array+"')");
   	Delete.setAttribute("class","delete");
   	Delete.appendChild(document.createTextNode("Delete Site"));
+
+  	const loader = document.createElement("div");
+ 	loader.setAttribute("class", "dloader");
+	loader.setAttribute("id", string + array);
+	Delete.appendChild(loader);
   
   	const bgroup = document.createElement("div");
   	bgroup.setAttribute("class","btn-group");
