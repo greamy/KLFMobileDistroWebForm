@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse  # HttpResponse is an object, we need to point this object to the form html file
-from django.http import JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.db.utils import IntegrityError
 from django.template import loader
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.JsonHandler import JsonHandler
@@ -56,22 +56,22 @@ def create_site(request):
 	site_name = request.POST.get("newSite")
 
 	loc = Location.objects.filter(name__iexact=loc_name)
-
-	if loc.exists():
-		site = Site(name=site_name, location=loc.first())
-		site.save()
-	else:
-		loc = Location(name=loc_name)
-		loc.save()
-		site = Site(name=site_name, location=loc)
-		site.save()
-
+	try:
+		if loc.exists():
+			site = Site(name=site_name, location=loc.first())
+			site.save()
+		else:
+			loc = Location(name=loc_name)
+			loc.save()
+			site = Site(name=site_name, location=loc)
+			site.save()
+	except IntegrityError:
+		return HttpResponseBadRequest('Site already exists at that location.')
 	return get_locations(request)
 
 def delete_site(request):
 	loc_name = request.POST.get("location")
 	site_name = request.POST.get("site")
-
 	site = Site.objects.filter(name__iexact=site_name)
 	if site.exists():
 		site.delete()
