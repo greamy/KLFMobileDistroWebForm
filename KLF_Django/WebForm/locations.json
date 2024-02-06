@@ -1,8 +1,10 @@
 {
     "Comstock": [
+        "Comstock Middle School",
         "Comstock Middle School"
     ],
     "Galesburg": [
+        "Galesburg United Methodist Church",
         "Galesburg United Methodist Church"
     ],
     "Kalamazoo": [
@@ -11,16 +13,20 @@
         "Haven Church",
         "Douglass Community Association",
         "Sunnyside United Methodist Church",
+        "The Salvation Army",
+        "Saint Andrew Community Church",
+        "Heritage Christian Reformed Church",
+        "Haven Church",
+        "Douglass Community Association",
+        "Sunnyside United Methodist Church",
         "The Salvation Army"
     ],
     "Portage": [
+        "Chapel Hill United Methodist Church",
         "Chapel Hill United Methodist Church"
     ],
     "Vicksburg": [
+        "Vicksburg United Methodist Church",
         "Vicksburg United Methodist Church"
-    ],
-    "test1": [
-        "site1",
-        "site1"
     ]
 }

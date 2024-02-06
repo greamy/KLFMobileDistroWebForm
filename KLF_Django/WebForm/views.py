@@ -47,24 +47,37 @@ def submit(request):
 
 def get_locations(request):
 	file_path = 'WebForm/locations.json'
+	
+	sites = Site.objects.all()
+	site_dict = {}
+	for site in sites:
+		if site.location.name in site_dict:
+			site_dict[site.location.name].append(site.name)
+		else:
+			site_dict[site.location.name] = [site.name]
+
+	print(site_dict)
+
+
 	try:
 		handler = JsonHandler(file_path)
 		locations = handler.get_data()
 
-		return JsonResponse(locations, safe=False)
+		return JsonResponse(site_dict, safe=False)
 	except FileNotFoundError:
 		return JsonResponse({'error': 'Locations JSON file not found'}, status=404)
 
 
 def create_site(request):
-	file_path = 'WebForm/locations.json'
+	#file_path = 'WebForm/locations.json'
 	loc_name = request.POST.get("newLocation")
 	site_name = request.POST.get("newSite")
 	loc_dict = {loc_name: [site_name]}
 
 	loc = Location.objects.filter(name__iexact=loc_name)
+
 	if loc.exists():
-		site = Site(name=site_name, location=loc)
+		site = Site(name=site_name, location=loc.first())
 		site.save()
 	else:
 		loc = Location(name=loc_name)
@@ -72,24 +85,40 @@ def create_site(request):
 		site = Site(name=site_name, location=loc)
 		site.save()
 
-
 	try:
-		handler = JsonHandler(file_path)
-		handler.add_data(loc_dict)
-		handler.save_json(file_path)
-		return JsonResponse(handler.get_data(), safe=False)
+		#handler = JsonHandler(file_path)
+		#handler.add_data(loc_dict)
+		#handler.save_json(file_path)
+		return get_locations(request)
 	except FileNotFoundError:
 		return JsonResponse({'error': 'Locations JSON file not found'}, status=404)
 
 
 def delete_site(request):
-	file_path = 'WebForm/locations.json'
-	loc = request.POST.get("location")
-	site = request.POST.get("site")
+	#file_path = 'WebForm/locations.json'
+	loc_name = request.POST.get("location")
+	site_name = request.POST.get("site")
+
+	site = Site.objects.filter(name__iexact=site_name)
+	if site.exists():
+		site.delete()
+		other_sites = Site.objects.filter(location__name__iexact=loc_name)
+		if not other_sites.exists():
+			Location.objects.filter(name__iexact=loc_name).delete()
+
+	else:
+		return JsonResponse({'error': 'Site object not found in database'}, status=404)
+
 	try:
-		handler = JsonHandler(file_path)
-		handler.remove_data(loc, site)
-		handler.save_json(file_path)
-		return JsonResponse(handler.get_data(), safe=False)
+		#handler = JsonHandler(file_path)
+		#handler.remove_data(loc_name, site_name)
+		#handler.save_json(file_path)
+		return get_locations(request)
 	except FileNotFoundError:
 		return JsonResponse({'error': 'Locations JSON file not found'}, status=404)
+
+
+
+
+
+
