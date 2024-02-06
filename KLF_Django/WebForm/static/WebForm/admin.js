@@ -45,8 +45,6 @@ function getCookie(name) {
 function createSite() {
 	const loc = document.getElementById("InputLocation");
 	const site = document.getElementById("InputSite");
-	console.log(loc.value);
-	console.log(site.value);
 	document.getElementById("loader").style.display="inline-block"; // for loading animation on page
 
 	$.ajax({
@@ -58,6 +56,8 @@ function createSite() {
 		// Do not send CSRF token to another domain.
 		data: {"newLocation": loc.value, "newSite": site.value}, 
 		success: function (data) {
+			loc.value = "";
+			site.value = "";
 			let locations = processData(data);
 			ResetLocations();
 			populateLocations(locations[0], locations[1]);
