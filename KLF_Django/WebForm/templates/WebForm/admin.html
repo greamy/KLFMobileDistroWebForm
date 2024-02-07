@@ -209,6 +209,57 @@ img{
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+#overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+}
+#sure{
+  background-color: white;
+  width: 400px;
+  height: 150px;
+  margin: auto;
+  margin-top: 10%
+}
+#sure #yes, #no {
+  border: none;
+  color: black;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0px 50px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+#sure h1{
+  text-align: center;
+}
+#sure #yes{
+  background-color: #7d1c15;
+  transition-duration: 0.4s;
+}
+#sure #yes:hover {
+  background-color: #f44336;
+  color: white;
+}
+#sure #no{
+  background-color: #04593a;
+  transition-duration: 0.4s;
+}
+#sure #no:hover{
+  background-color: #04AA6D;
+  color: white;
+}
+
 </style>
 
 
@@ -223,6 +274,13 @@ img{
 
 <body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <div id="overlay" >
+    <div id="sure">
+      <h1><strong>Are you sure?</strong></h1>
+      <button id="yes">Yes</button>
+      <button id="no" onclick="No()">No</button>
+    </div>
+  </div>
   <div class="sidenav">
     <img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
     <fieldset>
