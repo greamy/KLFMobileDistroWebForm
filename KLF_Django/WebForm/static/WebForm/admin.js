@@ -41,7 +41,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
+let Universal = ""; // do not touch
 function createSite() {
 	const loc = document.getElementById("InputLocation");
 	const site = document.getElementById("InputSite");
@@ -65,10 +65,15 @@ function createSite() {
 		}
 	});
 }
-
+function No(){
+  document.getElementById("overlay").style.display="none";
+  document.getElementById(Universal).style.display="none";
+}
 function DeleteSite(string,array){
-	document.getElementById(string + array).style.display="inline-block";
+	Universal = string+array;
+	document.getElementById(Universal).style.display="inline-block";
 	var pages = document.getElementsByClassName("PageB");
+	document.getElementById("overlay").style.display="block";
 	var location = "";
 	var site = "";
 
