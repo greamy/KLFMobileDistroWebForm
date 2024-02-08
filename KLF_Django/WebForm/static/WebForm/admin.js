@@ -46,8 +46,16 @@ function createSite() {
 	const loc = document.getElementById("InputLocation");
 	const site = document.getElementById("InputSite");
 	document.getElementById("loader").style.display="inline-block"; // for loading animation on page
-
-	$.ajax({
+	for(var i = 0; i < Locations.length; i++){
+    if(Locations[i] == loc.value){
+      for (var l = 0; l < Sites[i].length; l++){
+        if(Sites[i][l] == site.value){
+          document.getElementById("error-overlay").style.display = "block";
+          document.getElementById("loader").style.display="none";
+          return 0;
+        }else if(l + 1 == Sites[i].length){
+		//repeating code between 57 - 95
+          $.ajax({
 		type: "POST",
 		url: "/form/post-location-data/", 
 		dataType: "json",
@@ -62,12 +70,39 @@ function createSite() {
 			ResetLocations();
 			populateLocations(locations[0], locations[1]);
 			document.getElementById("loader").style.display = "none";
-		}
-	});
+			}
+		});
+        }
+      }
+    }
+    else{
+  	$.ajax({
+		type: "POST",
+		url: "/form/post-location-data/", 
+		dataType: "json",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},        
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"newLocation": loc.value, "newSite": site.value}, 
+		success: function (data) {
+			loc.value = "";
+			site.value = "";
+			let locations = processData(data);
+			ResetLocations();
+			populateLocations(locations[0], locations[1]);
+			document.getElementById("loader").style.display = "none";
+			}
+		});//repeating code between 57 - 95
+    }
+  }
+	
 }
 function No(){
   document.getElementById("overlay").style.display="none";
   document.getElementById(Universal).style.display="none";
+}
+function off() {
+  document.getElementById("error-overlay").style.display = "none";
 }
 function DeleteSite(string,array){
 	Universal = string+array;
