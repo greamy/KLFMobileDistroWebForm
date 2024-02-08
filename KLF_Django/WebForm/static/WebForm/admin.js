@@ -41,13 +41,13 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
+let Universal = ""; // do not touch
 function createSite() {
 	const loc = document.getElementById("InputLocation");
 	const site = document.getElementById("InputSite");
 	document.getElementById("loader").style.display="inline-block"; // for loading animation on page
 
-	$.ajax({
+    $.ajax({
 		type: "POST",
 		url: "/form/post-location-data/", 
 		dataType: "json",
@@ -72,10 +72,18 @@ function createSite() {
 		}
 	});
 }
-
+function No(){
+  document.getElementById("overlay").style.display="none";
+  document.getElementById(Universal).style.display="none";
+}
+function off() {
+  document.getElementById("error-overlay").style.display = "none";
+}
 function DeleteSite(string,array){
-	document.getElementById(string + array).style.display="inline-block";
+	Universal = string+array;
+	document.getElementById(Universal).style.display="inline-block";
 	var pages = document.getElementsByClassName("PageB");
+	document.getElementById("overlay").style.display="block";
 	var location = "";
 	var site = "";
 
