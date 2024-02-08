@@ -259,7 +259,28 @@ img{
   background-color: #04AA6D;
   color: white;
 }
-
+#error-overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  cursor: pointer;
+}
+#error-overlay h1{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 50px;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
 </style>
 
 
@@ -280,6 +301,9 @@ img{
       <button id="yes">Yes</button>
       <button id="no" onclick="No()">No</button>
     </div>
+  </div>
+  <div id="error-overlay" onclick="off()">
+    <h1>Error! This Location Already Exists</h1>
   </div>
   <div class="sidenav">
     <img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
