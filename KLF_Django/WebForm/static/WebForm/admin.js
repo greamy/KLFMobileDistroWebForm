@@ -62,6 +62,13 @@ function createSite() {
 			ResetLocations();
 			populateLocations(locations[0], locations[1]);
 			document.getElementById("loader").style.display = "none";
+		},
+		error: function (request, textStatus, errorThrown) {
+			// TODO: Update error label field on HTML with the response text, set label field to display.
+			loc.value = "";
+			site.value = "";
+			console.log(request.responseText)
+			document.getElementById("loader").style.display = "none";
 		}
 	});
 }

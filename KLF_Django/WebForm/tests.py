@@ -30,7 +30,7 @@ class LocationActionTestCases(TestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertIsInstance(response, JsonResponse)
 
-	def test_add_location(self):
+	def test_add_site(self):
 		# Action:
 		# 	Add test site
 		# Tests:
@@ -41,10 +41,16 @@ class LocationActionTestCases(TestCase):
 		self.assertContains(response, "TestLocation")
 		self.assertTrue(Site.objects.filter(name__iexact=self.test_site_names[0]).exists())
 
+	def test_add_duplicate_site(self):
 		# Action:
 		# 	Add duplicate test site
 		# Tests:
 		#	Database does not contain duplicate data (ie. add site request did not create duplicate row)
+		loc = Location(name=self.test_loc_name)
+		loc.save()
+		new_site = Site(name=self.test_site_names[0], location=loc)
+		new_site.save()
+
 		with transaction.atomic():
 			response = self.client.post("/form/post-location-data/",
 									{"newLocation": self.test_loc_name, "newSite": self.test_site_names[0]})
