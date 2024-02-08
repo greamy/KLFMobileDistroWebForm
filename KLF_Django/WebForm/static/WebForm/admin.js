@@ -47,7 +47,7 @@ function createSite() {
 	const site = document.getElementById("InputSite");
 	document.getElementById("loader").style.display="inline-block"; // for loading animation on page
 
-    $.ajax({
+	$.ajax({
 		type: "POST",
 		url: "/form/post-location-data/", 
 		dataType: "json",
@@ -65,13 +65,16 @@ function createSite() {
 		},
 		error: function (request, textStatus, errorThrown) {
 			// TODO: Update error label field on HTML with the response text, set label field to display.
+
 			loc.value = "";
 			site.value = "";
 			console.log(request.responseText)
 			document.getElementById("loader").style.display = "none";
+			document.getElementById("error-overlay").style.display = "block";
 		}
 	});
 }
+
 function No(){
   document.getElementById("overlay").style.display="none";
   document.getElementById(Universal).style.display="none";
@@ -79,11 +82,16 @@ function No(){
 function off() {
   document.getElementById("error-overlay").style.display = "none";
 }
-function DeleteSite(string,array){
-	Universal = string+array;
-	document.getElementById(Universal).style.display="inline-block";
-	var pages = document.getElementsByClassName("PageB");
+
+function DeleteOverlay() {
 	document.getElementById("overlay").style.display="block";
+}
+
+function DeleteSite(){
+	//Universal = string+array;
+	//document.getElementById(Universal).style.display="inline-block";
+	document.getElementById("overlay").style.display="none";
+	var pages = document.getElementsByClassName("PageB");
 	var location = "";
 	var site = "";
 
@@ -144,7 +152,7 @@ function CreatePage(array, string) {
 	QR.appendChild(document.createTextNode("Generate QR Code"));
 	
 	const Delete = document.createElement("button");
-  	Delete.setAttribute("onClick","DeleteSite('"+string+"','"+array+"')");
+  	Delete.setAttribute("onClick","DeleteOverlay('"+string+"','"+array+"')");
   	Delete.setAttribute("class","delete");
   	Delete.appendChild(document.createTextNode("Delete Site"));
 

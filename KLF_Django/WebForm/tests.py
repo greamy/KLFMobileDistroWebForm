@@ -10,7 +10,6 @@ class BasicPagesTestCase(TestCase):
 	def test_form_page(self):
 		c = Client()
 		response = c.get("/form/")
-
 		self.assertContains(response, '<form method="POST"', status_code=200, html=False)
 
 	def test_admin_page(self):
