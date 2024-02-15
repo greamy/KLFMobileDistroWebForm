@@ -10,7 +10,8 @@ from .models import Location, Site
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
 # this will generate responses from these functions, for instance, calling the html file for the user form.
 
-def index(request):
+def index(request, site):
+	
 	return render(request, "WebForm/index.html", {})
 
 def admin(request):
@@ -19,9 +20,12 @@ def admin(request):
 def generate_QR(request):
 	QR = QRCode("google.com")
 	QR.saveImage("WebForm/QR_Codes/QR.png")
+	print(request.GET)
 	return HttpResponse("test")
 
-def submit(request):
+def submit(request, site):
+	print(site)
+
 	if request.method == "POST":
 		template = loader.get_template('WebForm/Sindex.html')
 		user_data = [request.POST.get("Fname"),

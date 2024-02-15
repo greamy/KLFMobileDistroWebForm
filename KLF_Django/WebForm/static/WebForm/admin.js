@@ -95,16 +95,11 @@ function DeleteSite(){
 	var location = "";
 	var site = "";
 
-	for (let page of pages) {
-		var Npage = document.getElementById(page.id + "P");
-		if (Npage.style.display != "none"){
-			let siteName = Npage.childNodes[0].innerText;
-			let temp = siteName.split(": ");
-			location = temp[0];
-			site = temp[1];
-			Npage.remove();
-		}
-	}
+	var page_data = getCurrentPage();
+	location = page_data[0];
+	site = page_data[1];
+	let NPage = page_data[2];
+	Npage.remove();
 
 	$.ajax({
 		type: "POST",
@@ -123,6 +118,35 @@ function DeleteSite(){
 		}
 	});
 }
+
+
+
+function getCurrentPage() {
+	var pages = document.getElementsByClassName("PageB");
+	var location = "";
+	var site = "";
+	var Npage = "";
+
+	for (let page of pages) {
+		Npage = document.getElementById(page.id + "P");
+		if (Npage.style.display != "none"){
+			let siteName = Npage.childNodes[0].innerText;
+			let temp = siteName.split(": ");
+			location = temp[0];
+			site = temp[1];
+		}
+	}
+	return [location, site, NPage]
+}
+
+
+
+
+
+
+
+
+
 
 //creates page for each location and site
 function CreatePage(array, string) {
@@ -212,13 +236,46 @@ function createSites(array, string) {
 	CreatePage(array, string);
 }
 
+
+
+
+
+
+
 //generate qr
 function GenerateQR() {
 	console.log("hello whats up");
-	var httpreq = new XMLHttpRequest();
-	httpreq.open("GET", "/form/QR", true);
-	httpreq.send();
+	page_data = getCurrentPage();
+	var location = page_data[0];
+	var site = page_data[1];
+	console.log(location);
+	console.log(site);
+
+	$.ajax({
+	type: "GET",
+	url: "/form/QR"
+	//dataType: "text",
+
+	// Do not send CSRF token to another domain.
+	data: {"location": location, "site": site},
+	success: function (data) {
+		let locations = processData(data);
+		ResetLocations();
+		populateLocations(locations[0], locations[1]);
+		let homeP = document.getElementById("homeP");
+		homeP.style.display="block";
+	}
+	});
 }
+
+
+
+
+
+
+
+
+
 
 function ResetLocations() {
 	const sideBar = document.getElementById("loc");

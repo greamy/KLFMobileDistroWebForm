@@ -19,12 +19,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-	path('', views.index, name="index"),  # path(route, view)
 	path('get-location-data/', views.get_locations, name='getLocations'),
 	path('post-location-data/', views.create_site, name='postLocations'),
 	path('delete-location-data/', views.delete_site, name='deleteSite'),
 	path('admin/', views.admin, name='admin'),
-	path('submit/', views.submit, name='submit'),
+	path('<str:site>/submit/', views.submit, name='submit'),
 	path('QR/', views.generate_QR, name='QR'),
+	path('<str:site>/', views.index, name="index")  # path(route, view)
 	# path('admin/', include("WebForm.urls"))	#assuming this request is coming from a user at /forms, redirect to WebForm ap
 ]
