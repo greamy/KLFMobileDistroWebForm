@@ -88,17 +88,15 @@ function DeleteOverlay() {
 }
 
 function DeleteSite(){
-	//Universal = string+array;
-	//document.getElementById(Universal).style.display="inline-block";
+//	Universal = string+array;
+//	document.getElementById(Universal).style.display="inline-block";
 	document.getElementById("overlay").style.display="none";
 	var pages = document.getElementsByClassName("PageB");
-	var location = "";
-	var site = "";
 
 	var page_data = getCurrentPage();
-	location = page_data[0];
-	site = page_data[1];
-	let NPage = page_data[2];
+	var location = page_data[0];
+	var site = page_data[1];
+	let Npage = page_data[2];
 	Npage.remove();
 
 	$.ajax({
@@ -119,13 +117,11 @@ function DeleteSite(){
 	});
 }
 
-
-
 function getCurrentPage() {
 	var pages = document.getElementsByClassName("PageB");
 	var location = "";
 	var site = "";
-	var Npage = "";
+	var Npage = null;
 
 	for (let page of pages) {
 		Npage = document.getElementById(page.id + "P");
@@ -136,17 +132,8 @@ function getCurrentPage() {
 			site = temp[1];
 		}
 	}
-	return [location, site, NPage]
+	return [location, site, Npage]
 }
-
-
-
-
-
-
-
-
-
 
 //creates page for each location and site
 function CreatePage(array, string) {
@@ -236,46 +223,31 @@ function createSites(array, string) {
 	CreatePage(array, string);
 }
 
-
-
-
-
-
-
 //generate qr
 function GenerateQR() {
-	console.log("hello whats up");
 	page_data = getCurrentPage();
 	var location = page_data[0];
 	var site = page_data[1];
-	console.log(location);
-	console.log(site);
 
 	$.ajax({
-	type: "GET",
-	url: "/form/QR"
-	//dataType: "text",
-
-	// Do not send CSRF token to another domain.
-	data: {"location": location, "site": site},
-	success: function (data) {
-		let locations = processData(data);
-		ResetLocations();
-		populateLocations(locations[0], locations[1]);
-		let homeP = document.getElementById("homeP");
-		homeP.style.display="block";
-	}
+		type: "GET",
+		url: "/form/QR",
+		data: {"location": location, "site": site},
+		xhrFields: {
+            responseType: 'blob' // Set the response type to blob
+        },
+		success: function (data) {
+			var blob = new Blob([data], { type: 'image/png' }); // Create a blob from the response data
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'QR.png'; // Specify the filename
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+		}
 	});
 }
-
-
-
-
-
-
-
-
-
 
 function ResetLocations() {
 	const sideBar = document.getElementById("loc");

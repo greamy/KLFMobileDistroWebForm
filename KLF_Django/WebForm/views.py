@@ -7,21 +7,29 @@ from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
 from .models import Location, Site
 
+
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
 # this will generate responses from these functions, for instance, calling the html file for the user form.
 
 def index(request, site):
-	
 	return render(request, "WebForm/index.html", {})
+
 
 def admin(request):
 	return render(request, "WebForm/admin.html", {})
 
+
 def generate_QR(request):
-	QR = QRCode("google.com")
-	QR.saveImage("WebForm/QR_Codes/QR.png")
 	print(request.GET)
-	return HttpResponse("test")
+	location = request.GET.get("location")
+	site = request.GET.get("site")
+	QR = QRCode(location + " : " + site)
+	QR.saveImage("WebForm/QR_Codes/QR.png")
+	with open("WebForm/QR_Codes/QR.png", 'rb') as img:
+		response = HttpResponse(img.read(), content_type="image/png")
+		response["Content-Disposition"] = 'attachment; filename="QR.png"'
+	return response
+
 
 def submit(request, site):
 	print(site)
@@ -29,12 +37,12 @@ def submit(request, site):
 	if request.method == "POST":
 		template = loader.get_template('WebForm/Sindex.html')
 		user_data = [request.POST.get("Fname"),
-					request.POST.get("Lname"),
-					request.POST.get("Email"),
-					request.POST.get("HHold"),
-					request.POST.get("Address"),
-					request.POST.get("Zip")
-					]
+					 request.POST.get("Lname"),
+					 request.POST.get("Email"),
+					 request.POST.get("HHold"),
+					 request.POST.get("Address"),
+					 request.POST.get("Zip")
+					 ]
 		headers = ["First Name", "Last Name", "Email", "# in House", "Address", "Zip"]
 		# TODO: Dynamically update file path based on location
 		datafile = ExcelFile("MobileFoodDistro.xlsx", headers, "WebForm/ExcelDocs")
@@ -43,6 +51,7 @@ def submit(request, site):
 		return HttpResponse(template.render({}, request))
 	else:
 		return HttpResponse("Howd you do dat?")
+
 
 def get_locations(request):
 	sites = Site.objects.all()
@@ -54,6 +63,7 @@ def get_locations(request):
 			site_dict[site.location.name] = [site.name]
 
 	return JsonResponse(site_dict, safe=False)
+
 
 def create_site(request):
 	loc_name = request.POST.get("newLocation")
@@ -73,6 +83,7 @@ def create_site(request):
 		return HttpResponseBadRequest('Site already exists at that location.')
 	return get_locations(request)
 
+
 def delete_site(request):
 	loc_name = request.POST.get("location")
 	site_name = request.POST.get("site")
@@ -86,9 +97,3 @@ def delete_site(request):
 		return JsonResponse({'error': 'Site object not found in database'}, status=404)
 
 	return get_locations(request)
-
-
-
-
-
-
