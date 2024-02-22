@@ -13,3 +13,12 @@ class Site(models.Model):
         constraints = [
             models.UniqueConstraint(Lower("name"), "location", name="unique_name_location")
         ]
+
+
+#class Submission
+# we need a table with columns for first name last name etc, 
+# but we also need the date submitted
+# and the site submitted from (in url currently) that is linked to site database through a foreign key "Site" from the location/site databases above
+
+
+

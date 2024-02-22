@@ -23,7 +23,9 @@ def generate_QR(request):
 	print(request.GET)
 	location = request.GET.get("location")
 	site = request.GET.get("site")
-	QR = QRCode(location + " : " + site)
+	#QR = QRCode(location + " : " + site)
+	QR = QRCode("192.168.40.159:8000/form/" + site)
+
 	QR.saveImage("WebForm/QR_Codes/QR.png")
 	with open("WebForm/QR_Codes/QR.png", 'rb') as img:
 		response = HttpResponse(img.read(), content_type="image/png")
