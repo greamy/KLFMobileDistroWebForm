@@ -160,6 +160,7 @@ function CreatePage(array, string) {
 
 	const QR = document.createElement("button");
 	QR.setAttribute("onClick","GenerateQR()");
+	QR.setAttribute("class","QR");
 	QR.appendChild(document.createTextNode("Generate QR Code"));
 	
 	const Delete = document.createElement("button");
