@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.http import JsonResponse
 from django.db import transaction
-from .models import Site, Location
+from .models import Site, Location, Submission
 
 
 # Test simple pages to check if get requets are valid
@@ -9,7 +9,7 @@ class BasicPagesTestCase(TestCase):
 
 	def test_form_page(self):
 		c = Client()
-		response = c.get("/form/")
+		response = c.get("/form/test/")
 		self.assertContains(response, '<form method="POST"', status_code=200, html=False)
 
 	def test_admin_page(self):
@@ -87,3 +87,43 @@ class LocationActionTestCases(TestCase):
 		self.assertNotContains(response, self.test_site_names[1])
 		self.assertFalse(Site.objects.filter(name__iexact=self.test_site_names[1]).exists())
 		self.assertFalse(Location.objects.filter(name__iexact=self.test_loc_name).exists())
+
+
+class SubmissionTestCases(TestCase):
+	def setUp(self):
+		self.client = Client()
+
+		self.Fname = "test Fname"
+		self.Lname = "test Lname"
+		self.Email = "test Email"
+		self.HHold = 1
+		self.Address = "test Address"
+		self.Zip = "12345"
+		self.submission_dict = {"Fname": self.Fname, "Lname":self.Lname, "Email": self.Email, 
+						"HHold": self.HHold, "Address":self.Address, "Zip": self.Zip}
+
+		self.loc_name = "test location"
+		loc = Location(name=self.loc_name)
+		loc.save()
+
+		self.site_name = "test site"
+		site = Site(name=self.site_name, location=loc)
+		site.save()
+
+	def test_sumbit_form(self):
+		response = self.client.post("/form/" + self.site_name + "/submit/", self.submission_dict)
+		self.assertContains(response, "Thank you for your submission!")
+		self.assertTrue(Submission.objects.filter(first_name__iexact=self.Fname).exists())
+
+
+
+
+
+
+
+
+
+
+
+
+

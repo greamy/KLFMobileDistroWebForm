@@ -15,10 +15,17 @@ class Site(models.Model):
         ]
 
 
-#class Submission
-# we need a table with columns for first name last name etc, 
-# but we also need the date submitted
-# and the site submitted from (in url currently) that is linked to site database through a foreign key "Site" from the location/site databases above
+class Submission(models.Model):
+	first_name = models.TextField()
+	last_name = models.TextField()
+	email = models.TextField()
+	number_in_household = models.IntegerField()
+	street_address = models.TextField()
+	zip_code = models.TextField()
+	site = models.ForeignKey(Site, on_delete=models.CASCADE)
+	date = models.DateField(auto_now=True)
+	
+
 
 
 

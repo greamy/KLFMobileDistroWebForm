@@ -5,7 +5,7 @@ from django.template import loader
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
-from .models import Location, Site
+from .models import Location, Site, Submission
 
 
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
@@ -33,8 +33,12 @@ def generate_QR(request):
 	return response
 
 
-def submit(request, site):
-	print(site)
+
+
+
+def submit(request, site_name):
+	print(site_name)
+	
 
 	if request.method == "POST":
 		template = loader.get_template('WebForm/Sindex.html')
@@ -45,14 +49,23 @@ def submit(request, site):
 					 request.POST.get("Address"),
 					 request.POST.get("Zip")
 					 ]
-		headers = ["First Name", "Last Name", "Email", "# in House", "Address", "Zip"]
-		# TODO: Dynamically update file path based on location
-		datafile = ExcelFile("MobileFoodDistro.xlsx", headers, "WebForm/ExcelDocs")
-		datafile.addData(user_data)
-		datafile.saveFile()
+		
+		site = Site.objects.filter(name__iexact=site_name)
+		if site.exists():
+			submission = Submission(first_name=user_data[0],last_name=user_data[1],email=user_data[2],							number_in_household=user_data[3],street_address=user_data[4],zip_code=user_data[5], site=site.first())
+
+			submission.save()
+		else:
+			return HttpResponse("Invalid Site Name")
+
 		return HttpResponse(template.render({}, request))
 	else:
 		return HttpResponse("Howd you do dat?")
+
+
+
+
+
 
 
 def get_locations(request):
@@ -99,3 +112,5 @@ def delete_site(request):
 		return JsonResponse({'error': 'Site object not found in database'}, status=404)
 
 	return get_locations(request)
+
+
