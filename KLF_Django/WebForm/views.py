@@ -52,7 +52,8 @@ def submit(request, site_name):
 		
 		site = Site.objects.filter(name__iexact=site_name)
 		if site.exists():
-			submission = Submission(first_name=user_data[0],last_name=user_data[1],email=user_data[2],							number_in_household=user_data[3],street_address=user_data[4],zip_code=user_data[5], site=site.first())
+			submission = Submission(first_name=user_data[0], last_name=user_data[1], email=user_data[2], 
+						number_in_household=user_data[3], street_address=user_data[4], zip_code=user_data[5], site=site.first())
 
 			submission.save()
 		else:
