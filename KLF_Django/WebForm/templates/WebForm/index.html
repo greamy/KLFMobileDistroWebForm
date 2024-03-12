@@ -75,19 +75,8 @@ input[type=number] {
 		<h2>Mobile Distribution Form</h2>
 		<form method="POST" action="submit/">
 			{% csrf_token %}
-			<div>
-				<label for="Fname">First Name<span style="color:red">*</span></label>
-				<input id= "Fname" placeholder="First Name" type="text" name="Fname" pattern="[A-Za-z]{1,}" required>
-				<label for="Lname">Last Name<span style="color:red">*</span></label>
-				<input id= "Lname" placeholder="Last Name" type="text" name="Lname" pattern="[A-Za-z]{1,}" required>
-				<label for="Email">Email Address</label>
-				<input id= "Email" placeholder="Email" type="email" name="Email">
-				<label for="HHold">Number in Household<span style="color:red">*</span></label>
-				<input id= "HHold" placeholder="Number in Household" type="number" min="1" name="HHold" required>
-				<label for="Address">Street Address<span style="color:red">*</span></label>
-				<input id= "Address" placeholder="Address" name="Address" required>
-				<label for="Zip">ZIP Code<span style="color:red">*</span></label>
-				<input id= "Zip" placeholder="ZIP" max="99999" min="10000" type="number" name="Zip" required>
+			<div id="form">
+        			<p id="error">Error: Missing Javascript file</p>
 			</div>
 			<button class="btn btn-block btn-danger" id="Submit" type="submit">Submit </button>
 
