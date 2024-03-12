@@ -41,6 +41,7 @@ function createForm( settings){
   form.appendChild(label);
   form.appendChild(inputs);
 }
+document.getElementById("error").style.display="none";
 for (var i = 0; i < inputSettings.length;i++){
   createForm(inputSettings[i]);
 }
