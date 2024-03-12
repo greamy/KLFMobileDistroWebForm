@@ -15,7 +15,6 @@ import socket
 def index(request, site):
 	return render(request, "WebForm/index.html", {})
 
-
 def admin(request):
 	return render(request, "WebForm/admin.html", {})
 
@@ -56,7 +55,6 @@ def submit(request, site_name):
 	else:
 		return HttpResponse("Howd you do dat?")
 
-
 def get_locations(request):
 	sites = Site.objects.all()
 	site_dict = {}
@@ -67,7 +65,6 @@ def get_locations(request):
 			site_dict[site.location.name] = [site.name]
 
 	return JsonResponse(site_dict, safe=False)
-
 
 def create_site(request):
 	loc_name = request.POST.get("newLocation")
@@ -86,7 +83,6 @@ def create_site(request):
 	except IntegrityError:
 		return HttpResponseBadRequest('Site already exists at that location.')
 	return get_locations(request)
-
 
 def delete_site(request):
 	loc_name = request.POST.get("location")

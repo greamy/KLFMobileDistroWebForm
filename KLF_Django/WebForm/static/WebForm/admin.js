@@ -6,7 +6,7 @@ $(document).ready(function () {
 		dataType: "json",
 		success: function (data) {
 			// Process the json data
-			let locations = processData(data);
+			let locations = processLocationData(data);
 			populateLocations(locations[0], locations[1]);
 		}
 	});
@@ -24,209 +24,221 @@ const inputSettings = [
                        ["Zip Code","Zip Code","Zip Code","number",1,10000,99999,0,1]];
 let Universal = "";
 
-//form editor
-function FormSetting(settings, x){
-  const info = document.createElement("b");
-  info.appendChild(document.createTextNode("\u24d8"));
+// Functionality:
+//		Creates editable field row in 'Edit Form' page
+// Parameters:
+// 		settings: array of settings for form field being added, like shown above
+//		x: integer representing order in the list of form fields.
+// Returns: Nothing
+function FormSetting(settings, x) {
+	const info = document.createElement("b");
+	info.appendChild(document.createTextNode("\u24d8"));
 
-  const TEFAP = document.createElement("i");
-  TEFAP.setAttribute("title", "TEFAP");
-  TEFAP.setAttribute("class","fa fa-book");
+	const TEFAP = document.createElement("i");
+	TEFAP.setAttribute("title", "TEFAP Required Field");
+	TEFAP.setAttribute("class","fa fa-book");
 
-  const name = document.createElement("p");
-  if(settings[8] == 1){
-    name.appendChild(TEFAP);
-    name.appendChild(document.createTextNode(" "));
-  }
-  name.appendChild(document.createTextNode(settings[2]));
+	const name = document.createElement("p");
+	if(settings[8] == 1) {
+		name.appendChild(TEFAP);
+		name.appendChild(document.createTextNode(" "));
+	}
+	name.appendChild(document.createTextNode(settings[2]));
 
-  const Plabel = document.createElement("label");
-  Plabel.setAttribute("for",settings[0]);
-  Plabel.appendChild(document.createTextNode("Placeholder: "));
-  Plabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+	const Plabel = document.createElement("label");
+	Plabel.setAttribute("for",settings[0]);
+	Plabel.appendChild(document.createTextNode("Placeholder: "));
+	Plabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
-  const rename = document.createElement("input");
-  rename.setAttribute("placeholder",settings[1]);
-  rename.setAttribute("name",settings[2]);
-  rename.setAttribute("id",settings[0]);
-  rename.setAttribute("class","rename");
+	const rename = document.createElement("input");
+	rename.setAttribute("placeholder",settings[1]);
+	rename.setAttribute("name",settings[2]);
+	rename.setAttribute("id",settings[0]);
+	rename.setAttribute("class","rename");
 
-  const rlabel = document.createElement("label");
-  rlabel.setAttribute("for", "require");
-  rlabel.appendChild(document.createTextNode("Required?"));
-  rlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+	const rlabel = document.createElement("label");
+	rlabel.setAttribute("for", "require");
+	rlabel.appendChild(document.createTextNode("Required?"));
+	rlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
-  const require = document.createElement("input");
-  require.setAttribute("type","checkbox");
-  require.setAttribute("id","require");
-  if (settings[4] == 1){
-    require.setAttribute("checked", 1);
-  }
-  const tlabel = document.createElement("label");
-  tlabel.appendChild(document.createTextNode("Type:"));
-  tlabel.setAttribute("for", "type");
-  tlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+	const require = document.createElement("input");
+	require.setAttribute("type","checkbox");
+	require.setAttribute("id","require");
+	if (settings[4] == 1) {
+		require.setAttribute("checked", 1);
+	}
+	const tlabel = document.createElement("label");
+	tlabel.appendChild(document.createTextNode("Type:"));
+	tlabel.setAttribute("for", "type");
+	tlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
-  const text = document.createElement("option");
-  text.appendChild(document.createTextNode("Text"));
-  text.setAttribute("title","Accepts only Letters");
-  text.setAttribute("value","text");
-  if (settings[3] == "text"){
-    text.setAttribute("selected",1);
-  }
+	const text = document.createElement("option");
+	text.appendChild(document.createTextNode("Text"));
+	text.setAttribute("title","Accepts only Letters");
+	text.setAttribute("value","text");
+	if (settings[3] == "text") {
+		text.setAttribute("selected",1);
+	}
 
-  const Email = document.createElement("option");
-  Email.appendChild(document.createTextNode("Email"));
-  Email.setAttribute("title","Accepts only an Email Address");
-  Email.setAttribute("value","email");
-  if (settings[3] == "email"){
-    Email.setAttribute("selected",1);
-  }
+	const Email = document.createElement("option");
+	Email.appendChild(document.createTextNode("Email"));
+	Email.setAttribute("title","Accepts only an Email Address");
+	Email.setAttribute("value","email");
+	if (settings[3] == "email"){
+		Email.setAttribute("selected",1);
+	}
 
-  const number = document.createElement("option");
-  number.appendChild(document.createTextNode("Number"));
-  number.setAttribute("title","Accepts only Numbers");
-  number.setAttribute("value","number");
-  if (settings[3] == "number"){
-    number.setAttribute("selected",1);
-  }
+	const number = document.createElement("option");
+	number.appendChild(document.createTextNode("Number"));
+	number.setAttribute("title","Accepts only Numbers");
+	number.setAttribute("value","number");
+	if (settings[3] == "number") {
+		number.setAttribute("selected",1);
+	}
 
-  const other = document.createElement("option");
-  other.appendChild(document.createTextNode("Other"));
-  other.setAttribute("title","Accepts all Characters");
-  other.setAttribute("value","other");
-  if (settings[3] == "other"){
-    other.setAttribute("selected",1);
-  }
+	const other = document.createElement("option");
+	other.appendChild(document.createTextNode("Other"));
+	other.setAttribute("title","Accepts all Characters");
+	other.setAttribute("value","other");
+	if (settings[3] == "other") {
+		other.setAttribute("selected",1);
+	}
 
-  const type = document.createElement("select");
-  type.setAttribute("id","type");
-  type.appendChild(text);
-  type.appendChild(Email);
-  type.appendChild(number);
-  type.appendChild(other);
+	const type = document.createElement("select");
+	type.setAttribute("id","type");
+	type.appendChild(text);
+	type.appendChild(Email);
+	type.appendChild(number);
+	type.appendChild(other);
 
-  const mlabel = document.createElement("label");
-  mlabel.setAttribute("for", "min");
-  mlabel.appendChild(document.createTextNode("Min:"));
-  mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+	const mlabel = document.createElement("label");
+	mlabel.setAttribute("for", "min");
+	mlabel.appendChild(document.createTextNode("Min:"));
+	mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
-  const min = document.createElement("input");
-  min.setAttribute("id","min");
-  min.setAttribute("type","number");
-  min.setAttribute("min","0");
-  min.setAttribute("style","width:50px");
-  min.setAttribute("placeholder", settings[5]);
+	const min = document.createElement("input");
+	min.setAttribute("id","min");
+	min.setAttribute("type","number");
+	min.setAttribute("min","0");
+	min.setAttribute("style","width:50px");
+	min.setAttribute("placeholder", settings[5]);
 
-  const xlabel = document.createElement("label");
-  xlabel.setAttribute("for", "max");
-  xlabel.appendChild(document.createTextNode("Max:"));
-  xlabel.appendChild(info);
-  xlabel.setAttribute("title","Set to 0 if you don't want a limit");
-  xlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+	const xlabel = document.createElement("label");
+	xlabel.setAttribute("for", "max");
+	xlabel.appendChild(document.createTextNode("Max:"));
+	xlabel.appendChild(info);
+	xlabel.setAttribute("title","Set to 0 if you don't want a limit");
+	xlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
-  const max = document.createElement("input");
-  max.setAttribute("id","max");
-  max.setAttribute("type","number");
-  max.setAttribute("min","0");
-  max.setAttribute("style","width:50px");
-  max.setAttribute("placeholder", settings[6]);
+	const max = document.createElement("input");
+	max.setAttribute("id","max");
+	max.setAttribute("type","number");
+	max.setAttribute("min","0");
+	max.setAttribute("style","width:50px");
+	max.setAttribute("placeholder", settings[6]);
 
-    const upA = document.createElement("i");
-  upA.setAttribute("class","arrow up");
+	const upA = document.createElement("i");
+	upA.setAttribute("class","arrow up");
 
-  const up = document.createElement("button");
-  up.setAttribute("class","arrows");
-  up.setAttribute("id","up");
-  up.appendChild(upA);
+	const up = document.createElement("button");
+	up.setAttribute("class","arrows");
+	up.setAttribute("id","up");
+	up.appendChild(upA);
 
-  const downA = document.createElement("i");
-  downA.setAttribute("class","arrow down");
+	const downA = document.createElement("i");
+	downA.setAttribute("class","arrow down");
 
-  const down = document.createElement("button");
-  down.setAttribute("class","arrows");
-  down.setAttribute("id","down");
-  down.appendChild(downA);
+	const down = document.createElement("button");
+	down.setAttribute("class","arrows");
+	down.setAttribute("id","down");
+	down.appendChild(downA);
 
-  const nOrder = document.createElement("div");
-  nOrder.setAttribute("class","nOrder");
-  nOrder.appendChild(document.createTextNode(x+1));
+	const nOrder = document.createElement("div");
+	nOrder.setAttribute("class","nOrder");
+	nOrder.appendChild(document.createTextNode(x+1));
 
 
-  const order = document.createElement("div");
-  order.setAttribute("id","orderStyle");
-  order.appendChild(up);
-  order.appendChild(nOrder);
-  order.appendChild(down);
+	const order = document.createElement("div");
+	order.setAttribute("id","orderStyle");
+	order.appendChild(up);
+	order.appendChild(nOrder);
+	order.appendChild(down);
 
-  const LRemove = document.createElement("i");
-  LRemove.appendChild(document.createTextNode("X"));
+	const LRemove = document.createElement("i");
+	LRemove.appendChild(document.createTextNode("X"));
 
-  const Remove = document.createElement("button");
-  Remove.setAttribute("id","Remove");
-  if (settings[8]==1){
-    Remove.setAttribute("Disabled",1);
-  }
-  Remove.appendChild(LRemove);
+	const Remove = document.createElement("button");
+	Remove.setAttribute("id","Remove");
+	if (settings[8]==1) {
+		Remove.setAttribute("Disabled",1);
+	}
+	Remove.appendChild(LRemove);
 
-  const visible = document.createElement("i");
-  visible.setAttribute("class","fa fa-eye");
-  visible.setAttribute("title","Visibility");
+	const visible = document.createElement("i");
+	visible.setAttribute("class","fa fa-eye");
+	visible.setAttribute("title","Visibility");
 
-  const Vcheck = document.createElement("input");
-  Vcheck.setAttribute("type","checkbox");
-  if (settings[7]==0){
-    Vcheck.setAttribute("checked", 1);
-  }
+	const Vcheck = document.createElement("input");
+	Vcheck.setAttribute("type","checkbox");
+	if (settings[7]==0) {
+		Vcheck.setAttribute("checked", 1);
+	}
 
-  const Visdiv = document.createElement("div");
-  Visdiv.appendChild(visible);
-  Visdiv.appendChild(Vcheck);
-  Visdiv.setAttribute("class","Visdiv");
+	const Visdiv = document.createElement("div");
+	Visdiv.appendChild(visible);
+	Visdiv.appendChild(Vcheck);
+	Visdiv.setAttribute("class","Visdiv");
 
-  const option = document.createElement("div");
-  option.setAttribute("id","option");
-  option.appendChild(name);
-  option.appendChild(Plabel);
-  option.appendChild(rename);
-  option.appendChild(rlabel);
-  option.appendChild(require);
-  option.appendChild(tlabel);
-  option.appendChild(type);
-  if (settings[3] == "number"){
-    option.appendChild(mlabel);
-    option.appendChild(min);
-    option.appendChild(xlabel);
-    option.appendChild(max);
-  }
-  option.appendChild(order);
-  option.appendChild(Remove);
-  option.appendChild(Visdiv);
+	const option = document.createElement("div");
+	option.setAttribute("id","option");
+	option.appendChild(name);
+	option.appendChild(Plabel);
+	option.appendChild(rename);
+	option.appendChild(rlabel);
+	option.appendChild(require);
+	option.appendChild(tlabel);
+	option.appendChild(type);
+	if (settings[3] == "number"){
+		option.appendChild(mlabel);
+		option.appendChild(min);
+		option.appendChild(xlabel);
+		option.appendChild(max);
+	}
+	option.appendChild(order);
+	option.appendChild(Remove);
+	option.appendChild(Visdiv);
 
-  const optionView = document.createElement("div");
-  optionView.appendChild(option);
+	const optionView = document.createElement("div");
+	optionView.appendChild(option);
 
-  const Save = document.createElement("button");
-  Save.setAttribute("id","SaveForm");
-  Save.appendChild(document.createTextNode("Save Form"));
+	const Save = document.createElement("button");
+	Save.setAttribute("id","SaveForm");
+	Save.appendChild(document.createTextNode("Save Form"));
 
-  const add = document.createElement("button");
-  add.setAttribute("id","AddField");
-  add.appendChild(document.createTextNode("Add Field"));
+	const add = document.createElement("button");
+	add.setAttribute("id","AddField");
+	add.appendChild(document.createTextNode("Add Field"));
 
-  const FormButtons = document.createElement("div");
-  FormButtons.setAttribute("class","FormButton");
-  FormButtons.appendChild(Save);
-  FormButtons.appendChild(add);
+	const FormButtons = document.createElement("div");
+	FormButtons.setAttribute("class","FormButton");
+	FormButtons.appendChild(Save);
+	FormButtons.appendChild(add);
 
-  const formSetting = document.getElementById("form-setting");
-  formSetting.appendChild(optionView);
-  if(x+1 == inputSettings.length){
-    formSetting.appendChild(FormButtons);
-  }
+	const formSetting = document.getElementById("form-setting");
+	formSetting.appendChild(optionView);
+	if(x + 1 == inputSettings.length) {
+		formSetting.appendChild(FormButtons);
+	}
 }
 
-function processData(data) {
+// Functionality:
+//		Transforms javascript object into multi-dimensional array for use in other functions in this file.
+// Parameters:
+//		data: javascript object containing list of locations and sites, usually returned from AJAX call to server.
+// Returns:
+//		2d Array, [0] is array of locations, [1] is another 2d array of sites, each element in this array is a location
+// TODO: Sort location list alphabetically and then sort site array to match
+function processLocationData(data) {
 	var rows = data;
 	var locations = [];
 	var sites = [];
@@ -240,6 +252,12 @@ function processData(data) {
 	return [locations, sites];
 }
 
+// Functionality:
+//		Returns value of cookie based on name. We use this mainly for CSRF cookie values for AJAX post requests.
+// Parameters:
+//		name: string name of the cookie you wan the value of
+// Returns:
+//		value of cookie, or null if cookie name doesn't exist
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -256,6 +274,11 @@ function getCookie(name) {
     return cookieValue;
 }
 
+// Functionality:
+//		Runs when 'Create' button is clicked on home page. Sends AJAX request to server to create new site,
+//			then updates UI.
+// Parameters: None
+// Returns: None
 function createSite() {
 	const loc = document.getElementById("InputLocation");
 	const site = document.getElementById("InputSite");
@@ -272,7 +295,7 @@ function createSite() {
 		success: function (data) {
 			loc.value = "";
 			site.value = "";
-			let locations = processData(data);
+			let locations = processLocationData(data);
 			ResetLocations();
 			populateLocations(locations[0], locations[1]);
 			document.getElementById("loader").style.display = "none";
@@ -289,18 +312,35 @@ function createSite() {
 	});
 }
 
+// Functionality:
+//		Runs when 'Are you sure?' overlay 'No' button is clicked. Just disables the overlay and performs no action.
+// Parameters: None
+// Returns: None
 function No(){
   document.getElementById("overlay").style.display="none";
   document.getElementById(Universal).style.display="none";
 }
+// Functionality:
+//		Runs when user is done with the error overlay. Disables the overlay so user can continue to use the site.
+// Parameters: None
+// Returns: None
 function off() {
   document.getElementById("error-overlay").style.display = "none";
 }
 
+// Functionality:
+//		Runs when user clicks 'Delete Site' button in a site's page. Enables 'Are you sure?' pop-up.
+// Parameters: None
+// Returns: None
 function DeleteOverlay() {
 	document.getElementById("overlay").style.display="block";
 }
 
+// Functionality:
+//		Runs after user clicks 'yes' to the delete site pop-up. Sends request to server to delete the site,
+//			then updates UI accordingly.
+// Parameters: None
+// Returns: None
 function DeleteSite(){
 //	Universal = string+array;
 //	document.getElementById(Universal).style.display="inline-block";
@@ -322,7 +362,7 @@ function DeleteSite(){
 		// Do not send CSRF token to another domain.
 		data: {"location": location, "site": site},
 		success: function (data) {
-			let locations = processData(data);
+			let locations = processLocationData(data);
 			ResetLocations();
 			populateLocations(locations[0], locations[1]);
 			let homeP = document.getElementById("homeP");
@@ -331,6 +371,11 @@ function DeleteSite(){
 	});
 }
 
+// Functionality:
+//		Returns the page object of the currently selected site page.
+// Parameters: None
+// Returns:
+//		Array of current location, site, and page object of current page.
 function getCurrentPage() {
 	var pages = document.getElementsByClassName("PageB");
 	var location = "";
@@ -349,7 +394,12 @@ function getCurrentPage() {
 	return [location, site, Npage]
 }
 
-//creates page for each location and site
+// Functionality:
+//		creates HTML page elements for each location and site
+// Parameters:
+//		array: TODO: consult with joey about these parameters
+//		string:
+// Returns: None
 function CreatePage(array, string) {
 	const textH2 = document.createTextNode(string + ": " + array);
 
@@ -404,7 +454,11 @@ function CreatePage(array, string) {
 	div.style.display = "none";
 }
 
-//creates Location Button and Divider for Drop Down Menu for Side Nav Bar
+// Functionality:
+//		Creates Location Button and Divider for Drop Down Menu for Side Nav Bar
+// Parameters:
+//		string: id to be used for element creation
+// Returns: None
 function CreateLoc(string) {
 	const da = document.createElement("i");
 	da.setAttribute("class", "fa fa-caret-right");
@@ -426,7 +480,12 @@ function CreateLoc(string) {
 	element.appendChild(Sit);
 }
 
-//creates all Site within Divider in Side Nav Bar
+// Functionality:
+//		Creates all Site within Divider in Side Nav Bar
+// Parameters:
+//		array:
+//		string:
+// Returns: None
 function createSites(array, string) {
 	const text = document.createTextNode(array);
 	const Site = document.createElement("button");
@@ -438,7 +497,10 @@ function createSites(array, string) {
 	CreatePage(array, string);
 }
 
-//generate qr
+// Functionality:
+//		Sends request to server to generate QR code for currently selected site.
+// Parameters: None
+// Returns: None
 function GenerateQR() {
 	page_data = getCurrentPage();
 	var location = page_data[0];
@@ -464,6 +526,10 @@ function GenerateQR() {
 	});
 }
 
+// Functionality:
+//		Clears side-nav of all locations, usually so we can repopulate the list with new data from server response.
+// Parameters: None
+// Returns: None
 function ResetLocations() {
 	const sideBar = document.getElementById("loc");
   	while (sideBar.firstChild) {
@@ -471,6 +537,13 @@ function ResetLocations() {
   	}
 }
 
+// Functionality:
+//		Creates list of locations and sites in side-nav, as drop down menus. Ran on page load.
+// Parameters:
+//		locations: array of string location names
+//		sites: 2d array of sites, each element of array is a list of sites
+//			under the same indexed location from locations array
+// Returns: None
 function populateLocations(locations, sites) {
 	//Creates All appropriate Locations with its listed sites as drop down menus
 	for (var i = 0; i < locations.length; i++) {
