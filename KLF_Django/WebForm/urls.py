@@ -22,6 +22,7 @@ urlpatterns = [
 	path('get-location-data/', views.get_locations, name='getLocations'),
 	path('post-location-data/', views.create_site, name='postLocations'),
 	path('delete-location-data/', views.delete_site, name='deleteSite'),
+	path('get-submission-table/', views.get_submission_table, name='getSubmissionTable'),
 	path('admin/', views.admin, name='admin'),
 	path('<str:site_name>/submit/', views.submit, name='submit'),
 	path('QR/', views.generate_QR, name='QR'),

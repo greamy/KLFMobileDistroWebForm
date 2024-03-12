@@ -7,6 +7,7 @@ from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
 from .models import Location, Site, Submission
 import socket
+import datetime
 
 
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
@@ -15,8 +16,10 @@ import socket
 def index(request, site):
 	return render(request, "WebForm/index.html", {})
 
+
 def admin(request):
 	return render(request, "WebForm/admin.html", {})
+
 
 def generate_QR(request):
 	location = request.GET.get("location")
@@ -30,6 +33,7 @@ def generate_QR(request):
 		response["Content-Disposition"] = 'attachment; filename="QR.png"'
 	return response
 
+
 def submit(request, site_name):
 	print(site_name)
 	if request.method == "POST":
@@ -41,11 +45,12 @@ def submit(request, site_name):
 					 request.POST.get("Address"),
 					 request.POST.get("Zip")
 					 ]
-		
+
 		site = Site.objects.filter(name__iexact=site_name)
 		if site.exists():
-			submission = Submission(first_name=user_data[0], last_name=user_data[1], email=user_data[2], 
-						number_in_household=user_data[3], street_address=user_data[4], zip_code=user_data[5], site=site.first())
+			submission = Submission(first_name=user_data[0], last_name=user_data[1], email=user_data[2],
+									number_in_household=user_data[3], street_address=user_data[4],
+									zip_code=user_data[5], site=site.first())
 
 			submission.save()
 		else:
@@ -54,6 +59,7 @@ def submit(request, site_name):
 		return HttpResponse(template.render({}, request))
 	else:
 		return HttpResponse("Howd you do dat?")
+
 
 def get_locations(request):
 	sites = Site.objects.all()
@@ -65,6 +71,7 @@ def get_locations(request):
 			site_dict[site.location.name] = [site.name]
 
 	return JsonResponse(site_dict, safe=False)
+
 
 def create_site(request):
 	loc_name = request.POST.get("newLocation")
@@ -84,6 +91,7 @@ def create_site(request):
 		return HttpResponseBadRequest('Site already exists at that location.')
 	return get_locations(request)
 
+
 def delete_site(request):
 	loc_name = request.POST.get("location")
 	site_name = request.POST.get("site")
@@ -99,3 +107,15 @@ def delete_site(request):
 	return get_locations(request)
 
 
+# Pull site and location string from request object
+# Query Submission model for all submissions from site
+# Figure out which days had at least one submission
+# Return list-like object of days that had >= 1 submission
+# {"02/10/24", "02/15/24", ...}
+def get_submission_table(request):
+	return JsonResponse(
+			[
+				datetime.date.today(),
+				datetime.date.today() - datetime.timedelta(days=7),
+				datetime.date.today() - datetime.timedelta(days=10)
+			], safe=False)

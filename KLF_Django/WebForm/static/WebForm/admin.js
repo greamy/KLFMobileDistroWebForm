@@ -411,11 +411,11 @@ function CreatePage(array, string) {
 	div1.appendChild(h2);
 
 	const filename = document.createElement("a");
-	filename.appendChild(document.createTextNode("File Name"));
+	filename.appendChild(document.createTextNode("Distribution Date"));
 
 	const Update = document.createElement("a");
 	Update.setAttribute("id", "Update");
-	Update.appendChild(document.createTextNode("Last Modified"));
+	Update.appendChild(document.createTextNode("Download"));
 
 	const filelist = document.createElement("div");
 	filelist.setAttribute("class","FileList");
