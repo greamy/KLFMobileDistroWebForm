@@ -419,6 +419,7 @@ function CreatePage(array, string) {
 
 	const filelist = document.createElement("div");
 	filelist.setAttribute("class","FileList");
+	filelist.setAttribute("id", "fileList")
 	filelist.appendChild(filename);
 	filelist.appendChild(Update);
 
@@ -538,6 +539,50 @@ function ResetLocations() {
 }
 
 // Functionality:
+//		Send request to server to retrieve list of dates where there was >= 1 submission at newly selected site.
+//		Also, update UI with newly acquired list of dates.
+// Parameters:
+//		Npage: document object of newly selected page element
+// Returns: None
+function GetSubmissionDates(new_page) {
+	var page_data = getCurrentPage();
+	var location = page_data[0]
+	var site = page_data[1]
+
+	table = document.getElementById("submissionTable");
+	if (table != null) {
+		table.removeChild(table.firstChild)
+	}
+
+	$.ajax({
+		type: "GET",
+		url: "/form/get-submission-table/",
+		data: {"location": location, "site": site},
+		success: function (data) {
+			console.log(data);
+			filelist = document.getElementById("fileList");
+
+			table = document.createElement("table");
+			table.setAttribute("id", "submissionTable")
+			filelist.appendChild(table);
+
+//			filename.appendChild(document.createTextNode("Distribution Date"));
+			table_body = document.createElement("tbody");
+			table.appendChild(table_body);
+
+			data.forEach(function(date) {
+				table_row = document.createElement("tr");
+				table_body.appendChild(table_row);
+
+				entry = document.createElement("td");
+				entry.innerHTML = date;
+				table_row.appendChild(entry);
+			});
+		}
+	});
+}
+
+// Functionality:
 //		Creates list of locations and sites in side-nav, as drop down menus. Ran on page load.
 // Parameters:
 //		locations: array of string location names
@@ -581,6 +626,10 @@ function populateLocations(locations, sites) {
 			Cpage.style.display = "none";
 			Npage.style.display = "block";
 			Cpage = Npage;
+			// TODO: Run function to send AJAX request to generate list of submission dates and update table
+			if (e.target.id + "P" != "homeP" && e.target.id + "P" != "formP"){
+				GetSubmissionDates(Npage);
+			}
 		});
 	}
 	for (var i = 0; i < inputSettings.length;i++){

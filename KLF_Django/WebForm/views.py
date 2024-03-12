@@ -35,7 +35,6 @@ def generate_QR(request):
 
 
 def submit(request, site_name):
-	print(site_name)
 	if request.method == "POST":
 		template = loader.get_template('WebForm/Sindex.html')
 		user_data = [request.POST.get("Fname"),
@@ -113,9 +112,63 @@ def delete_site(request):
 # Return list-like object of days that had >= 1 submission
 # {"02/10/24", "02/15/24", ...}
 def get_submission_table(request):
-	return JsonResponse(
-			[
-				datetime.date.today(),
-				datetime.date.today() - datetime.timedelta(days=7),
-				datetime.date.today() - datetime.timedelta(days=10)
-			], safe=False)
+	location = request.GET.get("location")
+	site = request.GET.get("site")
+
+	unique_dates = Submission.objects.filter(site__name__iexact=site).values("date")
+	dates_list = []
+	for submission in unique_dates:
+		dates_list.append(submission['date'])
+
+	return JsonResponse(dates_list, safe=False)
+	# return JsonResponse(
+	# 		[
+	# 			datetime.date.today(),
+	# 			datetime.date.today() - datetime.timedelta(days=7),
+	# 			datetime.date.today() - datetime.timedelta(days=10)
+	# 		], safe=False)
+
+def make_dummy_submissions(request):
+	Fname = "test Fname"
+	Lname = "test Lname"
+	Email = "test Email"
+	HHold = 1
+	Address = "test Address"
+	Zip = "12345"
+	submission_dict = {"Fname": Fname, "Lname": Lname, "Email": Email,
+							"HHold": HHold, "Address": Address, "Zip": Zip}
+
+	site = Site.objects.filter(name__iexact="Galesburg United Methodist Church").first()
+
+	submission1 = Submission(first_name="today", last_name=Lname, email=Email,
+							 number_in_household=HHold, street_address=Address,
+							 zip_code=Zip, site=site)
+	submission1.save()
+
+	submission2 = Submission(first_name="1day", last_name=Lname, email=Email,
+							 number_in_household=HHold, street_address=Address,
+							 zip_code=Zip, site=site)
+	submission2.save()
+
+	submission3 = Submission(first_name="2day", last_name=Lname, email=Email,
+							 number_in_household=HHold, street_address=Address,
+							 zip_code=Zip, site=site)
+	submission3.save()
+
+	submission4 = Submission(first_name="3day", last_name=Lname, email=Email,
+							 number_in_household=HHold, street_address=Address,
+							 zip_code=Zip, site=site)
+	submission4.save()
+
+	submission5 = Submission(first_name="4day", last_name=Lname, email=Email,
+							 number_in_household=HHold, street_address=Address,
+							 zip_code=Zip, site=site)
+	submission5.save()
+
+	# Update dates to have multiple submission dates
+	today = datetime.date.today()
+
+	Submission.objects.filter(first_name__iexact="1day").update(date=today - datetime.timedelta(days=1))
+	Submission.objects.filter(first_name__iexact="2day").update(date=today - datetime.timedelta(days=2))
+	Submission.objects.filter(first_name__iexact="3day").update(date=today - datetime.timedelta(days=3))
+	Submission.objects.filter(first_name__iexact="4day").update(date=today - datetime.timedelta(days=4))
