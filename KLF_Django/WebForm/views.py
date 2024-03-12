@@ -6,6 +6,7 @@ from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
 from .models import Location, Site, Submission
+import socket
 
 
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
@@ -18,13 +19,11 @@ def index(request, site):
 def admin(request):
 	return render(request, "WebForm/admin.html", {})
 
-
 def generate_QR(request):
-	print(request.GET)
 	location = request.GET.get("location")
 	site = request.GET.get("site")
-	#QR = QRCode(location + " : " + site)
-	QR = QRCode("192.168.40.159:8000/form/" + site)
+	cur_ip = socket.gethostbyname(socket.gethostname())
+	QR = QRCode("http://" + cur_ip + "/form/" + site + "/")
 
 	QR.saveImage("WebForm/QR_Codes/QR.png")
 	with open("WebForm/QR_Codes/QR.png", 'rb') as img:
@@ -32,14 +31,8 @@ def generate_QR(request):
 		response["Content-Disposition"] = 'attachment; filename="QR.png"'
 	return response
 
-
-
-
-
 def submit(request, site_name):
 	print(site_name)
-	
-
 	if request.method == "POST":
 		template = loader.get_template('WebForm/Sindex.html')
 		user_data = [request.POST.get("Fname"),
@@ -62,11 +55,6 @@ def submit(request, site_name):
 		return HttpResponse(template.render({}, request))
 	else:
 		return HttpResponse("Howd you do dat?")
-
-
-
-
-
 
 
 def get_locations(request):

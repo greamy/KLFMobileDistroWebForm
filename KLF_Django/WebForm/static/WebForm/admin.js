@@ -339,7 +339,7 @@ function getCurrentPage() {
 
 	for (let page of pages) {
 		Npage = document.getElementById(page.id + "P");
-		if (Npage.style.display != "none"){
+		if (page.id != "form" && Npage.style.display != "none"){
 			let siteName = Npage.childNodes[0].innerText;
 			let temp = siteName.split(": ");
 			location = temp[0];
@@ -510,7 +510,7 @@ function populateLocations(locations, sites) {
 			Cpage = Npage;
 		});
 	}
-}
-for (var i = 0; i < inputSettings.length;i++){
+	for (var i = 0; i < inputSettings.length;i++){
   		FormSetting(inputSettings[i], i);
+	}
 }
