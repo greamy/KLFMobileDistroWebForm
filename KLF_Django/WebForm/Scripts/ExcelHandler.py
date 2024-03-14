@@ -40,18 +40,17 @@ class ExcelFile:
 	def addData(self, data):
 		ws = self.wb.active
 		# check if multiple rows in data input
-		print("Data"+ str(data))
 
 		if isinstance(data[0], list):
 			for row in data:
 				ws.append(row)
 		else:
 			ws.append(data)
-			#print("Else:")
 
 
 	def saveFile(self):
 		file_path = os.path.join(settings.BASE_DIR, self.directory, self.name)
+		print("Saving to: " + str(file_path))
 		self.wb.save(file_path)
 
 

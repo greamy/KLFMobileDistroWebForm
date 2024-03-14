@@ -176,13 +176,15 @@ def get_excel_file(request):
 
 	model_data = Submission.objects.filter(site__name__iexact=site).filter(date__exact=date_object)
 	excel_data = []
-	print(type(model_data.first()))
-	headers = model_data.first().keys()
+	headers = list(vars(model_data.first()).keys())
 
 	for row in model_data:
-		excel_data.append(row.values())
-	file_name = site + date + ".xlxs"
-	handler = ExcelFile(file_name, headers, "WebForm/ExcelDocs")
+		row = list(vars(row).values())[1:]
+		# print(row)
+		excel_data.append(row)
+	print(excel_data)
+	file_name = site + date + ".xlsx"
+	handler = ExcelFile(file_name, headers, "WebForm\ExcelDocs")
 	handler.addData(excel_data)
 	handler.saveFile()
 
