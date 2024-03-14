@@ -577,6 +577,15 @@ function GetSubmissionDates(new_page) {
 				entry = document.createElement("td");
 				entry.innerHTML = date;
 				table_row.appendChild(entry);
+
+				b = document.createElement("td");
+				download = document.createElement("button");
+				di = document.createElement("i");
+				di.setAttribute("class","fa fa-download");
+				download.appendChild(di);
+				download.setAttribute("id","download");
+				b.appendChild(download);
+				table_row.appendChild(b);
 			});
 		}
 	});
