@@ -2,12 +2,15 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.db.utils import IntegrityError
 from django.template import loader
+from django.conf import settings
+from django.db.models import F
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
 from .models import Location, Site, Submission
 import socket
 import datetime
+import os
 
 
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
@@ -115,12 +118,9 @@ def get_submission_table(request):
 	location = request.GET.get("location")
 	site = request.GET.get("site")
 
-	unique_dates = Submission.objects.filter(site__name__iexact=site).values("date")
-	dates_list = []
-	for submission in unique_dates:
-		dates_list.append(submission['date'])
+	unique_dates = list(Submission.objects.filter(site__name__iexact=site).dates("date", "day", "DESC"))
 
-	return JsonResponse(dates_list, safe=False)
+	return JsonResponse(unique_dates, safe=False)
 
 
 def make_dummy_submissions(request):
@@ -130,8 +130,6 @@ def make_dummy_submissions(request):
 	HHold = 1
 	Address = "test Address"
 	Zip = "12345"
-	submission_dict = {"Fname": Fname, "Lname": Lname, "Email": Email,
-							"HHold": HHold, "Address": Address, "Zip": Zip}
 
 	site = Site.objects.filter(name__iexact="Galesburg United Methodist Church").first()
 
@@ -174,29 +172,31 @@ def get_excel_file(request):
 	date = request.GET.get("date")
 	date_object = datetime.datetime.strptime(date, '%Y-%m-%d').date()
 
-	model_data = Submission.objects.filter(site__name__iexact=site).filter(date__exact=date_object)
+	model_data = Submission.objects \
+		.filter(site__name__iexact=site) \
+		.filter(date__exact=date_object) \
+		.values(First_Name=F("first_name"), Last_Name=F("last_name"), Email=F("email"),
+				Number_In_Household=F("number_in_household"), Street_Address=F("street_address"),
+				Zip_Code=F("zip_code"), Site_Name=F("site__name"), Date=F("date"))
+
 	excel_data = []
-	headers = list(vars(model_data.first()).keys())
+	headers = list(model_data.first().keys())
 
 	for row in model_data:
-		row = list(vars(row).values())[1:]
-		# print(row)
+		row = list(row.values())
 		excel_data.append(row)
-	print(excel_data)
-	file_name = site + date + ".xlsx"
-	handler = ExcelFile(file_name, headers, "WebForm\ExcelDocs")
-	handler.addData(excel_data)
-	handler.saveFile()
 
+	file_name = site + " " + date + ".xlsx"
+	directory = os.path.join(settings.BASE_DIR, "WebForm", "ExcelDocs")
+	handler = ExcelFile(file_name, headers, directory)
+	handler.add_data(excel_data)
+	handler.save_file()
 
-#fileName, headers, directory):
-#list of lists
+	excel_file = handler.get_file()
+	response = HttpResponse(excel_file.read(),
+							content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	response["Content-Disposition"] = 'attachment; filename="' + file_name + '"'
+	excel_file.close()
+	handler.delete_file()
 
-
-
-
-
-
-
-
-
+	return response

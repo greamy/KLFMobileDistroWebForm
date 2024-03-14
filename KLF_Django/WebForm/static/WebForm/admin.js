@@ -549,9 +549,10 @@ function GetSubmissionDates(new_page) {
 	var location = page_data[0]
 	var site = page_data[1]
 
-	table = document.getElementById("submissionTable");
-	if (table != null) {
-		table.removeChild(table.firstChild)
+	table_head = document.getElementById("fileList");
+	console.log(table_head);
+	if (table_head.lastChild.id == "submissionTable") {
+		table_head.removeChild(table_head.lastChild)
 	}
 
 	$.ajax({
@@ -566,7 +567,6 @@ function GetSubmissionDates(new_page) {
 			table.setAttribute("id", "submissionTable")
 			filelist.appendChild(table);
 
-//			filename.appendChild(document.createTextNode("Distribution Date"));
 			table_body = document.createElement("tbody");
 			table.appendChild(table_body);
 
@@ -582,11 +582,37 @@ function GetSubmissionDates(new_page) {
 				download = document.createElement("button");
 				di = document.createElement("i");
 				di.setAttribute("class","fa fa-download");
+
 				download.appendChild(di);
 				download.setAttribute("id","download");
+				download.setAttribute("onClick", "DownloadSubmissions('" + site + "','" + date + "')");
+
 				b.appendChild(download);
 				table_row.appendChild(b);
 			});
+		}
+	});
+}
+
+function DownloadSubmissions(site, date) {
+	$.ajax({
+		type: "GET",
+		url: "/form/get-excel-file/",
+		data: {"site": site, "date": date},
+		xhrFields: {
+            responseType: 'blob' // Set the response type to blob
+        },
+		success: function (data) {
+			var blob = new Blob([data], {
+				type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+			}); // Create a blob from the response data
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = site + ' ' + date + '.xlsx'; // Specify the filename
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
 		}
 	});
 }
