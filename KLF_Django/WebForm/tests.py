@@ -169,6 +169,7 @@ class SubmissionTableTestCases(TestCase):
 		submission_decoy.save()
 
 		# Update dates to have multiple submission dates
+		self.today = datetime.date.today()
 		self.lastweek = datetime.date.today() - datetime.timedelta(days=7)
 		self.tendays = datetime.date.today() - datetime.timedelta(days=10)
 		self.fivedays = datetime.date.today() - datetime.timedelta(days=5)
@@ -190,3 +191,27 @@ class SubmissionTableTestCases(TestCase):
 			returned_dates[i] = datetime.datetime.strptime(date, '%Y-%m-%d').date()
 		returned_dates = set(returned_dates)
 		self.assertSetEqual(returned_dates, expected)
+
+
+
+
+	def test_file_download(self):
+		
+		response = self.client.get("/form/get-excel-file/", data={"site": self.site_name, "date": self.today})
+		disposition_header = response["Content-Disposition"].split(";")[0]
+		
+		self.assertEqual(response.status_code, 200)
+		self.assertEqual(disposition_header, "attachment")
+
+
+
+
+
+
+
+
+
+
+
+
+

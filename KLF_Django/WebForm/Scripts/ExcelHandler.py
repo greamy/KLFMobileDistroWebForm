@@ -51,8 +51,7 @@ class ExcelFile:
 
 
 	def saveFile(self):
-		directory = 'WebForm/ExcelDocs'
-		file_path = os.path.join(settings.BASE_DIR, directory, self.name)
+		file_path = os.path.join(settings.BASE_DIR, self.directory, self.name)
 		self.wb.save(file_path)
 
 

@@ -121,12 +121,7 @@ def get_submission_table(request):
 		dates_list.append(submission['date'])
 
 	return JsonResponse(dates_list, safe=False)
-	# return JsonResponse(
-	# 		[
-	# 			datetime.date.today(),
-	# 			datetime.date.today() - datetime.timedelta(days=7),
-	# 			datetime.date.today() - datetime.timedelta(days=10)
-	# 		], safe=False)
+
 
 def make_dummy_submissions(request):
 	Fname = "test Fname"
@@ -172,3 +167,34 @@ def make_dummy_submissions(request):
 	Submission.objects.filter(first_name__iexact="2day").update(date=today - datetime.timedelta(days=2))
 	Submission.objects.filter(first_name__iexact="3day").update(date=today - datetime.timedelta(days=3))
 	Submission.objects.filter(first_name__iexact="4day").update(date=today - datetime.timedelta(days=4))
+
+
+def get_excel_file(request):
+	site = request.GET.get("site")
+	date = request.GET.get("date")
+	date_object = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+
+	model_data = Submission.objects.filter(site__name__iexact=site).filter(date__exact=date_object)
+	excel_data = []
+	print(type(model_data.first()))
+	headers = model_data.first().keys()
+
+	for row in model_data:
+		excel_data.append(row.values())
+	file_name = site + date + ".xlxs"
+	handler = ExcelFile(file_name, headers, "WebForm/ExcelDocs")
+	handler.addData(excel_data)
+	handler.saveFile()
+
+
+#fileName, headers, directory):
+#list of lists
+
+
+
+
+
+
+
+
+
