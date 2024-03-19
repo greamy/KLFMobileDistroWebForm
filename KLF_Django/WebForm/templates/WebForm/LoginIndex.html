@@ -58,7 +58,8 @@ a{
   display:none;
 }</style>
   <div>
-    <form>
+    <form method="POST" action="/form/admin/login/">
+	{% csrf_token %}
       <img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
       <h2>Administrator Login</h2>
       <label>Username:</label>

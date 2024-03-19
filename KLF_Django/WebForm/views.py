@@ -4,6 +4,7 @@ from django.db.utils import IntegrityError
 from django.template import loader
 from django.conf import settings
 from django.db.models import F
+from django.contrib.auth import authenticate, login, logout
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
@@ -21,10 +22,49 @@ def index(request, site):
 
 
 def admin(request):
-	return render(request, "WebForm/admin.html", {})
+	if request.user.is_authenticated:
+		return render(request, "WebForm/admin.html", {})
+	username = request.POST["Username"]
+	password = request.POST["Password"]
+	user = authenticate(request, username=username, password=password)
+	if user is not None:
+		login(request, user)
+		return render(request, "WebForm/admin.html", {})
+	else:
+		return render(request, "WebForm/LoginIndex.html", {})
+
+def admin_login(request):
+	if request.user.is_authenticated:
+		return admin(request)
+	return render(request, "WebForm/LoginIndex.html", {})
+
+def logout_user(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
+	logout(request)
+	return admin_login(request)
+
+def change_username(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
+	new_username = request.POST["Username"]
+	request.user.username = new_username
+	return HttpResponse("Successfully changed username")
+
+def change_password(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
+	new_password = request.POST["Password"]
+	request.user.set_password(new_password)
+	return HttpResponse("Successfully changed password")
+
+#def forgot_password
 
 
 def generate_QR(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
+
 	location = request.GET.get("location")
 	site = request.GET.get("site")
 	cur_ip = socket.gethostbyname(socket.gethostname())
@@ -64,6 +104,9 @@ def submit(request, site_name):
 
 
 def get_locations(request):
+	if not request.user.is_authenticated:
+		print(" not authenticated")
+		return admin_login(request)
 	sites = Site.objects.all()
 	site_dict = {}
 	for site in sites:
@@ -76,6 +119,8 @@ def get_locations(request):
 
 
 def create_site(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
 	loc_name = request.POST.get("newLocation")
 	site_name = request.POST.get("newSite")
 
@@ -95,6 +140,8 @@ def create_site(request):
 
 
 def delete_site(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
 	loc_name = request.POST.get("location")
 	site_name = request.POST.get("site")
 	site = Site.objects.filter(name__iexact=site_name)
@@ -115,6 +162,8 @@ def delete_site(request):
 # Return list-like object of days that had >= 1 submission
 # {"02/10/24", "02/15/24", ...}
 def get_submission_table(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
 	location = request.GET.get("location")
 	site = request.GET.get("site")
 
@@ -168,6 +217,8 @@ def make_dummy_submissions(request):
 
 
 def get_excel_file(request):
+	if not request.user.is_authenticated:
+		return admin_login(request)
 	site = request.GET.get("site")
 	date = request.GET.get("date")
 	date_object = datetime.datetime.strptime(date, '%Y-%m-%d').date()
