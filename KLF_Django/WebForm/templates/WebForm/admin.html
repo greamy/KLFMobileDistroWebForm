@@ -400,6 +400,27 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 tr{
   outline: thin solid;
 }
+#log{
+  position:absolute;
+  top:5px;
+  right:5px;
+}
+#logout{
+  background-color: red;
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  text-align: center;
+  text-decoration: none;
+  transition-duration: 0.4s;
+  border-radius: 10px;
+}
+#logout:hover{
+  backgroud-color:red;
+  color:black;
+  cursor: pointer;
+}
+
 </style>
 
 
@@ -414,6 +435,9 @@ tr{
 
 <body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <div id="log">
+    <button id="logout">Log Out</button>
+  </div>
   <div id="overlay" >
     <div id="sure">
       <h1><strong>Are you sure?</strong></h1>
