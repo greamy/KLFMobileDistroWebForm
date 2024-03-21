@@ -259,27 +259,7 @@ function processLocationData(data) {
 	return [locations, sites];
 }
 
-// Functionality:
-//		Returns value of cookie based on name. We use this mainly for CSRF cookie values for AJAX post requests.
-// Parameters:
-//		name: string name of the cookie you wan the value of
-// Returns:
-//		value of cookie, or null if cookie name doesn't exist
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?            
-		if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
+
 
 // Functionality:
 //		Runs when 'Create' button is clicked on home page. Sends AJAX request to server to create new site,
@@ -335,7 +315,6 @@ function DeleteSite(){
 	var location = page_data[0];
 	var site = page_data[1];
 	let Npage = page_data[2];
-	Npage.remove();
 
 	$.ajax({
 		type: "POST",
@@ -355,6 +334,24 @@ function DeleteSite(){
 			populateLocations(locations[0], locations[1]);
 			let homeP = document.getElementById("homeP");
 			homeP.style.display="block";
+			Npage.remove();
+		}
+	});
+}
+
+function Logout(){
+	$.ajax({
+		type: "GET",
+		url: "/form/admin/logout/",
+		dataType: "json",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
 		}
 	});
 }
@@ -367,6 +364,7 @@ function No(){
   document.getElementById("overlay").style.display="none";
   document.getElementById(Universal).style.display="none";
 }
+
 // Functionality:
 //		Runs when user is done with the error overlay. Disables the overlay so user can continue to use the site.
 // Parameters: None

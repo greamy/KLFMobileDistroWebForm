@@ -57,8 +57,9 @@ a{
   color: red;
   display:none;
 }</style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <div>
-    <form method="POST" action="/form/admin/login/">
+    <form action="javascript:Submit()">
 	{% csrf_token %}
       <img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
       <h2>Administrator Login</h2>
@@ -66,8 +67,12 @@ a{
       <input id="username" name="username" placeholder="Username" required>
       <label>Password:</label>
       <input id="password" name="password" type="password" placeholder="Password" required>
-      <button>Login</button>
-      <a>Username or Password was Incorrect. Please Try Again.</a>
+      <button type="submit">Login</button>
+      <a id="errorMsg">Username or Password was Incorrect. Please Try Again.</a>
     </form>
   </div>
+
+{% load static %}
+<script src="{% static 'WebForm/utility.js' %}" type="text/javascript"></script>
+<script src="{% static 'WebForm/login.js' %}" type="text/javascript"></script>
 </html>

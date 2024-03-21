@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from http import HTTPStatus
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.db.utils import IntegrityError
 from django.template import loader
@@ -21,6 +22,10 @@ LOGIN_REDIRECT_URL = ADMIN_HOME_URL + "login/"
 LOGIN_REDIRECT_JSON = {"redirect": LOGIN_REDIRECT_URL}
 APPLICATION_DIR = os.path.join(settings.BASE_DIR, "WebForm")
 INVALID_REQUEST_TYPE = "Invalid Request type."
+
+class HttpResponseUnauthorized(HttpResponse):
+	status_code = HTTPStatus.UNAUTHORIZED
+
 def index(request, site):
 	return render(request, "Webform/index.html", {})
 
@@ -41,9 +46,9 @@ def admin_login(request):
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
-			return HttpResponseRedirect(ADMIN_HOME_URL)
+			return JsonResponse(LOGIN_REDIRECT_JSON)
 		else:
-			return render(request, "WebForm/LoginIndex.html", {})
+			return HttpResponseUnauthorized("Username or Password was Incorrect. Please Try Again.")
 	else:
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
@@ -51,7 +56,7 @@ def admin_login(request):
 def logout_user(request):
 	if request.user.is_authenticated:
 		logout(request)
-	return HttpResponseRedirect(LOGIN_REDIRECT_URL)
+	return JsonResponse(LOGIN_REDIRECT_JSON)
 
 def change_username(request):
 	if not request.user.is_authenticated:

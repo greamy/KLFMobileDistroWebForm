@@ -481,27 +481,22 @@ tr{
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-
-
 <body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <div id="log">
     <div id="profile-button"><img id="profile" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png" alt="buttonpng" border="0">
       <div id="ProfileSettings">
         <button id="PEdit">Edit Profile</button>
-        <button id="logout">Log Out</button>
+        <button id="logout" onclick="Logout()">Log Out</button>
       </div></div>
   </div>
   <div id="overlay" >
     <div id="sure">
       <h1><strong>Are you sure?</strong></h1>
-      <button id="yes"onclick="DeleteSite()">Yes</button>
+      <button id="yes" onclick="DeleteSite()">Yes</button>
       <button id="no" onclick="No()">No</button>
     </div>
   </div>
-<!--  <div id="error-overlay" onclick="off()">-->
-<!--    <h1>Error! This Location Already Exists</h1>-->
-<!--  </div>-->
   <div class="sidenav">
     <img src="https://kzoolf.org/files/2014/08/klf-logo.png" alt="Kalamazoo Loaves & Fishes">
     <fieldset>
@@ -535,6 +530,7 @@ tr{
     </div>
 </body>
 {% load static %}
+<script src="{% static 'WebForm/utility.js' %}" type="text/javascript"></script>
 <script src="{% static 'WebForm/admin.js' %}" type="text/javascript"></script>
 
 </html>

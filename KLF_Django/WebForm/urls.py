@@ -28,6 +28,7 @@ urlpatterns = [
 	path('change-username/', views.change_username, name='changeUsername'),
 	path('change-password/', views.change_password, name='changePassword'),
 	path('admin/login/', views.admin_login, name='admin_login'),
+	path('admin/logout/', views.logout_user, name='admin_logout'),
 	path('admin/', views.admin, name='admin'),
 	path('<str:site_name>/submit/', views.submit, name='submit'),
 	path('QR/', views.generate_QR, name='QR'),
