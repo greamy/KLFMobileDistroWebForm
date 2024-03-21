@@ -284,6 +284,7 @@ function getCookie(name) {
 function createSite() {
 	const loc = document.getElementById("InputLocation");
 	const site = document.getElementById("InputSite");
+	document.getElementById("error-create-site").style.display="none";
 	document.getElementById("loader").style.display="inline-block"; // for loading animation on page
 
 	$.ajax({
@@ -295,6 +296,10 @@ function createSite() {
 		// Do not send CSRF token to another domain.
 		data: {"newLocation": loc.value, "newSite": site.value}, 
 		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
 			loc.value = "";
 			site.value = "";
 			let locations = processLocationData(data);
@@ -302,13 +307,49 @@ function createSite() {
 			populateLocations(locations[0], locations[1]);
 			document.getElementById("loader").style.display = "none";
 		},
-		error: function (request, textStatus, errorThrown) {
-			// TODO: Update error label field on HTML with the response text, set label field to display.
-
+		error: function (response, textStatus, errorThrown) {
 			loc.value = "";
 			site.value = "";
 			document.getElementById("loader").style.display = "none";
-			document.getElementById("error-overlay").style.display = "block";
+			errorOverlay = document.getElementById("error-create-site");
+			errorOverlay.innerHTML = response.responseText;
+			errorOverlay.style.display = "block";
+		}
+	});
+}
+
+// Functionality:
+//		Runs after user clicks 'yes' to the delete site pop-up. Sends request to server to delete the site,
+//			then updates UI accordingly.
+// Parameters: None
+// Returns: None
+function DeleteSite(){
+	document.getElementById("overlay").style.display="none";
+
+	var page_data = getCurrentPage();
+	var location = page_data[0];
+	var site = page_data[1];
+	let Npage = page_data[2];
+	Npage.remove();
+
+	$.ajax({
+		type: "POST",
+		url: "/form/delete-location-data/",
+		dataType: "json",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"location": location, "site": site},
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			let locations = processLocationData(data);
+			ResetLocations();
+			populateLocations(locations[0], locations[1]);
+			let homeP = document.getElementById("homeP");
+			homeP.style.display="block";
 		}
 	});
 }
@@ -335,43 +376,6 @@ function off() {
 // Returns: None
 function DeleteOverlay() {
 	document.getElementById("overlay").style.display="block";
-}
-
-// Functionality:
-//		Runs after user clicks 'yes' to the delete site pop-up. Sends request to server to delete the site,
-//			then updates UI accordingly.
-// Parameters: None
-// Returns: None
-function DeleteSite(){
-//	Universal = string+array;
-//	document.getElementById(Universal).style.display="inline-block";
-	document.getElementById("overlay").style.display="none";
-
-	var page_data = getCurrentPage();
-	var location = page_data[0];
-	var site = page_data[1];
-	let Npage = page_data[2];
-//	console.log(location);
-//	console.log(site);
-//	console.log(Npage);
-	Npage.remove();
-
-	$.ajax({
-		type: "POST",
-		url: "/form/delete-location-data/",
-		dataType: "json",
-		headers: {'X-CSRFToken': getCookie("csrftoken")},
-		mode: 'same-origin',
-		// Do not send CSRF token to another domain.
-		data: {"location": location, "site": site},
-		success: function (data) {
-			let locations = processLocationData(data);
-			ResetLocations();
-			populateLocations(locations[0], locations[1]);
-			let homeP = document.getElementById("homeP");
-			homeP.style.display="block";
-		}
-	});
 }
 
 // Functionality:

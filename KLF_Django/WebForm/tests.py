@@ -1,28 +1,30 @@
 from django.test import TestCase, Client
 from django.http import JsonResponse
 from django.db import transaction
+from django.contrib.auth.models import User
 from .models import Site, Location, Submission
 import datetime
 import json
 
 
-# Test simple pages to check if get requets are valid
+# Test simple pages to check if get requests are valid
 class BasicPagesTestCase(TestCase):
+	def setUp(self):
+		self.client.force_login(User.objects.get_or_create(username='testuser')[0])
 
 	def test_form_page(self):
-		c = Client()
-		response = c.get("/form/test/")
+		response = self.client.get("/form/test/")
 		self.assertContains(response, '<form method="POST"', status_code=200, html=False)
 
 	def test_admin_page(self):
-		c = Client()
-		response = c.get("/form/admin/")
+		# self.client.force_login(User.objects.get_or_create(username='testuser')[0])
+		response = self.client.get("/form/admin/")
 		self.assertContains(response, '<form action="javascript:', status_code=200, html=False)
 
 
 class LocationActionTestCases(TestCase):
 	def setUp(self):
-		self.client = Client()
+		self.client.force_login(User.objects.get_or_create(username='testuser')[0])
 		self.test_loc_name = "TestLocation"
 		self.test_site_names = ["TestSite1", "TestSite2"]
 
@@ -93,11 +95,9 @@ class LocationActionTestCases(TestCase):
 
 class SubmissionTestCases(TestCase):
 	def setUp(self):
-		self.client = Client()
-
 		self.Fname = "test Fname"
 		self.Lname = "test Lname"
-		self.Email = "test Email"
+		self.Email = "test Email@testsite.com"
 		self.HHold = 1
 		self.Address = "test Address"
 		self.Zip = "12345"
@@ -120,7 +120,7 @@ class SubmissionTestCases(TestCase):
 
 class SubmissionTableTestCases(TestCase):
 	def setUp(self):
-		self.client = Client()
+		self.client.force_login(User.objects.get_or_create(username='testuser')[0])
 
 		self.loc_name = "test location"
 		loc = Location(name=self.loc_name)
@@ -192,11 +192,7 @@ class SubmissionTableTestCases(TestCase):
 		returned_dates = set(returned_dates)
 		self.assertSetEqual(returned_dates, expected)
 
-
-
-
 	def test_file_download(self):
-		
 		response = self.client.get("/form/get-excel-file/", data={"site": self.site_name, "date": self.today})
 		disposition_header = response["Content-Disposition"].split(";")[0]
 		

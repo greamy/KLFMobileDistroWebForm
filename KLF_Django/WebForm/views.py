@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.db.utils import IntegrityError
 from django.template import loader
 from django.conf import settings
@@ -16,96 +16,123 @@ import os
 
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
 # this will generate responses from these functions, for instance, calling the html file for the user form.
-
+ADMIN_HOME_URL = "/form/admin/"
+LOGIN_REDIRECT_URL = ADMIN_HOME_URL + "login/"
+LOGIN_REDIRECT_JSON = {"redirect": LOGIN_REDIRECT_URL}
+APPLICATION_DIR = os.path.join(settings.BASE_DIR, "WebForm")
+INVALID_REQUEST_TYPE = "Invalid Request type."
 def index(request, site):
-	return render(request, "WebForm/index.html", {})
-
+	return render(request, "Webform/index.html", {})
 
 def admin(request):
-	if request.user.is_authenticated:
-		return render(request, "WebForm/admin.html", {})
-	username = request.POST["Username"]
-	password = request.POST["Password"]
-	user = authenticate(request, username=username, password=password)
-	if user is not None:
-		login(request, user)
-		return render(request, "WebForm/admin.html", {})
-	else:
-		return render(request, "WebForm/LoginIndex.html", {})
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
+	return render(request, "WebForm/admin.html", {})
 
 def admin_login(request):
 	if request.user.is_authenticated:
-		return admin(request)
-	return render(request, "WebForm/LoginIndex.html", {})
+		return HttpResponseRedirect(ADMIN_HOME_URL)
+
+	if request.method == "GET":
+		return render(request, "WebForm/LoginIndex.html", {})
+	elif request.method == "POST":
+		username = request.POST["username"]
+		password = request.POST["password"]
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
+			return HttpResponseRedirect(ADMIN_HOME_URL)
+		else:
+			return render(request, "WebForm/LoginIndex.html", {})
+	else:
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
 
 def logout_user(request):
-	if not request.user.is_authenticated:
-		return admin_login(request)
-	logout(request)
-	return admin_login(request)
+	if request.user.is_authenticated:
+		logout(request)
+	return HttpResponseRedirect(LOGIN_REDIRECT_URL)
 
 def change_username(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
+	if request.method != "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
 	new_username = request.POST["Username"]
 	request.user.username = new_username
 	return HttpResponse("Successfully changed username")
 
 def change_password(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
+	if request.method != "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
 	new_password = request.POST["Password"]
 	request.user.set_password(new_password)
 	return HttpResponse("Successfully changed password")
 
 #def forgot_password
 
-
 def generate_QR(request):
 	if not request.user.is_authenticated:
 		return admin_login(request)
+	if request.method != "GET":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
 	location = request.GET.get("location")
 	site = request.GET.get("site")
 	cur_ip = socket.gethostbyname(socket.gethostname())
 	QR = QRCode("http://" + cur_ip + "/form/" + site + "/")
 
-	QR.saveImage("WebForm/QR_Codes/QR.png")
-	with open("WebForm/QR_Codes/QR.png", 'rb') as img:
+	file_name = "QR.png"
+	path = os.path.join(APPLICATION_DIR, "QR_CODES", file_name)
+	QR.saveImage(path)
+	with open(path, 'rb') as img:
 		response = HttpResponse(img.read(), content_type="image/png")
-		response["Content-Disposition"] = 'attachment; filename="QR.png"'
+		response["Content-Disposition"] = 'attachment; filename="' + file_name + '"'
 	return response
 
 
 def submit(request, site_name):
-	if request.method == "POST":
-		template = loader.get_template('WebForm/Sindex.html')
-		user_data = [request.POST.get("Fname"),
-					 request.POST.get("Lname"),
-					 request.POST.get("Email"),
-					 request.POST.get("HHold"),
-					 request.POST.get("Address"),
-					 request.POST.get("Zip")
-					 ]
+	if request.method != "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-		site = Site.objects.filter(name__iexact=site_name)
-		if site.exists():
-			submission = Submission(first_name=user_data[0], last_name=user_data[1], email=user_data[2],
-									number_in_household=user_data[3], street_address=user_data[4],
-									zip_code=user_data[5], site=site.first())
+	template = loader.get_template('WebForm/Sindex.html')
+	user_data = [request.POST.get("Fname"),
+				 request.POST.get("Lname"),
+				 request.POST.get("Email"),
+				 request.POST.get("HHold"),
+				 request.POST.get("Address"),
+				 request.POST.get("Zip")
+				 ]
 
-			submission.save()
-		else:
-			return HttpResponse("Invalid Site Name")
+	# input validation
+	if '@' not in user_data[2] or '.' not in user_data[2]:
+		return HttpResponseBadRequest("Invalid Email Address")
+	try:
+		hhold = int(user_data[3])
+	except ValueError:
+		return HttpResponseBadRequest("Invalid Number in Household")
 
-		return HttpResponse(template.render({}, request))
-	else:
-		return HttpResponse("Howd you do dat?")
+	site = Site.objects.filter(name__iexact=site_name)
+	if not site.exists():
+		return HttpResponseBadRequest("Invalid Site Name in URL.")
+
+	submission = Submission(first_name=user_data[0], last_name=user_data[1], email=user_data[2],
+							number_in_household=user_data[3], street_address=user_data[4],
+							zip_code=user_data[5], site=site.first())
+
+	submission.save()
+
+	return HttpResponse(template.render({}, request))
 
 
 def get_locations(request):
 	if not request.user.is_authenticated:
 		return admin_login(request)
+
 	sites = Site.objects.all()
 	site_dict = {}
 	for site in sites:
@@ -119,7 +146,10 @@ def get_locations(request):
 
 def create_site(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if not request.method == "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
 	loc_name = request.POST.get("newLocation")
 	site_name = request.POST.get("newSite")
 
@@ -140,7 +170,10 @@ def create_site(request):
 
 def delete_site(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if not request.method == "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
 	loc_name = request.POST.get("location")
 	site_name = request.POST.get("site")
 	site = Site.objects.filter(name__iexact=site_name)
@@ -162,7 +195,10 @@ def delete_site(request):
 # {"02/10/24", "02/15/24", ...}
 def get_submission_table(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if request.method != "GET":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
 	location = request.GET.get("location")
 	site = request.GET.get("site")
 
@@ -217,7 +253,10 @@ def make_dummy_submissions(request):
 
 def get_excel_file(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if request.method != "GET":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
 	site = request.GET.get("site")
 	date = request.GET.get("date")
 	date_object = datetime.datetime.strptime(date, '%Y-%m-%d').date()
@@ -237,7 +276,7 @@ def get_excel_file(request):
 		excel_data.append(row)
 
 	file_name = site + " " + date + ".xlsx"
-	directory = os.path.join(settings.BASE_DIR, "WebForm", "ExcelDocs")
+	directory = os.path.join(APPLICATION_DIR, "ExcelDocs")
 	handler = ExcelFile(file_name, headers, directory)
 	handler.add_data(excel_data)
 	handler.save_file()
