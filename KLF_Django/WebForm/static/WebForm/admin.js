@@ -5,6 +5,11 @@ $(document).ready(function () {
 		url: "/form/get-location-data",
 		dataType: "json",
 		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+
 			// Process the json data
 			let locations = processLocationData(data);
 			populateLocations(locations[0], locations[1]);
@@ -228,7 +233,7 @@ function FormSetting(settings, x, isLast) {
 
 	const formSetting = document.getElementById("form-setting");
 	formSetting.appendChild(optionView);
-	if(isLast) {
+	if (isLast) {
 		formSetting.appendChild(FormButtons);
 	}
 }
@@ -524,6 +529,11 @@ function GenerateQR() {
             responseType: 'blob' // Set the response type to blob
         },
 		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+
 			var blob = new Blob([data], { type: 'image/png' }); // Create a blob from the response data
             var url = window.URL.createObjectURL(blob);
             var a = document.createElement('a');
@@ -568,6 +578,11 @@ function GetSubmissionDates(new_page) {
 		url: "/form/get-submission-table/",
 		data: {"location": location, "site": site},
 		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+
 			filelist = document.getElementById("fileList");
 
 			table = document.createElement("table");
@@ -610,6 +625,11 @@ function DownloadSubmissions(site, date) {
             responseType: 'blob' // Set the response type to blob
         },
 		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+
 			var blob = new Blob([data], {
 				type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 			}); // Create a blob from the response data

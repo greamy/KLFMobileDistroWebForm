@@ -77,7 +77,7 @@ def change_password(request):
 
 def generate_QR(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return JsonResponse(LOGIN_REDIRECT_JSON)
 	if request.method != "GET":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
@@ -131,7 +131,7 @@ def submit(request, site_name):
 
 def get_locations(request):
 	if not request.user.is_authenticated:
-		return admin_login(request)
+		return JsonResponse(LOGIN_REDIRECT_JSON)
 
 	sites = Site.objects.all()
 	site_dict = {}
