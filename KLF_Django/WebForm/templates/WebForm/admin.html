@@ -402,22 +402,68 @@ tr{
 }
 #log{
   position:absolute;
-  top:5px;
-  right:5px;
+  top:10px;
+  right:50px;
 }
 #logout{
+  position:absolute;
   background-color: red;
   border: none;
   color: white;
   padding: 10px 16px;
   text-align: center;
   text-decoration: none;
-  transition-duration: 0.4s;
   border-radius: 10px;
+  top: 55px;
+  left: 40px;
 }
 #logout:hover{
   backgroud-color:red;
   color:black;
+  cursor: pointer;
+}
+#profile-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 100px;
+  width: 50px;
+  height: 50px;
+}
+#profile{
+  width:50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+#ProfileSettings{
+  visibility: hidden;
+  position:absolute;
+  background-color:grey;
+  border-radius: 10px;
+  width:150px;
+  height:100px;
+  left: -55px;
+  top: 55px;
+}
+#profile-button:hover #ProfileSettings{
+  visibility: visible;
+  cursor: defualt;
+}
+#PEdit{
+  position:absolute;
+  background-color: #0384fc;
+  border: none;
+  color: black;
+  padding: 10px 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+  top: 10px;
+  left: 30px;
+}
+#PEdit:hover{
+  background-color: #03befc;
   cursor: pointer;
 }
 
@@ -436,7 +482,11 @@ tr{
 <body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <div id="log">
-    <button id="logout">Log Out</button>
+    <div onclick="Profileicon()" id="profile-button"><img id="profile" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png" alt="buttonpng" border="0">
+      <div id="ProfileSettings">
+        <button id="PEdit">Edit Profile</button>
+        <button id="logout">Log Out</button>
+      </div></div>
   </div>
   <div id="overlay" >
     <div id="sure">
