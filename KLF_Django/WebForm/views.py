@@ -105,7 +105,6 @@ def submit(request, site_name):
 
 def get_locations(request):
 	if not request.user.is_authenticated:
-		print(" not authenticated")
 		return admin_login(request)
 	sites = Site.objects.all()
 	site_dict = {}

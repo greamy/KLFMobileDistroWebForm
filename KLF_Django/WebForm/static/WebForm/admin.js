@@ -8,20 +8,22 @@ $(document).ready(function () {
 			// Process the json data
 			let locations = processLocationData(data);
 			populateLocations(locations[0], locations[1]);
-		}
-	});
-});
 
-//2d Array for form
-//format: id, placeholder, name, type, required?, min, max, hide?, TEFAP
-// TODO: Replace this definition with server call on 'Edit form' button click.
-const inputSettings = [
+			//2d Array for form
+			//format: id, placeholder, name, type, required?, min, max, hide?, TEFAP
+			// TODO: Replace this definition with server call on 'Edit form' button click.
+			const inputSettings = [
                        ["First Name","First Name","First Name","text", 1,0,0,0,1],
                        ["Last Name","Last Name","Last Name","text", 1,0,0,0,1],
                        ["Email Address","Email Address","Email Address","email",0,0,0,0,1],
                        ["Number in Household","Number in Household","Number in Household","number",1,1,50,0,1],
                        ["Street Address","Street Address","Street Address","other",1,0,0,0,1],
                        ["Zip Code","Zip Code","Zip Code","number",1,10000,99999,0,1]];
+			populateFormSettings(inputSettings);
+		}
+	});
+});
+
 let Universal = "";
 
 // Functionality:
@@ -30,7 +32,7 @@ let Universal = "";
 // 		settings: array of settings for form field being added, like shown above
 //		x: integer representing order in the list of form fields.
 // Returns: Nothing
-function FormSetting(settings, x) {
+function FormSetting(settings, x, isLast) {
 	const info = document.createElement("b");
 	info.appendChild(document.createTextNode("\u24d8"));
 
@@ -226,7 +228,7 @@ function FormSetting(settings, x) {
 
 	const formSetting = document.getElementById("form-setting");
 	formSetting.appendChild(optionView);
-	if(x + 1 == inputSettings.length) {
+	if(isLast) {
 		formSetting.appendChild(FormButtons);
 	}
 }
@@ -305,7 +307,6 @@ function createSite() {
 
 			loc.value = "";
 			site.value = "";
-			console.log(request.responseText)
 			document.getElementById("loader").style.display = "none";
 			document.getElementById("error-overlay").style.display = "block";
 		}
@@ -345,12 +346,14 @@ function DeleteSite(){
 //	Universal = string+array;
 //	document.getElementById(Universal).style.display="inline-block";
 	document.getElementById("overlay").style.display="none";
-	var pages = document.getElementsByClassName("PageB");
 
 	var page_data = getCurrentPage();
 	var location = page_data[0];
 	var site = page_data[1];
 	let Npage = page_data[2];
+//	console.log(location);
+//	console.log(site);
+//	console.log(Npage);
 	Npage.remove();
 
 	$.ajax({
@@ -381,17 +384,19 @@ function getCurrentPage() {
 	var location = "";
 	var site = "";
 	var Npage = null;
+	var CurPage = null;
 
 	for (let page of pages) {
 		Npage = document.getElementById(page.id + "P");
 		if (page.id != "form" && Npage.style.display != "none"){
+			CurPage = Npage;
 			let siteName = Npage.childNodes[0].innerText;
 			let temp = siteName.split(": ");
 			location = temp[0];
 			site = temp[1];
 		}
 	}
-	return [location, site, Npage]
+	return [location, site, CurPage]
 }
 
 // Functionality:
@@ -550,7 +555,6 @@ function GetSubmissionDates(new_page) {
 	var site = page_data[1]
 
 	table_head = document.getElementById("fileList");
-	console.log(table_head);
 	if (table_head.lastChild.id == "submissionTable") {
 		table_head.removeChild(table_head.lastChild)
 	}
@@ -560,7 +564,6 @@ function GetSubmissionDates(new_page) {
 		url: "/form/get-submission-table/",
 		data: {"location": location, "site": site},
 		success: function (data) {
-			console.log(data);
 			filelist = document.getElementById("fileList");
 
 			table = document.createElement("table");
@@ -667,7 +670,10 @@ function populateLocations(locations, sites) {
 			}
 		});
 	}
-	for (var i = 0; i < inputSettings.length;i++){
-  		FormSetting(inputSettings[i], i);
+}
+
+function populateFormSettings(inputSettings) {
+	for (var i = 0; i < inputSettings.length; i++) {
+		FormSetting(inputSettings[i], i, i + 1 == inputSettings.length);
 	}
 }
