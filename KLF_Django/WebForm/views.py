@@ -6,8 +6,8 @@ from django.template import loader
 from django.conf import settings
 from django.db.models import F
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .Scripts.ExcelHandler import ExcelFile
-from .Scripts.JsonHandler import JsonHandler
 from .Scripts.QRCode import QRCode
 from .models import Location, Site, Submission
 import socket
@@ -29,9 +29,8 @@ class HttpResponseUnauthorized(HttpResponse):
 def index(request, site):
 	return render(request, "Webform/index.html", {})
 
+@login_required
 def admin(request):
-	if not request.user.is_authenticated:
-		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
 	return render(request, "WebForm/admin.html", {})
 
 def admin_login(request):
@@ -78,7 +77,6 @@ def change_password(request):
 	request.user.set_password(new_password)
 	return HttpResponse("Successfully changed password")
 
-#def forgot_password
 
 def generate_QR(request):
 	if not request.user.is_authenticated:
