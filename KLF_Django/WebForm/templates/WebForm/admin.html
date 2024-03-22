@@ -435,7 +435,7 @@ tr{
   width: 50px;
   height: 50px;
 }
-#profile{
+#profileI{
   width:50px;
   object-fit: cover;
   border-radius: 50%;
@@ -454,7 +454,7 @@ tr{
   visibility: visible;
   cursor: defualt;
 }
-#PEdit{
+#profile{
   position:absolute;
   background-color: #0384fc;
   border: none;
@@ -466,10 +466,14 @@ tr{
   top: 10px;
   left: 30px;
 }
-#PEdit:hover{
+#profile:hover{
   background-color: #03befc;
   cursor: pointer;
 }
+#profileP{
+  display:none;
+}
+
 
 </style>
 
@@ -484,10 +488,10 @@ tr{
 <body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <div id="log">
-    <div id="profile-button"><img id="profile" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png" alt="buttonpng" border="0">
+    <div id="profile-button"><img id="profileI" src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTAxL3JtNjA5LXNvbGlkaWNvbi13LTAwMi1wLnBuZw.png" alt="buttonpng" border="0">
       <div id="ProfileSettings">
-        <button id="PEdit">Edit Profile</button>
-        <button id="logout" onclick="Logout()">Log Out</button>
+        <button id="profile" class="PageB">Edit Profile</button>
+        <button id="logout">Log Out</button>
       </div></div>
   </div>
   <div id="overlay" >
@@ -520,6 +524,9 @@ tr{
       <div id="error-create-site" style="display: none;">
           Error! This Location Already Exists
       </div>
+    </div>
+    <div id="profileP" class="page">
+      <div class="Top-Color"><h2>Profile Settings</h2></div>
     </div>
     <div id="formP" class="page" style="display: none;">
         <div class="Top-Color"><h2>Form Editor (WIP)</h2></div>
