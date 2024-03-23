@@ -395,7 +395,7 @@ function getCurrentPage() {
 
 	for (let page of pages) {
 		Npage = document.getElementById(page.id + "P");
-		if (page.id != "form" && Npage.style.display != "none"){
+		if (page.id != "form" && page.id != "profile" && Npage.style.display != "none"){
 			CurPage = Npage;
 			let siteName = Npage.childNodes[0].innerText;
 			let temp = siteName.split(": ");

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Location, Site, Submission
+from .models import Location, Site, Submission, Field
 
 class SubmissionAdmin(admin.ModelAdmin):
     readonly_fields = ('date',)
@@ -9,3 +9,4 @@ class SubmissionAdmin(admin.ModelAdmin):
 admin.site.register(Location)
 admin.site.register(Site)
 admin.site.register(Submission, SubmissionAdmin)
+admin.site.register(Field)

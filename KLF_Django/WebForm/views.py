@@ -27,7 +27,7 @@ class HttpResponseUnauthorized(HttpResponse):
 	status_code = HTTPStatus.UNAUTHORIZED
 
 def index(request, site):
-	return render(request, "Webform/index.html", {})
+	return render(request, "WebForm/index.html", {})
 
 @login_required
 def admin(request):
@@ -90,7 +90,7 @@ def generate_QR(request):
 	QR = QRCode("http://" + cur_ip + "/form/" + site + "/")
 
 	file_name = "QR.png"
-	path = os.path.join(APPLICATION_DIR, "QR_CODES", file_name)
+	path = os.path.join(APPLICATION_DIR, "QR_Codes", file_name)
 	QR.saveImage(path)
 	with open(path, 'rb') as img:
 		response = HttpResponse(img.read(), content_type="image/png")
@@ -292,3 +292,7 @@ def get_excel_file(request):
 	handler.delete_file()
 
 	return response
+
+
+
+

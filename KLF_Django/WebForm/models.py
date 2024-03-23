@@ -30,6 +30,21 @@ class Submission(models.Model):
 	# later we'll parse in our views so that the data gets split into different columns when put into excel file
 
 
+
+
+class Field(models.Model):
+	type_choices = {"TXT": "text", "NUM": "number", "EML": "email", "OTH": "other"}
+
+	placeholder = models.TextField()
+	required = models.BooleanField()
+	field_type = models.CharField(choices=type_choices, max_length=3)
+	visible = models.BooleanField()
+	order_num = models.IntegerField()
+	field_min = models.IntegerField(null=True, blank=True)
+	field_max = models.IntegerField(null=True, blank=True)
+	
+
+
 # Model (Field) for storing field information from form.js
 # This will replace the hardcoded fields in form.js
 # from tehn on we would need server requests to get the infromation fro each field
