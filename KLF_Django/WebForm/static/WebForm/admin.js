@@ -127,7 +127,7 @@ function FormSetting(settings, x, isLast) {
 	min.setAttribute("id","min");
 	min.setAttribute("type","number");
 	min.setAttribute("min","0");
-	min.setAttribute("style","width:50px");f
+	min.setAttribute("style","width:50px");
 	min.setAttribute("placeholder", settings[5]);
 
 	const xlabel = document.createElement("label");

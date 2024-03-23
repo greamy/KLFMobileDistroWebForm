@@ -34,15 +34,17 @@ class Submission(models.Model):
 
 class Field(models.Model):
 	type_choices = {"TXT": "text", "NUM": "number", "EML": "email", "OTH": "other"}
-
+	
+	field_id = models.TextField()
 	placeholder = models.TextField()
-	required = models.BooleanField()
+	name = models.TextField()
 	field_type = models.CharField(choices=type_choices, max_length=3)
-	visible = models.BooleanField()
-	order_num = models.IntegerField()
+	required = models.BooleanField()
 	field_min = models.IntegerField(null=True, blank=True)
 	field_max = models.IntegerField(null=True, blank=True)
-	
+	visible = models.BooleanField()
+	tefap = models.BooleanField()
+	order_num = models.IntegerField()
 
 
 # Model (Field) for storing field information from form.js

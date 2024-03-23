@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.QRCode import QRCode
-from .models import Location, Site, Submission
+from .models import Location, Site, Submission, Field
 import socket
 import datetime
 import os
@@ -294,6 +294,21 @@ def get_excel_file(request):
 	handler.delete_file()
 
 	return response
+
+
+def get_form_fields(request):
+	if not request.user.is_authenticated:
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if request.method != "GET":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	fields = Field.objects.all()
+	settings = []
+	for field in fields:
+		settings.append([field.field_id, field.placeholder, field.name, field.field_type, 1 if field.required else 0, field.field_min, field.field_max, 1 if field.visible else 0, 1 if field.tefap else 0, field.order_num])
+	print(settings)
+	return JsonResponse(settings, safe=False)
+
 
 
 

@@ -23,6 +23,7 @@ urlpatterns = [
 	path('post-location-data/', views.create_site, name='postLocations'),
 	path('delete-location-data/', views.delete_site, name='deleteSite'),
 	path('get-submission-table/', views.get_submission_table, name='getSubmissionTable'),
+	path('get-form-settings/', views.get_form_fields, name='getFormSettings'),
 	path('generate-dummy-submissions/', views.make_dummy_submissions, name='makeDummies'),
 	path('get-excel-file/', views.get_excel_file, name='getExcel'),
 	path('change-username/', views.change_username, name='changeUsername'),
