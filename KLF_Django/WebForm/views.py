@@ -212,49 +212,6 @@ def get_submission_table(request):
 	return JsonResponse(unique_dates, safe=False)
 
 
-def make_dummy_submissions(request):
-	Fname = "test Fname"
-	Lname = "test Lname"
-	Email = "test Email"
-	HHold = 1
-	Address = "test Address"
-	Zip = "12345"
-
-	site = Site.objects.filter(name__iexact="Galesburg United Methodist Church").first()
-
-	submission1 = Submission(first_name="today", last_name=Lname, email=Email,
-							 number_in_household=HHold, street_address=Address,
-							 zip_code=Zip, site=site)
-	submission1.save()
-
-	submission2 = Submission(first_name="1day", last_name=Lname, email=Email,
-							 number_in_household=HHold, street_address=Address,
-							 zip_code=Zip, site=site)
-	submission2.save()
-
-	submission3 = Submission(first_name="2day", last_name=Lname, email=Email,
-							 number_in_household=HHold, street_address=Address,
-							 zip_code=Zip, site=site)
-	submission3.save()
-
-	submission4 = Submission(first_name="3day", last_name=Lname, email=Email,
-							 number_in_household=HHold, street_address=Address,
-							 zip_code=Zip, site=site)
-	submission4.save()
-
-	submission5 = Submission(first_name="4day", last_name=Lname, email=Email,
-							 number_in_household=HHold, street_address=Address,
-							 zip_code=Zip, site=site)
-	submission5.save()
-
-	# Update dates to have multiple submission dates
-	today = datetime.date.today()
-
-	Submission.objects.filter(first_name__iexact="1day").update(date=today - datetime.timedelta(days=1))
-	Submission.objects.filter(first_name__iexact="2day").update(date=today - datetime.timedelta(days=2))
-	Submission.objects.filter(first_name__iexact="3day").update(date=today - datetime.timedelta(days=3))
-	Submission.objects.filter(first_name__iexact="4day").update(date=today - datetime.timedelta(days=4))
-
 
 def get_excel_file(request):
 	if not request.user.is_authenticated:
@@ -308,6 +265,29 @@ def get_form_fields(request):
 		settings.append([field.field_id, field.placeholder, field.name, field.field_type, 1 if field.required else 0, field.field_min, field.field_max, 1 if field.visible else 0, 1 if field.tefap else 0, field.order_num])
 	print(settings)
 	return JsonResponse(settings, safe=False)
+
+
+
+
+def save_form_fields(request):
+	if not request.user.is_authenticated:
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if request.method != "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	post_data = request.POST.lists()
+
+	for settings in post_data:
+		settings = settings[1]
+		print(settings)
+		Field.objects.filter(field_id__iexact=settings[0]).update(placeholder = settings[1], field_type = settings[2], required = True if settings[3] == "on" else False, field_min = None if settings[4] == "" else settings[4], field_max = None if settings[5] == "" else settings[5], visible = True if settings[6] == "on" else False, order_num = int(settings[7]))
+
+	return HttpResponse("Success")
+		
+
+
+
+
 
 
 

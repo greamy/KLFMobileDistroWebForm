@@ -46,11 +46,12 @@ function FormSetting(settings, x, isLast) {
 	TEFAP.setAttribute("class","fa fa-book");
 
 	const name = document.createElement("p");
+	name.setAttribute("id", "field_id_text"+x);
 	if(settings[8] == 1) {
 		name.appendChild(TEFAP);
 		name.appendChild(document.createTextNode(" "));
 	}
-	name.appendChild(document.createTextNode(settings[2]));
+	name.appendChild(document.createTextNode(settings[0]));
 
 	const Plabel = document.createElement("label");
 	Plabel.setAttribute("for",settings[0]);
@@ -60,8 +61,9 @@ function FormSetting(settings, x, isLast) {
 	const rename = document.createElement("input");
 	rename.setAttribute("placeholder",settings[1]);
 	rename.setAttribute("name",settings[2]);
-	rename.setAttribute("id",settings[0]);
+	rename.setAttribute("id", "placeholder"+x);
 	rename.setAttribute("class","rename");
+	rename.setAttribute("value", settings[1]);
 
 	const rlabel = document.createElement("label");
 	rlabel.setAttribute("for", "require");
@@ -70,7 +72,7 @@ function FormSetting(settings, x, isLast) {
 
 	const require = document.createElement("input");
 	require.setAttribute("type","checkbox");
-	require.setAttribute("id","require");
+	require.setAttribute("id","require"+x);
 	if (settings[4] == 1) {
 		require.setAttribute("checked", 1);
 	}
@@ -112,7 +114,7 @@ function FormSetting(settings, x, isLast) {
 	}
 
 	const type = document.createElement("select");
-	type.setAttribute("id","type");
+	type.setAttribute("id","type"+x);
 	type.appendChild(text);
 	type.appendChild(Email);
 	type.appendChild(number);
@@ -124,7 +126,7 @@ function FormSetting(settings, x, isLast) {
 	mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
 	const min = document.createElement("input");
-	min.setAttribute("id","min");
+	min.setAttribute("id","min"+x);
 	min.setAttribute("type","number");
 	min.setAttribute("min","0");
 	min.setAttribute("style","width:50px");
@@ -138,7 +140,7 @@ function FormSetting(settings, x, isLast) {
 	xlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
 	const max = document.createElement("input");
-	max.setAttribute("id","max");
+	max.setAttribute("id","max"+x);
 	max.setAttribute("type","number");
 	max.setAttribute("min","0");
 	max.setAttribute("style","width:50px");
@@ -162,6 +164,7 @@ function FormSetting(settings, x, isLast) {
 
 	const nOrder = document.createElement("div");
 	nOrder.setAttribute("class","nOrder");
+	nOrder.setAttribute("id", "nOrder"+x);
 	nOrder.appendChild(document.createTextNode(x+1));
 
 
@@ -187,6 +190,7 @@ function FormSetting(settings, x, isLast) {
 
 	const Vcheck = document.createElement("input");
 	Vcheck.setAttribute("type","checkbox");
+	Vcheck.setAttribute("id", "visible"+x);
 	if (settings[7]==0) {
 		Vcheck.setAttribute("checked", 1);
 	}
@@ -218,8 +222,14 @@ function FormSetting(settings, x, isLast) {
 	const optionView = document.createElement("div");
 	optionView.appendChild(option);
 
+	const successLabel = document.createElement("label");
+	successLabel.appendChild(document.createTextNode("Success!"));
+	successLabel.setAttribute("id", "sucessLabel");
+	successLabel.setAttribute("style", "color:green; display:none");
+
 	const Save = document.createElement("button");
 	Save.setAttribute("id","SaveForm");
+	Save.setAttribute("onclick", "saveFormFields()");
 	Save.appendChild(document.createTextNode("Save Form"));
 
 	const add = document.createElement("button");
@@ -228,6 +238,7 @@ function FormSetting(settings, x, isLast) {
 
 	const FormButtons = document.createElement("div");
 	FormButtons.setAttribute("class","FormButton");
+	FormButtons.appendChild(successLabel);
 	FormButtons.appendChild(Save);
 	FormButtons.appendChild(add);
 
@@ -582,7 +593,6 @@ function GetSubmissionDates(new_page) {
 			}
 
 			filelist = document.getElementById("fileList" + site);
-			console.log(filelist);
 			table = document.createElement("table");
 			table.setAttribute("id", "submissionTable");
 			filelist.appendChild(table);
@@ -591,7 +601,6 @@ function GetSubmissionDates(new_page) {
 			table.appendChild(table_body);
 
 			data.forEach(function(date) {
-				console.log(date);
 				table_row = document.createElement("tr");
 				table_body.appendChild(table_row);
 
@@ -700,3 +709,53 @@ function populateFormSettings(inputSettings) {
 		FormSetting(inputSettings[i], i, i + 1 == inputSettings.length);
 	}
 }
+
+
+function saveFormFields() {
+	document.getElementById("sucessLabel").style.display="none";
+	var fieldData = {};
+	var count = 0;
+	while (document.getElementById("placeholder" + count) != null){
+		field_id = document.getElementById("field_id_text" + count).innerText;
+		placeholder = document.getElementById("placeholder" + count).value;
+		field_type = document.getElementById("type" + count).value;
+		required = document.getElementById("require" + count).value;
+
+		field_min = document.getElementById("min" + count);
+		field_max = document.getElementById("max" + count);
+		if (field_min != null){
+			field_min = field_min.value;
+		}
+		if (field_max != null){
+			field_max = field_max.value;
+		}
+		visible = document.getElementById("visible" + count).value;
+		order_num = document.getElementById("nOrder" + count).innerText;
+
+		fieldData["field" + count]=[field_id, placeholder, field_type, required, field_min, field_max, visible, order_num]
+		count++;
+	}
+
+
+	$.ajax({
+		type: "POST",
+		url: "/form/post-form-settings/", 
+		dataType: "text",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},        
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: fieldData, 
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			document.getElementById("sucessLabel").style.display="block";
+		}
+	});
+}
+
+
+
+
+
