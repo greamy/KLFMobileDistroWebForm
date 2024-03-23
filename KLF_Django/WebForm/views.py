@@ -101,7 +101,7 @@ def generate_QR(request):
 def submit(request, site_name):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
-
+	print(request.POST)
 	template = loader.get_template('WebForm/Sindex.html')
 	user_data = [request.POST.get("Fname"),
 				 request.POST.get("Lname"),
@@ -112,6 +112,7 @@ def submit(request, site_name):
 				 ]
 
 	# input validation
+	print(user_data[2])
 	if '@' not in user_data[2] or '.' not in user_data[2]:
 		return HttpResponseBadRequest("Invalid Email Address")
 	try:
@@ -204,9 +205,10 @@ def get_submission_table(request):
 
 	location = request.GET.get("location")
 	site = request.GET.get("site")
-
+	print(site)
+	
 	unique_dates = list(Submission.objects.filter(site__name__iexact=site).dates("date", "day", "DESC"))
-
+	print(unique_dates)
 	return JsonResponse(unique_dates, safe=False)
 
 

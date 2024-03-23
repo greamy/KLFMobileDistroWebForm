@@ -2,12 +2,12 @@
 //2d Array for form
 //format: id, placeholder, name, type, required?, min, max
 const inputSettings = [
-                       ["First Name","First Name","First Name","text", 1,0,0,0,1],
-                       ["Last Name","Last Name","Last Name","text", 1,0,0,0,1],
-                       ["Email Address","Email Address","Email Address","email",0,0,0,0,1],
-                       ["Number in Household","Number in Household","Number in Household","number",1,1,50,0,1],
-                       ["Street Address","Street Address","Street Address","other",1,0,0,0,1],
-                       ["Zip Code","Zip Code","Zip Code","number",1,10000,99999,0,1]];
+                       ["First Name","First Name","Fname","text", 1,0,0,0,1],
+                       ["Last Name","Last Name","Lname","text", 1,0,0,0,1],
+                       ["Email Address","Email Address","Email","email",0,0,0,0,1],
+                       ["Number in Household","Number in Household","HHold","number",1,1,50,0,1],
+                       ["Street Address","Street Address","Address","other",1,0,0,0,1],
+                       ["Zip Code","Zip Code","Zip","number",1,10000,99999,0,1]];
 
 function createForm( settings){
   const important = document.createElement("span");

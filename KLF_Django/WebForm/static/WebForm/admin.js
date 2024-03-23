@@ -127,7 +127,7 @@ function FormSetting(settings, x, isLast) {
 	min.setAttribute("id","min");
 	min.setAttribute("type","number");
 	min.setAttribute("min","0");
-	min.setAttribute("style","width:50px");
+	min.setAttribute("style","width:50px");f
 	min.setAttribute("placeholder", settings[5]);
 
 	const xlabel = document.createElement("label");
@@ -431,7 +431,7 @@ function CreatePage(array, string) {
 
 	const filelist = document.createElement("div");
 	filelist.setAttribute("class","FileList");
-	filelist.setAttribute("id", "fileList")
+	filelist.setAttribute("id", "fileList" + array);
 	filelist.appendChild(filename);
 	filelist.appendChild(Update);
 
@@ -563,12 +563,12 @@ function ResetLocations() {
 // Returns: None
 function GetSubmissionDates(new_page) {
 	var page_data = getCurrentPage();
-	var location = page_data[0]
-	var site = page_data[1]
+	var location = page_data[0];
+	var site = page_data[1];
 
-	table_head = document.getElementById("fileList");
+	table_head = document.getElementById("fileList" + site);
 	if (table_head.lastChild.id == "submissionTable") {
-		table_head.removeChild(table_head.lastChild)
+		table_head.removeChild(table_head.lastChild);
 	}
 
 	$.ajax({
@@ -581,16 +581,17 @@ function GetSubmissionDates(new_page) {
 				return;
 			}
 
-			filelist = document.getElementById("fileList");
-
+			filelist = document.getElementById("fileList" + site);
+			console.log(filelist);
 			table = document.createElement("table");
-			table.setAttribute("id", "submissionTable")
+			table.setAttribute("id", "submissionTable");
 			filelist.appendChild(table);
 
 			table_body = document.createElement("tbody");
 			table.appendChild(table_body);
 
 			data.forEach(function(date) {
+				console.log(date);
 				table_row = document.createElement("tr");
 				table_body.appendChild(table_row);
 
