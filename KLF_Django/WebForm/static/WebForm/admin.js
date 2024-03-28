@@ -51,7 +51,19 @@ function FormSetting(settings, x, isLast) {
 		name.appendChild(TEFAP);
 		name.appendChild(document.createTextNode(" "));
 	}
-	name.appendChild(document.createTextNode(settings[0]));
+	if (settings[0] == "") {
+		idInput = document.createElement("input");
+		idInput.setAttribute("type", "text");
+		idInput.setAttribute("id", "idInput");
+		name.appendChild(document.createTextNode("Field Name: "));
+		name.appendChild(idInput);
+		
+
+
+	}
+	else {
+		name.appendChild(document.createTextNode(settings[0]));
+	}
 
 	const Plabel = document.createElement("label");
 	Plabel.setAttribute("for",settings[0]);
@@ -115,6 +127,7 @@ function FormSetting(settings, x, isLast) {
 
 	const type = document.createElement("select");
 	type.setAttribute("id","type"+x);
+	type.setAttribute("onchange", "fieldTypeChange(this.value, this.id)");
 	type.appendChild(text);
 	type.appendChild(Email);
 	type.appendChild(number);
@@ -122,6 +135,7 @@ function FormSetting(settings, x, isLast) {
 
 	const mlabel = document.createElement("label");
 	mlabel.setAttribute("for", "min");
+	mlabel.setAttribute("id", "mlabel"+x);
 	mlabel.appendChild(document.createTextNode("Min:"));
 	mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
 
@@ -134,6 +148,7 @@ function FormSetting(settings, x, isLast) {
 
 	const xlabel = document.createElement("label");
 	xlabel.setAttribute("for", "max");
+	xlabel.setAttribute("id", "xlabel"+x);
 	xlabel.appendChild(document.createTextNode("Max:"));
 	xlabel.appendChild(info);
 	xlabel.setAttribute("title","Set to 0 if you don't want a limit");
@@ -201,7 +216,8 @@ function FormSetting(settings, x, isLast) {
 	Visdiv.setAttribute("class","Visdiv");
 
 	const option = document.createElement("div");
-	option.setAttribute("id","option");
+	option.setAttribute("id","option"+x);
+	option.setAttribute("class","option");
 	option.appendChild(name);
 	option.appendChild(Plabel);
 	option.appendChild(rename);
@@ -248,6 +264,53 @@ function FormSetting(settings, x, isLast) {
 	formSetting.appendChild(optionView);
 	if (isLast) {
 		formSetting.appendChild(FormButtons);
+	}
+}
+
+
+
+function fieldTypeChange(value, id){
+	id = id.charAt(4);
+	if (value == "number") {
+		const mlabel = document.createElement("label");
+		mlabel.setAttribute("for", "min");
+		mlabel.setAttribute("id", "mlabel"+id);
+		mlabel.appendChild(document.createTextNode("Min:"));
+		mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+
+		const min = document.createElement("input");
+		min.setAttribute("id","min"+id);
+		min.setAttribute("type","number");
+		min.setAttribute("min","0");
+		min.setAttribute("style","width:50px");
+		min.setAttribute("placeholder", 0);
+
+		const xlabel = document.createElement("label");
+		xlabel.setAttribute("for", "max");
+		xlabel.setAttribute("id", "xlabel"+id);
+		xlabel.appendChild(document.createTextNode("Max:"));
+		//xlabel.appendChild(info);
+		xlabel.setAttribute("title","Set to 0 if you don't want a limit");
+		xlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+
+		const max = document.createElement("input");
+		max.setAttribute("id","max"+id);
+		max.setAttribute("type","number");
+		max.setAttribute("min","0");
+		max.setAttribute("style","width:50px");
+		max.setAttribute("placeholder", 100);
+
+		optionDiv = document.getElementById("option"+id);
+		optionDiv.appendChild(mlabel);
+		optionDiv.appendChild(min);
+		optionDiv.appendChild(xlabel);
+		optionDiv.appendChild(max);
+	}
+	else {
+		document.getElementById("mlabel"+id).remove();
+		document.getElementById("min"+id).remove();
+		document.getElementById("xlabel"+id).remove();
+		document.getElementById("max"+id).remove();
 	}
 }
 
