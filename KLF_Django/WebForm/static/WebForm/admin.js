@@ -234,10 +234,12 @@ function FormSetting(settings, x, isLast) {
 
 	const add = document.createElement("button");
 	add.setAttribute("id","AddField");
+	add.setAttribute("onclick", "addField()");
 	add.appendChild(document.createTextNode("Add Field"));
 
 	const FormButtons = document.createElement("div");
 	FormButtons.setAttribute("class","FormButton");
+	FormButtons.setAttribute("id", "FormButtonDiv");
 	FormButtons.appendChild(successLabel);
 	FormButtons.appendChild(Save);
 	FormButtons.appendChild(add);
@@ -248,6 +250,19 @@ function FormSetting(settings, x, isLast) {
 		formSetting.appendChild(FormButtons);
 	}
 }
+
+
+//format: id, placeholder, name, type, required?, min, max, hide?, TEFAP
+function addField() {
+	document.getElementById("FormButtonDiv").remove();
+	const setting = ["","","","text", 1,0,0,0,0];
+	order = document.getElementsByClassName("nOrder").length;
+	FormSetting(setting, order, true);
+
+
+
+}
+
 
 // Functionality:
 //		Transforms javascript object into multi-dimensional array for use in other functions in this file.
