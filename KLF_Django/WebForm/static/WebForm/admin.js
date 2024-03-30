@@ -31,6 +31,41 @@ $(document).ready(function () {
 
 let Universal = "";
 
+function createMinMax(minNum, maxNum, x) {
+	const info = document.createElement("b");
+	info.appendChild(document.createTextNode("\u24d8"));
+
+	const mlabel = document.createElement("label");
+	mlabel.setAttribute("for", "min");
+	mlabel.setAttribute("id", "mlabel"+x);
+	mlabel.appendChild(document.createTextNode("Min:"));
+	mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+
+	const min = document.createElement("input");
+	min.setAttribute("id","min"+x);
+	min.setAttribute("type","number");
+	min.setAttribute("min","0");
+	min.setAttribute("style","width:50px");
+	min.setAttribute("placeholder", minNum);
+
+	const xlabel = document.createElement("label");
+	xlabel.setAttribute("for", "max");
+	xlabel.setAttribute("id", "xlabel"+x);
+	xlabel.appendChild(document.createTextNode("Max:"));
+	xlabel.appendChild(info);
+	xlabel.setAttribute("title","Set to 0 if you don't want a limit");
+	xlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+
+	const max = document.createElement("input");
+	max.setAttribute("id","max"+x);
+	max.setAttribute("type","number");
+	max.setAttribute("min","0");
+	max.setAttribute("style","width:50px");
+	max.setAttribute("placeholder", maxNum);
+
+	return [mlabel, min, xlabel, max]
+}
+
 // Functionality:
 //		Creates editable field row in 'Edit Form' page
 // Parameters:
@@ -46,7 +81,7 @@ function FormSetting(settings, x, isLast) {
 	TEFAP.setAttribute("class","fa fa-book");
 
 	const name = document.createElement("p");
-	name.setAttribute("id", "field_id_text"+x);
+//	name.setAttribute("id", "field_id_text"+x);
 	if(settings[8] == 1) {
 		name.appendChild(TEFAP);
 		name.appendChild(document.createTextNode(" "));
@@ -54,14 +89,12 @@ function FormSetting(settings, x, isLast) {
 	if (settings[0] == "") {
 		idInput = document.createElement("input");
 		idInput.setAttribute("type", "text");
-		idInput.setAttribute("id", "idInput");
+		idInput.setAttribute("id", "field_id_text"+x);
 		name.appendChild(document.createTextNode("Field Name: "));
 		name.appendChild(idInput);
-		
-
-
 	}
 	else {
+		name.setAttribute("id", "field_id_text"+x);
 		name.appendChild(document.createTextNode(settings[0]));
 	}
 
@@ -133,33 +166,11 @@ function FormSetting(settings, x, isLast) {
 	type.appendChild(number);
 	type.appendChild(other);
 
-	const mlabel = document.createElement("label");
-	mlabel.setAttribute("for", "min");
-	mlabel.setAttribute("id", "mlabel"+x);
-	mlabel.appendChild(document.createTextNode("Min:"));
-	mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
-
-	const min = document.createElement("input");
-	min.setAttribute("id","min"+x);
-	min.setAttribute("type","number");
-	min.setAttribute("min","0");
-	min.setAttribute("style","width:50px");
-	min.setAttribute("placeholder", settings[5]);
-
-	const xlabel = document.createElement("label");
-	xlabel.setAttribute("for", "max");
-	xlabel.setAttribute("id", "xlabel"+x);
-	xlabel.appendChild(document.createTextNode("Max:"));
-	xlabel.appendChild(info);
-	xlabel.setAttribute("title","Set to 0 if you don't want a limit");
-	xlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
-
-	const max = document.createElement("input");
-	max.setAttribute("id","max"+x);
-	max.setAttribute("type","number");
-	max.setAttribute("min","0");
-	max.setAttribute("style","width:50px");
-	max.setAttribute("placeholder", settings[6]);
+	var minMax = createMinMax(settings[5], settings[6], x);
+	mlabel = minMax[0];
+	min = minMax[1];
+	xlabel = minMax[2];
+	max = minMax[3];
 
 	const upA = document.createElement("i");
 	upA.setAttribute("class","arrow up");
@@ -267,50 +278,22 @@ function FormSetting(settings, x, isLast) {
 	}
 }
 
-
-
 function fieldTypeChange(value, id){
-	id = id.charAt(4);
+	x = id.charAt(4);
 	if (value == "number") {
-		const mlabel = document.createElement("label");
-		mlabel.setAttribute("for", "min");
-		mlabel.setAttribute("id", "mlabel"+id);
-		mlabel.appendChild(document.createTextNode("Min:"));
-		mlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
+		var minMax = createMinMax(0, 100, x)
 
-		const min = document.createElement("input");
-		min.setAttribute("id","min"+id);
-		min.setAttribute("type","number");
-		min.setAttribute("min","0");
-		min.setAttribute("style","width:50px");
-		min.setAttribute("placeholder", 0);
+		optionDiv = document.getElementById("option"+x);
 
-		const xlabel = document.createElement("label");
-		xlabel.setAttribute("for", "max");
-		xlabel.setAttribute("id", "xlabel"+id);
-		xlabel.appendChild(document.createTextNode("Max:"));
-		//xlabel.appendChild(info);
-		xlabel.setAttribute("title","Set to 0 if you don't want a limit");
-		xlabel.setAttribute("style","font-size: 16px; margin-left: 10px");
-
-		const max = document.createElement("input");
-		max.setAttribute("id","max"+id);
-		max.setAttribute("type","number");
-		max.setAttribute("min","0");
-		max.setAttribute("style","width:50px");
-		max.setAttribute("placeholder", 100);
-
-		optionDiv = document.getElementById("option"+id);
-		optionDiv.appendChild(mlabel);
-		optionDiv.appendChild(min);
-		optionDiv.appendChild(xlabel);
-		optionDiv.appendChild(max);
+		for(var i = 0; i < minMax.length; i++){
+			optionDiv.appendChild(minMax[i]);
+		}
 	}
 	else {
-		document.getElementById("mlabel"+id).remove();
-		document.getElementById("min"+id).remove();
-		document.getElementById("xlabel"+id).remove();
-		document.getElementById("max"+id).remove();
+		document.getElementById("mlabel"+x).remove();
+		document.getElementById("min"+x).remove();
+		document.getElementById("xlabel"+x).remove();
+		document.getElementById("max"+x).remove();
 	}
 }
 
@@ -321,9 +304,53 @@ function addField() {
 	const setting = ["","","","text", 1,0,0,0,0];
 	order = document.getElementsByClassName("nOrder").length;
 	FormSetting(setting, order, true);
+}
 
+function saveFormFields() {
+	document.getElementById("sucessLabel").style.display="none";
+	var fieldData = {};
+	var count = 0;
+	while (document.getElementById("placeholder" + count) != null){
+		field_id = document.getElementById("field_id_text" + count).innerText;
+		if (field_id == "") {
+			field_id = document.getElementById("field_id_text" + count).value;
+		}
+		field_id = field_id.trim();
+		placeholder = document.getElementById("placeholder" + count).value;
+		field_type = document.getElementById("type" + count).value;
+		required = document.getElementById("require" + count).value;
 
+		field_min = document.getElementById("min" + count);
+		field_max = document.getElementById("max" + count);
+		if (field_min != null){
+			field_min = field_min.value;
+		}
+		if (field_max != null){
+			field_max = field_max.value;
+		}
+		visible = document.getElementById("visible" + count).value;
+		order_num = document.getElementById("nOrder" + count).innerText;
 
+		fieldData["field" + count]=[field_id, placeholder, field_type, required, field_min, field_max, visible, order_num]
+		count++;
+	}
+
+	$.ajax({
+		type: "POST",
+		url: "/form/post-form-settings/",
+		dataType: "text",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: fieldData,
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			document.getElementById("sucessLabel").style.display="block";
+		}
+	});
 }
 
 
@@ -770,6 +797,7 @@ function populateLocations(locations, sites) {
 	var pages = document.getElementsByClassName("PageB");
 	for (var i = 0; i < pages.length; i++){
 		pages[i].addEventListener("click", function (e){
+			document.getElementById("sucessLabel").style.display="none";
 			var Npage = document.getElementById(e.target.id + "P");
 			Cpage.style.display = "none";
 			Npage.style.display = "block";
@@ -787,53 +815,3 @@ function populateFormSettings(inputSettings) {
 		FormSetting(inputSettings[i], i, i + 1 == inputSettings.length);
 	}
 }
-
-
-function saveFormFields() {
-	document.getElementById("sucessLabel").style.display="none";
-	var fieldData = {};
-	var count = 0;
-	while (document.getElementById("placeholder" + count) != null){
-		field_id = document.getElementById("field_id_text" + count).innerText;
-		placeholder = document.getElementById("placeholder" + count).value;
-		field_type = document.getElementById("type" + count).value;
-		required = document.getElementById("require" + count).value;
-
-		field_min = document.getElementById("min" + count);
-		field_max = document.getElementById("max" + count);
-		if (field_min != null){
-			field_min = field_min.value;
-		}
-		if (field_max != null){
-			field_max = field_max.value;
-		}
-		visible = document.getElementById("visible" + count).value;
-		order_num = document.getElementById("nOrder" + count).innerText;
-
-		fieldData["field" + count]=[field_id, placeholder, field_type, required, field_min, field_max, visible, order_num]
-		count++;
-	}
-
-
-	$.ajax({
-		type: "POST",
-		url: "/form/post-form-settings/", 
-		dataType: "text",
-		headers: {'X-CSRFToken': getCookie("csrftoken")},        
-		mode: 'same-origin',
-		// Do not send CSRF token to another domain.
-		data: fieldData, 
-		success: function (data) {
-			if (data.redirect) {
-				window.location.href = data.redirect;
-				return;
-			}
-			document.getElementById("sucessLabel").style.display="block";
-		}
-	});
-}
-
-
-
-
-

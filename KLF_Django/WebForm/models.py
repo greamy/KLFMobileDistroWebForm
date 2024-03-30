@@ -26,14 +26,13 @@ class Submission(models.Model):
 	zip_code = models.TextField()
 	site = models.ForeignKey(Site, on_delete=models.CASCADE)
 	date = models.DateField(auto_now=True)
+	extra_fields = models.JSONField(default=dict)
 	# create one column ("Extra Fields") that stores all of the custom fields added later on as json
 	# later we'll parse in our views so that the data gets split into different columns when put into excel file
 
 
-
-
 class Field(models.Model):
-	type_choices = {"TXT": "text", "NUM": "number", "EML": "email", "OTH": "other"}
+	type_choices = [("TXT", "text"), ("NUM", "number"), ("EML", "email"), ("OTH", "other")]
 	
 	field_id = models.TextField()
 	placeholder = models.TextField()

@@ -14,7 +14,6 @@ import socket
 import datetime
 import os
 
-
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
 # this will generate responses from these functions, for instance, calling the html file for the user form.
 ADMIN_HOME_URL = "/form/admin/"
@@ -23,15 +22,19 @@ LOGIN_REDIRECT_JSON = {"redirect": LOGIN_REDIRECT_URL}
 APPLICATION_DIR = os.path.join(settings.BASE_DIR, "WebForm")
 INVALID_REQUEST_TYPE = "Invalid Request type."
 
+
 class HttpResponseUnauthorized(HttpResponse):
 	status_code = HTTPStatus.UNAUTHORIZED
+
 
 def index(request, site):
 	return render(request, "WebForm/index.html", {})
 
+
 @login_required
 def admin(request):
 	return render(request, "WebForm/admin.html", {})
+
 
 def admin_login(request):
 	if request.user.is_authenticated:
@@ -57,6 +60,7 @@ def logout_user(request):
 		logout(request)
 	return JsonResponse(LOGIN_REDIRECT_JSON)
 
+
 def change_username(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
@@ -66,6 +70,7 @@ def change_username(request):
 	new_username = request.POST["Username"]
 	request.user.username = new_username
 	return HttpResponse("Successfully changed username")
+
 
 def change_password(request):
 	if not request.user.is_authenticated:
@@ -97,26 +102,28 @@ def generate_QR(request):
 		response["Content-Disposition"] = 'attachment; filename="' + file_name + '"'
 	return response
 
-
+# TODO get headers from Fields Model
 def submit(request, site_name):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 	print(request.POST)
 	template = loader.get_template('WebForm/Sindex.html')
-	user_data = [request.POST.get("Fname"),
-				 request.POST.get("Lname"),
-				 request.POST.get("Email"),
-				 request.POST.get("HHold"),
-				 request.POST.get("Address"),
-				 request.POST.get("Zip")
-				 ]
+
+	user_data = request.POST
+	headers_db = Field.objects.all().values("field_id", "tefap")
+
+	extra_fields = {}
+	for header in headers_db:
+		if header['tefap'] == False:
+			extra_fields[header['field_id']] = user_data.get(header['field_id'])
+
+	print(extra_fields)
 
 	# input validation
-	print(user_data[2])
-	if '@' not in user_data[2] or '.' not in user_data[2]:
+	if '@' not in user_data['Email'] or '.' not in user_data['Email']:
 		return HttpResponseBadRequest("Invalid Email Address")
 	try:
-		hhold = int(user_data[3])
+		int(user_data['HHold'])
 	except ValueError:
 		return HttpResponseBadRequest("Invalid Number in Household")
 
@@ -124,9 +131,9 @@ def submit(request, site_name):
 	if not site.exists():
 		return HttpResponseBadRequest("Invalid Site Name in URL.")
 
-	submission = Submission(first_name=user_data[0], last_name=user_data[1], email=user_data[2],
-							number_in_household=user_data[3], street_address=user_data[4],
-							zip_code=user_data[5], site=site.first())
+	submission = Submission(first_name=user_data['Fname'], last_name=user_data['Lname'], email=user_data['Email'],
+							number_in_household=user_data['HHold'], street_address=user_data['Address'],
+							zip_code=user_data['Zip'], site=site.first(), extra_fields=extra_fields)
 
 	submission.save()
 
@@ -205,14 +212,11 @@ def get_submission_table(request):
 
 	location = request.GET.get("location")
 	site = request.GET.get("site")
-	print(site)
-	
+
 	unique_dates = list(Submission.objects.filter(site__name__iexact=site).dates("date", "day", "DESC"))
-	print(unique_dates)
 	return JsonResponse(unique_dates, safe=False)
 
-
-
+# TODO Get headers from Fields Database
 def get_excel_file(request):
 	if not request.user.is_authenticated:
 		return JsonResponse(LOGIN_REDIRECT_JSON)
@@ -228,13 +232,28 @@ def get_excel_file(request):
 		.filter(date__exact=date_object) \
 		.values(First_Name=F("first_name"), Last_Name=F("last_name"), Email=F("email"),
 				Number_In_Household=F("number_in_household"), Street_Address=F("street_address"),
-				Zip_Code=F("zip_code"), Site_Name=F("site__name"), Date=F("date"))
+				Zip_Code=F("zip_code"), Site_Name=F("site__name"), Date=F("date"), Extra_Fields=F("extra_fields"))
 
+	headers_db = Field.objects.all().values("field_id", "tefap")
+	headers = []
+	extra_fields = []
+	for header in headers_db:
+		if header['tefap']:
+			headers.append(header['field_id'])
+		else:
+			extra_fields.append(header['field_id'])
+	headers.append("Site Name")
+	headers.append("Date")
+	headers.extend(extra_fields)
+
+	# print(headers)
 	excel_data = []
-	headers = list(model_data.first().keys())
-
 	for row in model_data:
 		row = list(row.values())
+		if type(row[-1]) == dict:
+			extra = row.pop()
+			row.extend(list(extra.values()))
+		print(row)
 		excel_data.append(row)
 
 	file_name = site + " " + date + ".xlsx"
@@ -262,11 +281,10 @@ def get_form_fields(request):
 	fields = Field.objects.all()
 	settings = []
 	for field in fields:
-		settings.append([field.field_id, field.placeholder, field.name, field.field_type, 1 if field.required else 0, field.field_min, field.field_max, 1 if field.visible else 0, 1 if field.tefap else 0, field.order_num])
-	print(settings)
+		settings.append([field.field_id, field.placeholder, field.name, field.field_type, 1 if field.required else 0,
+						 field.field_min, field.field_max, 1 if field.visible else 0, 1 if field.tefap else 0,
+						 field.order_num])
 	return JsonResponse(settings, safe=False)
-
-
 
 
 def save_form_fields(request):
@@ -279,17 +297,22 @@ def save_form_fields(request):
 
 	for settings in post_data:
 		settings = settings[1]
-		print(settings)
-		Field.objects.filter(field_id__iexact=settings[0]).update(placeholder = settings[1], field_type = settings[2], required = True if settings[3] == "on" else False, field_min = None if settings[4] == "" else settings[4], field_max = None if settings[5] == "" else settings[5], visible = True if settings[6] == "on" else False, order_num = int(settings[7]))
+
+		updated = Field.objects.filter(field_id__iexact=settings[0]) \
+			.update(placeholder=settings[1], field_type=settings[2], required=True if settings[3] == "on" else False,
+					field_min=None if settings[4] == "" else settings[4],
+					field_max=None if settings[5] == "" else settings[5],
+					visible=True if settings[6] == "on" else False,
+					order_num=int(settings[7]))
+
+		if updated == 0:
+			new_field = Field(field_id=settings[0], placeholder=settings[1], name=settings[0], field_type=settings[2],
+							required=True if settings[3] == "on" else False,
+							field_min=None if settings[4] == "" else settings[4],
+							field_max=None if settings[5] == "" else settings[5],
+							visible=True if settings[6] == "on" else False,
+							tefap=False,
+							order_num=int(settings[7]))
+			new_field.save()
 
 	return HttpResponse("Success")
-		
-
-
-
-
-
-
-
-
-
