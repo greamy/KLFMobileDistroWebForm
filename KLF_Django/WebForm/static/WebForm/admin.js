@@ -207,6 +207,7 @@ function FormSetting(settings, x, isLast) {
 	Remove.setAttribute("id","Remove");
 	if (settings[8]==1) {
 		Remove.setAttribute("Disabled",1);
+		Remove.setAttribute("style","background-color:grey; cursor: default");
 	}
 	Remove.appendChild(LRemove);
 
@@ -272,10 +273,17 @@ function FormSetting(settings, x, isLast) {
 	FormButtons.appendChild(add);
 
 	const formSetting = document.getElementById("form-setting");
+	const customDiv = document.createElement("div");
+	customDiv.setAttribute("id", "formRemove");	
+	customDiv.appendChild(optionView);
+	formSetting.appendChild(customDiv);
+
 	formSetting.appendChild(optionView);
 	if (isLast) {
 		formSetting.appendChild(FormButtons);
 	}
+
+	
 }
 
 function fieldTypeChange(value, id){
@@ -797,7 +805,11 @@ function populateLocations(locations, sites) {
 	var pages = document.getElementsByClassName("PageB");
 	for (var i = 0; i < pages.length; i++){
 		pages[i].addEventListener("click", function (e){
-			document.getElementById("sucessLabel").style.display="none";
+			var successLabel = document.getElementById("sucessLabel");
+			if (successLabel != null) {
+				successLabel.style.display = "none";
+			}
+
 			var Npage = document.getElementById(e.target.id + "P");
 			Cpage.style.display = "none";
 			Npage.style.display = "block";
@@ -806,9 +818,35 @@ function populateLocations(locations, sites) {
 			if (e.target.id + "P" != "homeP" && e.target.id + "P" != "formP"){
 				GetSubmissionDates(Npage);
 			}
+			
+			if (e.target.id == "form") {
+				//getFormFields();
+			}
 		});
 	}
 }
+
+
+function getFormFields() {
+	$.ajax({
+		type: "GET",
+		url: "/form/get-form-settings",
+		dataType: "json",
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			
+			// Process the json data
+			console.log(data);
+			let inputSettings = data;
+  			populateFormSettings(inputSettings);
+		}
+	});
+
+}
+
 
 function populateFormSettings(inputSettings) {
 	for (var i = 0; i < inputSettings.length; i++) {
