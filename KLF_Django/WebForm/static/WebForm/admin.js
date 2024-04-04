@@ -266,6 +266,11 @@ function FormSetting(settings, x, isLast) {
 	add.setAttribute("onclick", "addField()");
 	add.appendChild(document.createTextNode("Add Field"));
 
+	const Des = document.createElement("textarea");
+  	Des.setAttribute("id","description");
+  	Des.setAttribute("rows","4");
+  	Des.setAttribute("cols","8");
+	
 	const FormButtons = document.createElement("div");
 	FormButtons.setAttribute("class","FormButton");
 	FormButtons.setAttribute("id", "FormButtonDiv");
@@ -277,6 +282,7 @@ function FormSetting(settings, x, isLast) {
 
 	formSetting.appendChild(optionView);
 	if (isLast) {
+		formSetting.appendChild(Des);
 		formSetting.appendChild(FormButtons);
 	}
 
