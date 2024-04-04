@@ -278,6 +278,10 @@ def get_form_fields(request):
 	if request.method != "GET":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
+	return load_fields_from_db()
+
+
+def load_fields_from_db():
 	fields = Field.objects.all()
 	settings = []
 	for field in fields:
@@ -285,6 +289,7 @@ def get_form_fields(request):
 						 field.field_min, field.field_max, 1 if field.visible else 0, 1 if field.tefap else 0,
 						 field.order_num])
 	return JsonResponse(settings, safe=False)
+
 
 
 def save_form_fields(request):
@@ -316,6 +321,38 @@ def save_form_fields(request):
 			new_field.save()
 
 	return HttpResponse("Success")
+
+
+
+
+
+
+
+
+def remove_form_field(request):
+	if not request.user.is_authenticated:
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if not request.method == "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	form_field = request.POST.get("field")
+	field = Field.objects.filter(field_id__iexact=form_field)
+
+	if field.exists():
+		field.delete()
+	else:
+		return JsonResponse({'error': 'Field object not found in database'}, status=404)
+
+	return load_fields_from_db()
+
+
+
+
+
+
+
+
+
 
 
 

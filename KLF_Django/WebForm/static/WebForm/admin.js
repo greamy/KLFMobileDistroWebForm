@@ -24,7 +24,7 @@ $(document).ready(function () {
                        ["Number in Household","Number in Household","Number in Household","number",1,1,50,0,1],
                        ["Street Address","Street Address","Street Address","other",1,0,0,0,1],
                        ["Zip Code","Zip Code","Zip Code","number",1,10000,99999,0,1]];
-			populateFormSettings(inputSettings);
+			//populateFormSettings(inputSettings);
 		}
 	});
 });
@@ -205,6 +205,7 @@ function FormSetting(settings, x, isLast) {
 
 	const Remove = document.createElement("button");
 	Remove.setAttribute("id","Remove");
+	Remove.setAttribute("onClick","removeFormField(" + x + ")");
 	if (settings[8]==1) {
 		Remove.setAttribute("Disabled",1);
 		Remove.setAttribute("style","background-color:grey; cursor: default");
@@ -272,11 +273,7 @@ function FormSetting(settings, x, isLast) {
 	FormButtons.appendChild(Save);
 	FormButtons.appendChild(add);
 
-	const formSetting = document.getElementById("form-setting");
-	const customDiv = document.createElement("div");
-	customDiv.setAttribute("id", "formRemove");	
-	customDiv.appendChild(optionView);
-	formSetting.appendChild(customDiv);
+	const formSetting = document.getElementById("formRemove");
 
 	formSetting.appendChild(optionView);
 	if (isLast) {
@@ -820,7 +817,7 @@ function populateLocations(locations, sites) {
 			}
 			
 			if (e.target.id == "form") {
-				//getFormFields();
+				getFormFields();
 			}
 		});
 	}
@@ -828,6 +825,12 @@ function populateLocations(locations, sites) {
 
 
 function getFormFields() {
+
+	removeDiv = document.getElementById("formRemove");
+	if (removeDiv) {
+		removeDiv.remove();
+	}
+
 	$.ajax({
 		type: "GET",
 		url: "/form/get-form-settings",
@@ -837,7 +840,6 @@ function getFormFields() {
 				window.location.href = data.redirect;
 				return;
 			}
-			
 			// Process the json data
 			console.log(data);
 			let inputSettings = data;
@@ -849,7 +851,43 @@ function getFormFields() {
 
 
 function populateFormSettings(inputSettings) {
+
+	const formSetting = document.getElementById("form-setting");
+	const customDiv = document.createElement("div");
+	customDiv.setAttribute("id", "formRemove");
+	formSetting.appendChild(customDiv);
+
 	for (var i = 0; i < inputSettings.length; i++) {
 		FormSetting(inputSettings[i], i, i + 1 == inputSettings.length);
 	}
 }
+
+
+
+function removeFormField(x){
+	console.log(x);
+	var field_id = document.getElementById("field_id_text"+x).value;
+
+	$.ajax({
+		type: "POST",
+		url: "/form/remove-form-field/",
+		dataType: "json",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"field": field_id},
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			document.getElementById("formRemove").remove();
+			populateFormSettings(data);
+		}
+	});
+
+}
+
+
+
+

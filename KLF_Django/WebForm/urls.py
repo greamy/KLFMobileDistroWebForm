@@ -24,6 +24,7 @@ urlpatterns = [
 	path('delete-location-data/', views.delete_site, name='deleteSite'),
 	path('get-submission-table/', views.get_submission_table, name='getSubmissionTable'),
 	path('get-form-settings/', views.get_form_fields, name='getFormSettings'),
+	path('remove-form-field/', views.remove_form_field, name="removeFormField"),
 	path('post-form-settings/', views.save_form_fields, name='postFormSettings'),
 	path('get-excel-file/', views.get_excel_file, name='getExcel'),
 	path('change-username/', views.change_username, name='changeUsername'),
