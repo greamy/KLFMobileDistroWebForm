@@ -73,7 +73,6 @@ function createMinMax(minNum, maxNum, x) {
 //		x: integer representing order in the list of form fields.
 // Returns: Nothing
 function FormSetting(settings, x, isLast) {
-	console.log(settings);
 	const info = document.createElement("b");
 	info.appendChild(document.createTextNode("\u24d8"));
 
@@ -207,7 +206,7 @@ function FormSetting(settings, x, isLast) {
 	const Remove = document.createElement("button");
 	Remove.setAttribute("id","Remove");
 	Remove.setAttribute("onClick","removeFormField(" + x + ")");
-	if (settings[8]==1) {
+	if (settings[8]==1) { // Delete button is only enabled for non-tefap fields
 		Remove.setAttribute("Disabled",1);
 		Remove.setAttribute("style","background-color:grey; cursor: default");
 	}
@@ -217,17 +216,19 @@ function FormSetting(settings, x, isLast) {
 	visible.setAttribute("class","fa fa-eye");
 	visible.setAttribute("title","Visibility");
 
+//	const Visdiv = null;
+//	if (settings[8]==0) { // Visibility checkbox only appears for non-tefap fields
 	const Vcheck = document.createElement("input");
 	Vcheck.setAttribute("type","checkbox");
 	Vcheck.setAttribute("id", "visible"+x);
 	if (settings[7]==1) {
 		Vcheck.setAttribute("checked", 1);
 	}
-
 	const Visdiv = document.createElement("div");
 	Visdiv.appendChild(visible);
 	Visdiv.appendChild(Vcheck);
 	Visdiv.setAttribute("class","Visdiv");
+//	}
 
 	const option = document.createElement("div");
 	option.setAttribute("id","option"+x);
@@ -247,7 +248,9 @@ function FormSetting(settings, x, isLast) {
 	}
 	option.appendChild(order);
 	option.appendChild(Remove);
-	option.appendChild(Visdiv);
+	if (settings[8]==0){
+		option.appendChild(Visdiv);
+	}
 
 	const optionView = document.createElement("div");
 	optionView.appendChild(option);
@@ -310,10 +313,11 @@ function fieldTypeChange(value, id){
 }
 
 
-//format: id, placeholder, name, type, required?, min, max, hide?, TEFAP
+//format: id, placeholder, name, type, required?, min, max, visible, TEFAP
 function addField() {
 	document.getElementById("FormButtonDiv").remove();
-	const setting = ["","","","text", 1,0,0,0,0];
+	document.getElementById("description").remove();
+	const setting = ["","","","text", 1,0,0,1,0];
 	order = document.getElementsByClassName("nOrder").length;
 	FormSetting(setting, order, true);
 }
@@ -335,13 +339,19 @@ function saveFormFields() {
 
 		field_min = document.getElementById("min" + count);
 		field_max = document.getElementById("max" + count);
+		visible = document.getElementById("visible" + count);
 		if (field_min != null){
 			field_min = field_min.value;
 		}
 		if (field_max != null){
 			field_max = field_max.value;
 		}
-		visible = document.getElementById("visible" + count).checked;
+		if (visible != null){
+			visible = visible.checked;
+		}
+		else {
+			visible = "true";
+		}
 		order_num = document.getElementById("nOrder" + count).innerText;
 
 		fieldData["field" + count]=[field_id, placeholder, field_type, required, field_min, field_max, visible, order_num]
@@ -351,7 +361,7 @@ function saveFormFields() {
 	$.ajax({
 		type: "POST",
 		url: "/form/post-form-settings/",
-		dataType: "text",
+		dataType: "json",
 		headers: {'X-CSRFToken': getCookie("csrftoken")},
 		mode: 'same-origin',
 		// Do not send CSRF token to another domain.
@@ -361,7 +371,57 @@ function saveFormFields() {
 				window.location.href = data.redirect;
 				return;
 			}
+			document.getElementById("formRemove").remove();
+			populateFormSettings(data);
 			document.getElementById("sucessLabel").style.display="block";
+		}
+	});
+}
+
+function removeFormField(x){
+	let field = document.getElementById("field_id_text"+x);
+	document.getElementById("option"+x).remove();
+	var field_id = field.value;
+	if (!field_id) {
+		field_id = field.innerText;
+	}
+
+	$.ajax({
+		type: "POST",
+		url: "/form/remove-form-field/",
+		dataType: "json",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},
+		mode: 'same-origin',
+		// Do not send CSRF token to another domain.
+		data: {"field": field_id},
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			document.getElementById("formRemove").remove();
+			populateFormSettings(data);
+		}
+	});
+}
+
+function getFormFields() {
+	removeDiv = document.getElementById("formRemove");
+	if (removeDiv) {
+		removeDiv.remove();
+	}
+
+	$.ajax({
+		type: "GET",
+		url: "/form/get-form-settings",
+		dataType: "json",
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			let inputSettings = data;
+  			populateFormSettings(inputSettings);
 		}
 	});
 }
@@ -831,27 +891,6 @@ function populateLocations(locations, sites) {
 	}
 }
 
-function getFormFields() {
-	removeDiv = document.getElementById("formRemove");
-	if (removeDiv) {
-		removeDiv.remove();
-	}
-
-	$.ajax({
-		type: "GET",
-		url: "/form/get-form-settings",
-		dataType: "json",
-		success: function (data) {
-			if (data.redirect) {
-				window.location.href = data.redirect;
-				return;
-			}
-			let inputSettings = data;
-  			populateFormSettings(inputSettings);
-		}
-	});
-}
-
 
 function populateFormSettings(inputSettings) {
 	const formSetting = document.getElementById("form-setting");
@@ -862,32 +901,5 @@ function populateFormSettings(inputSettings) {
 	for (var i = 0; i < inputSettings.length; i++) {
 		FormSetting(inputSettings[i], i, i + 1 == inputSettings.length);
 	}
-}
-
-
-function removeFormField(x){
-	let field = document.getElementById("field_id_text"+x)
-	var field_id = field.value;
-	if (!field_id) {
-		field_id = field.innerText;
-	}
-
-	$.ajax({
-		type: "POST",
-		url: "/form/remove-form-field/",
-		dataType: "json",
-		headers: {'X-CSRFToken': getCookie("csrftoken")},
-		mode: 'same-origin',
-		// Do not send CSRF token to another domain.
-		data: {"field": field_id},
-		success: function (data) {
-			if (data.redirect) {
-				window.location.href = data.redirect;
-				return;
-			}
-			document.getElementById("formRemove").remove();
-			populateFormSettings(data);
-		}
-	});
 }
 

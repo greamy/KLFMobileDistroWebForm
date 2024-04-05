@@ -16,7 +16,9 @@ $(document).ready(function () {
 
 			document.getElementById("error").style.display="none";
 			for (var i = 0; i < inputSettings.length;i++){
-  				createForm(inputSettings[i]);
+				if (inputSettings[i][7] == 1) {
+					createForm(inputSettings[i]);
+				}
 			}
 		}
 	});
@@ -32,7 +34,7 @@ $(document).ready(function () {
                        //["Street Address","Street Address","Address","other",1,0,0,0,1],
                        //["Zip Code","Zip Code","Zip","number",1,10000,99999,0,1]];
 
-function createForm( settings){
+function createForm(settings){
   const important = document.createElement("span");
   important.appendChild(document.createTextNode("*"));
   important.setAttribute("style","color:red");

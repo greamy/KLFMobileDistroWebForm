@@ -28,7 +28,10 @@ class HttpResponseUnauthorized(HttpResponse):
 
 
 def index(request, site):
-	return render(request, "WebForm/index.html", {})
+	if request.method == "GET":
+		return render(request, "WebForm/index.html", {})
+	elif request.method == "POST":
+		return submit(request, site)
 
 
 @login_required
@@ -110,22 +113,26 @@ def submit(request, site_name):
 	template = loader.get_template('WebForm/Sindex.html')
 
 	user_data = request.POST
-	headers_db = Field.objects.all().values("field_id", "tefap")
+	headers_db = Field.objects.all().values("field_id", "tefap", "visible")
 
 	extra_fields = {}
 	for header in headers_db:
-		if header['tefap'] == False:
+		if not header['tefap'] and header['visible']:
 			extra_fields[header['field_id']] = user_data.get(header['field_id'])
 
 	print(extra_fields)
 
 	# input validation
 	if '@' not in user_data['Email'] or '.' not in user_data['Email']:
-		return HttpResponseBadRequest("Invalid Email Address")
+		template = loader.get_template('WebForm/index.html')
+		return HttpResponse(
+			template.render({"error": "Invalid Email address. Must include '@' and '.' characters."}, request))
 	try:
 		int(user_data['HHold'])
 	except ValueError:
-		return HttpResponseBadRequest("Invalid Number in Household")
+		template = loader.get_template('WebForm/index.html')
+		return HttpResponse(
+			template.render({"error": "Invalid Email address. Must include '@' and '.' characters."}, request))
 
 	site = Site.objects.filter(name__iexact=site_name)
 	if not site.exists():
@@ -252,7 +259,8 @@ def get_excel_file(request):
 		row = list(row.values())
 		if type(row[-1]) == dict:
 			extra = row.pop()
-			row.extend(list(extra.values()))
+			for field in extra_fields:
+				row.append(extra.get(field))
 		print(row)
 		excel_data.append(row)
 
@@ -317,7 +325,7 @@ def save_form_fields(request):
 							order_num=int(settings[7]))
 			new_field.save()
 
-	return HttpResponse("Success")
+	return load_fields_from_db()
 
 
 def remove_form_field(request):
