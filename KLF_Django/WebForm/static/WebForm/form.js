@@ -54,8 +54,9 @@ function createForm(settings){
     inputs.setAttribute("required",settings[4]);
   }
   if(settings[3] == "text"){
-    inputs.setAttribute("oninvalid","setCustomValidity('Please enter letters.')");
     inputs.setAttribute("pattern","[A-Za-z]{1,}");
+    inputs.setAttribute("oninvalid","setCustomValidity('Please enter letters.')");
+    inputs.setAttribute("onchange","try{setCustomValidity('')}catch(e){}");
   }else if(settings[3] == "number"){
     inputs.setAttribute("min", settings[5]);
     if (settings[6] != 0){
