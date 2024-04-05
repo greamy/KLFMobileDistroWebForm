@@ -205,7 +205,8 @@ function FormSetting(settings, x, isLast) {
 
 	const Remove = document.createElement("button");
 	Remove.setAttribute("id","Remove");
-	Remove.setAttribute("onClick","removeFormField(" + x + ")");
+	//Remove.setAttribute("onClick","removeFormField(" + x + ")");
+	Remove.setAttribute("onClick","Delete('"+settings[0]+"','formP')");
 	if (settings[8]==1) { // Delete button is only enabled for non-tefap fields
 		Remove.setAttribute("Disabled",1);
 		Remove.setAttribute("style","background-color:grey; cursor: default");
@@ -566,8 +567,15 @@ function off() {
 //		Runs when user clicks 'Delete Site' button in a site's page. Enables 'Are you sure?' pop-up.
 // Parameters: None
 // Returns: None
-function DeleteOverlay() {
-	document.getElementById("overlay").style.display="block";
+function DeleteOverlay(string,array) {
+	if (array == "formP"){
+    		Universal = "formP";
+    		document.getElementById(Universal).style.display="block";
+  	}else{
+    		Universal = string+array;
+    		document.getElementById(Universal).style.display="inline-block";
+  	}
+  	document.getElementById("overlay").style.display="block";
 }
 
 // Functionality:
