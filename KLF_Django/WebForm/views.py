@@ -102,7 +102,7 @@ def generate_QR(request):
 		response["Content-Disposition"] = 'attachment; filename="' + file_name + '"'
 	return response
 
-# TODO get headers from Fields Model
+
 def submit(request, site_name):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
@@ -273,8 +273,6 @@ def get_excel_file(request):
 
 
 def get_form_fields(request):
-	if not request.user.is_authenticated:
-		return JsonResponse(LOGIN_REDIRECT_JSON)
 	if request.method != "GET":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
@@ -291,7 +289,6 @@ def load_fields_from_db():
 	return JsonResponse(settings, safe=False)
 
 
-
 def save_form_fields(request):
 	if not request.user.is_authenticated:
 		return JsonResponse(LOGIN_REDIRECT_JSON)
@@ -304,29 +301,23 @@ def save_form_fields(request):
 		settings = settings[1]
 
 		updated = Field.objects.filter(field_id__iexact=settings[0]) \
-			.update(placeholder=settings[1], field_type=settings[2], required=True if settings[3] == "on" else False,
+			.update(placeholder=settings[1], field_type=settings[2], required=True if settings[3] == "true" else False,
 					field_min=None if settings[4] == "" else settings[4],
 					field_max=None if settings[5] == "" else settings[5],
-					visible=True if settings[6] == "on" else False,
+					visible=True if settings[6] == "true" else False,
 					order_num=int(settings[7]))
 
 		if updated == 0:
 			new_field = Field(field_id=settings[0], placeholder=settings[1], name=settings[0], field_type=settings[2],
-							required=True if settings[3] == "on" else False,
+							required=True if settings[3] == "true" else False,
 							field_min=None if settings[4] == "" else settings[4],
 							field_max=None if settings[5] == "" else settings[5],
-							visible=True if settings[6] == "on" else False,
+							visible=True if settings[6] == "true" else False,
 							tefap=False,
 							order_num=int(settings[7]))
 			new_field.save()
 
 	return HttpResponse("Success")
-
-
-
-
-
-
 
 
 def remove_form_field(request):
@@ -336,6 +327,7 @@ def remove_form_field(request):
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
 	form_field = request.POST.get("field")
+	print(form_field)
 	field = Field.objects.filter(field_id__iexact=form_field)
 
 	if field.exists():

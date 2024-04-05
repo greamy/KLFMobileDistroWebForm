@@ -73,6 +73,7 @@ function createMinMax(minNum, maxNum, x) {
 //		x: integer representing order in the list of form fields.
 // Returns: Nothing
 function FormSetting(settings, x, isLast) {
+	console.log(settings);
 	const info = document.createElement("b");
 	info.appendChild(document.createTextNode("\u24d8"));
 
@@ -219,7 +220,7 @@ function FormSetting(settings, x, isLast) {
 	const Vcheck = document.createElement("input");
 	Vcheck.setAttribute("type","checkbox");
 	Vcheck.setAttribute("id", "visible"+x);
-	if (settings[7]==0) {
+	if (settings[7]==1) {
 		Vcheck.setAttribute("checked", 1);
 	}
 
@@ -329,7 +330,8 @@ function saveFormFields() {
 		field_id = field_id.trim();
 		placeholder = document.getElementById("placeholder" + count).value;
 		field_type = document.getElementById("type" + count).value;
-		required = document.getElementById("require" + count).value;
+		required = document.getElementById("require" + count).checked;
+		console.log(required);
 
 		field_min = document.getElementById("min" + count);
 		field_max = document.getElementById("max" + count);
@@ -339,7 +341,7 @@ function saveFormFields() {
 		if (field_max != null){
 			field_max = field_max.value;
 		}
-		visible = document.getElementById("visible" + count).value;
+		visible = document.getElementById("visible" + count).checked;
 		order_num = document.getElementById("nOrder" + count).innerText;
 
 		fieldData["field" + count]=[field_id, placeholder, field_type, required, field_min, field_max, visible, order_num]
@@ -829,9 +831,7 @@ function populateLocations(locations, sites) {
 	}
 }
 
-
 function getFormFields() {
-
 	removeDiv = document.getElementById("formRemove");
 	if (removeDiv) {
 		removeDiv.remove();
@@ -846,18 +846,14 @@ function getFormFields() {
 				window.location.href = data.redirect;
 				return;
 			}
-			// Process the json data
-			console.log(data);
 			let inputSettings = data;
   			populateFormSettings(inputSettings);
 		}
 	});
-
 }
 
 
 function populateFormSettings(inputSettings) {
-
 	const formSetting = document.getElementById("form-setting");
 	const customDiv = document.createElement("div");
 	customDiv.setAttribute("id", "formRemove");
@@ -869,10 +865,12 @@ function populateFormSettings(inputSettings) {
 }
 
 
-
 function removeFormField(x){
-	console.log(x);
-	var field_id = document.getElementById("field_id_text"+x).value;
+	let field = document.getElementById("field_id_text"+x)
+	var field_id = field.value;
+	if (!field_id) {
+		field_id = field.innerText;
+	}
 
 	$.ajax({
 		type: "POST",
@@ -891,9 +889,5 @@ function removeFormField(x){
 			populateFormSettings(data);
 		}
 	});
-
 }
-
-
-
 
