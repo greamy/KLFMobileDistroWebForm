@@ -206,7 +206,7 @@ function FormSetting(settings, x, isLast) {
 	const Remove = document.createElement("button");
 	Remove.setAttribute("id","Remove");
 	//Remove.setAttribute("onClick","removeFormField(" + x + ")");
-	Remove.setAttribute("onClick","Delete('"+settings[0]+"','formP')");
+	Remove.setAttribute("onClick","DeleteOverlay('"+settings[0]+"','formP', " + x + ")");
 	if (settings[8]==1) { // Delete button is only enabled for non-tefap fields
 		Remove.setAttribute("Disabled",1);
 		Remove.setAttribute("style","background-color:grey; cursor: default");
@@ -382,6 +382,9 @@ function saveFormFields() {
 function removeFormField(x){
 	let field = document.getElementById("field_id_text"+x);
 	document.getElementById("option"+x).remove();
+
+	document.getElementById("overlay").style.display="none";
+
 	var field_id = field.value;
 	if (!field_id) {
 		field_id = field.innerText;
@@ -552,7 +555,9 @@ function Logout(){
 // Returns: None
 function No(){
   document.getElementById("overlay").style.display="none";
-  document.getElementById(Universal).style.display="none";
+  if(Universal != "formP") {
+  	document.getElementById(Universal).style.display="none";
+  }
 }
 
 // Functionality:
@@ -567,13 +572,16 @@ function off() {
 //		Runs when user clicks 'Delete Site' button in a site's page. Enables 'Are you sure?' pop-up.
 // Parameters: None
 // Returns: None
-function DeleteOverlay(string,array) {
+function DeleteOverlay(string, array, x) {
+	console.log("DeleteOverlay('" +string+ "', '"+ array + "')");
 	if (array == "formP"){
     		Universal = "formP";
     		document.getElementById(Universal).style.display="block";
-  	}else{
+    		document.getElementById("yes").setAttribute("onclick", "removeFormField(" + x + ")");
+  	} else{
     		Universal = string+array;
     		document.getElementById(Universal).style.display="inline-block";
+    		document.getElementById("yes").setAttribute("onclick", "DeleteSite()");
   	}
   	document.getElementById("overlay").style.display="block";
 }
@@ -638,7 +646,7 @@ function CreatePage(array, string) {
 	QR.appendChild(document.createTextNode("Generate QR Code"));
 	
 	const Delete = document.createElement("button");
-  	Delete.setAttribute("onClick","DeleteOverlay('"+string+"','"+array+"')");
+  	Delete.setAttribute("onClick","DeleteOverlay('"+string+"','"+array+"', " + 0 + ")");
   	Delete.setAttribute("class","delete");
   	Delete.appendChild(document.createTextNode("Delete Site"));
 
