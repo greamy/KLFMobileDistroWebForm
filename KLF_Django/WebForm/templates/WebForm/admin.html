@@ -224,7 +224,7 @@ img{
 #sure{
   background-color: white;
   width: 400px;
-  height: 125px;
+  height: 150px;
   margin: auto;
   margin-top: 10%
 }
@@ -485,6 +485,10 @@ tr{
   height: 100px;
   width: 500px;
 }
+.overlay-msg{
+  text-align:center;
+  display:none;
+}
 </style>
 
 
@@ -507,6 +511,8 @@ tr{
   <div id="overlay" >
     <div id="sure">
       <h1><strong>Are you sure?</strong></h1>
+      <p id="DS" class="overlay-msg">This action will remove all related data with this Site!</p>
+      <p id="DF" class="overlay-msg">This action will remove collected data from this field!</p>
       <button id="yes" onclick="DeleteSite()">Yes</button>
       <button id="no" onclick="No()">No</button>
     </div>
