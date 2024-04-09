@@ -579,12 +579,14 @@ function DeleteOverlay(string, array, x) {
 	console.log("DeleteOverlay('" +string+ "', '"+ array + "')");
 	if (array == "formP"){
     		Universal = "formP";
-		document.getElementById("DF").style.display="block";
+			document.getElementById("DF").style.display="block";
+			document.getElementById("DS").style.display="none";
     		document.getElementById(Universal).style.display="block";
     		document.getElementById("yes").setAttribute("onclick", "removeFormField(" + x + ")");
   	} else{
     		Universal = string+array;
-		document.getElementById("DS").style.display="block";
+    		document.getElementById("DF").style.display="none";
+			document.getElementById("DS").style.display="block";
     		document.getElementById(Universal).style.display="inline-block";
     		document.getElementById("yes").setAttribute("onclick", "DeleteSite()");
   	}
@@ -851,6 +853,48 @@ function DownloadSubmissions(site, date) {
 	});
 }
 
+function getProfileInfo() {
+	usernameField = document.getElementById("Username");
+	emailField = document.getElementById("Email");
+
+	$.ajax({
+		type: "GET",
+		url: "/form/get-profile-info/",
+		data: {},
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+
+			usernameField.value = data['username'];
+			emailField.value = data['email'];
+		}
+	});
+}
+
+function changeUsernameEmail() {
+	username = document.getElementById("Username").value;
+	email = document.getElementById("Email").value;
+
+	$.ajax({
+		type: "POST",
+		url: "/form/change-username/",
+		headers: {'X-CSRFToken': getCookie("csrftoken")},
+		mode: 'same-origin',
+		dataType: "json",
+		data: {"username": username, "email": email},
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			console.log(data);
+
+		}
+	});
+}
+
 // Functionality:
 //		Creates list of locations and sites in side-nav, as drop down menus. Ran on page load.
 // Parameters:
@@ -900,13 +944,14 @@ function populateLocations(locations, sites) {
 			Cpage.style.display = "none";
 			Npage.style.display = "block";
 			Cpage = Npage;
-			// TODO: Run function to send AJAX request to generate list of submission dates and update table
-			if (e.target.id + "P" != "homeP" && e.target.id + "P" != "formP"){
-				GetSubmissionDates(Npage);
-			}
-			
 			if (e.target.id == "form") {
 				getFormFields();
+			}
+			else if (e.target.id == "profile") {
+				getProfileInfo();
+			}
+			else if (e.target.id != "home") {
+				GetSubmissionDates(Npage);
 			}
 		});
 	}

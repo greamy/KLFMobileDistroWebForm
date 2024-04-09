@@ -63,6 +63,17 @@ def logout_user(request):
 		logout(request)
 	return JsonResponse(LOGIN_REDIRECT_JSON)
 
+def get_profile_info(request):
+	if not request.user.is_authenticated:
+		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
+	if request.method != "GET":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	username = request.user.username
+	email = request.user.email
+
+	return JsonResponse({"username": username, "email": email}, safe=False)
+
 
 def change_username(request):
 	if not request.user.is_authenticated:
@@ -70,9 +81,17 @@ def change_username(request):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-	new_username = request.POST["Username"]
+	print(request.user)
+
+	new_username = request.POST["username"]
+	new_email = request.POST['email']
+	print(new_username, new_email)
 	request.user.username = new_username
-	return HttpResponse("Successfully changed username")
+	request.user.email = new_email
+
+	print(request.user.email)
+
+	return HttpResponse("Successfully changed username and email")
 
 
 def change_password(request):

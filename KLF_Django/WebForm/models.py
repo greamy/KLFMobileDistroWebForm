@@ -46,11 +46,6 @@ class Field(models.Model):
 	order_num = models.IntegerField()
 
 
-# Model (Field) for storing field information from form.js
-# This will replace the hardcoded fields in form.js
-# from tehn on we would need server requests to get the infromation fro each field
-# so server requests
-
 
 
 

@@ -224,7 +224,7 @@ img{
 #sure{
   background-color: white;
   width: 400px;
-  height: 150px;
+  height: 200px;
   margin: auto;
   margin-top: 10%
 }
@@ -511,8 +511,14 @@ tr{
   <div id="overlay" >
     <div id="sure">
       <h1><strong>Are you sure?</strong></h1>
-      <p id="DS" class="overlay-msg">This action will remove all related data with this Site!</p>
-      <p id="DF" class="overlay-msg">This action will remove collected data from this field!</p>
+      <p id="DS" class="overlay-msg">
+        This action will remove all related data with this Site!
+        <b>Download all data before completing this action!</b>
+      </p>
+      <p id="DF" class="overlay-msg">
+        This action will remove collected data from this field!
+        <b>Download all data before completing this action!</b>
+      </p>
       <button id="yes" onclick="DeleteSite()">Yes</button>
       <button id="no" onclick="No()">No</button>
     </div>
@@ -543,13 +549,14 @@ tr{
     </div>
     <div id="profileP" class="page">
       <div class="Top-Color"><h2>Profile Settings</h2></div>
-      <form class="ProfileSettings">
+      <form class="ProfileSettings" action="javascript:changeUsernameEmail();">
         <label for="Username">Username:</label>
         <input id="Username"></input><br>
         <label for="Email">Email:</label>
         <input id="Email" type="Email"></input><br>
         <button id="Apply">Submit & Apply</button>
       </form>
+      <button id="Change">Change Password</button>
     </div>
     <div id="formP" class="page" style="display: none;">
         <div class="Top-Color"><h2>Form Editor (WIP)</h2></div>
