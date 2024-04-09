@@ -557,6 +557,9 @@ function No(){
   document.getElementById("overlay").style.display="none";
   if(Universal != "formP") {
   	document.getElementById(Universal).style.display="none";
+	document.getElementById("DS").style.display="none";
+  }else{
+	document.getElementById("DF").style.display="none";
   }
 }
 
@@ -576,10 +579,12 @@ function DeleteOverlay(string, array, x) {
 	console.log("DeleteOverlay('" +string+ "', '"+ array + "')");
 	if (array == "formP"){
     		Universal = "formP";
+		document.getElementById("DF").style.display="block";
     		document.getElementById(Universal).style.display="block";
     		document.getElementById("yes").setAttribute("onclick", "removeFormField(" + x + ")");
   	} else{
     		Universal = string+array;
+		document.getElementById("DS").style.display="block";
     		document.getElementById(Universal).style.display="inline-block";
     		document.getElementById("yes").setAttribute("onclick", "DeleteSite()");
   	}
