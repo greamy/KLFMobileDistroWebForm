@@ -88,6 +88,7 @@ def change_username(request):
 	print(new_username, new_email)
 	request.user.username = new_username
 	request.user.email = new_email
+	request.user.save()
 
 	print(request.user.email)
 

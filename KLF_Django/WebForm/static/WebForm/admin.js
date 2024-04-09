@@ -874,6 +874,7 @@ function getProfileInfo() {
 }
 
 function changeUsernameEmail() {
+	document.getElementById("userSuccess").style.display='none';
 	username = document.getElementById("Username").value;
 	email = document.getElementById("Email").value;
 
@@ -882,13 +883,14 @@ function changeUsernameEmail() {
 		url: "/form/change-username/",
 		headers: {'X-CSRFToken': getCookie("csrftoken")},
 		mode: 'same-origin',
-		dataType: "json",
+		dataType: "text",
 		data: {"username": username, "email": email},
 		success: function (data) {
 			if (data.redirect) {
 				window.location.href = data.redirect;
 				return;
 			}
+			document.getElementById("userSuccess").style.display='block';
 			console.log(data);
 
 		}
@@ -936,6 +938,7 @@ function populateLocations(locations, sites) {
 	for (var i = 0; i < pages.length; i++){
 		pages[i].addEventListener("click", function (e){
 			var successLabel = document.getElementById("sucessLabel");
+			document.getElementById("userSuccess").style.display='none';
 			if (successLabel != null) {
 				successLabel.style.display = "none";
 			}
