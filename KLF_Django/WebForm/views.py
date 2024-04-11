@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from http import HTTPStatus
+from time import sleep
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.db.utils import IntegrityError
 from django.template import loader
@@ -103,15 +104,18 @@ def change_password(request):
 
 	elif request.method == "POST":
 		new_password = request.POST["Password"]
-
 		request.user.set_password(new_password)
-		return HttpResponseRedirect(ADMIN_HOME_URL)
-
+		change_password_success(request)
+		return HttpResponseRedirect("/form/change-password-success/")
 	
 	else:
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+	
 
 
+def change_password_success(request):
+	return render(request, "WebForm/ChangePasswordSuccess.html", {})
+	
 
 
 def generate_QR(request):

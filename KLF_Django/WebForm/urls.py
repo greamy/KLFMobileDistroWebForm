@@ -30,6 +30,7 @@ urlpatterns = [
 	path('get-profile-info/', views.get_profile_info, name='getProfileInfo'),
 	path('change-username/', views.change_username, name='changeUsername'),
 	path('change-password/', views.change_password, name='changePassword'),
+	path('change-password-success/', views.change_password_success, name='changePasswordSuccess'),
 	path('admin/login/', views.admin_login, name='admin_login'),
 	path('admin/logout/', views.logout_user, name='admin_logout'),
 	path('admin/', views.admin, name='admin'),
