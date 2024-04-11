@@ -98,12 +98,20 @@ def change_username(request):
 def change_password(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
-	if request.method != "POST":
+	if request.method == "GET":
+		return render(request, "WebForm/ChangePassword.html", {})
+
+	elif request.method == "POST":
+		new_password = request.POST["Password"]
+
+		request.user.set_password(new_password)
+		return HttpResponseRedirect(ADMIN_HOME_URL)
+
+	
+	else:
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-	new_password = request.POST["Password"]
-	request.user.set_password(new_password)
-	return HttpResponse("Successfully changed password")
+
 
 
 def generate_QR(request):

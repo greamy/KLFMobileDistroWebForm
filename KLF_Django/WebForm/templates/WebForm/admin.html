@@ -489,6 +489,28 @@ tr{
   text-align:center;
   display:none;
 }
+#Username, #Email{
+  border: none;
+  border-bottom: 2px solid black;
+}
+#Apply, #Change{
+  margin-left: 5px;
+  margin-top: 2px;
+  border:none;
+  background-color:white;
+  font-size:15px;
+  background-color:rgb(50,107,90);
+  border: none;
+  color: white;
+  padding: 5px 16px;
+  border-radius: 12px;
+  transition-duration: 0.4s;
+}
+#Apply:hover, #Change:hover{
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
 </style>
 
 
@@ -557,7 +579,9 @@ tr{
         <button id="Apply">Submit & Apply</button>
       </form>
       <label id="userSuccess" style="color: green; display: block">Success!</label>
-      <button id="Change">Change Password</button>
+      <form action="/form/change-password/" method="get">
+        <button id="Change">Change Password</button>
+	</form>
     </div>
     <div id="formP" class="page" style="display: none;">
         <div class="Top-Color"><h2>Form Editor (WIP)</h2></div>
