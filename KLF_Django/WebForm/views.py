@@ -103,19 +103,21 @@ def change_password(request):
 		return render(request, "WebForm/ChangePassword.html", {})
 
 	elif request.method == "POST":
+		cur_password = request.POST["CurrentPassword"]
+		user = authenticate(request, username=request.user.username, password=cur_password)
+		if user is None:
+			return render(request, "WebForm/ChangePassword.html", {"error": "Current Password is incorrect"})
+
 		new_password = request.POST["Password"]
 		request.user.set_password(new_password)
-		change_password_success(request)
 		return HttpResponseRedirect("/form/change-password-success/")
 	
 	else:
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 	
 
-
 def change_password_success(request):
 	return render(request, "WebForm/ChangePasswordSuccess.html", {})
-	
 
 
 def generate_QR(request):
