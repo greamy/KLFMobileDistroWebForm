@@ -96,6 +96,18 @@ def change_username(request):
 	return HttpResponse("Successfully changed username and email")
 
 
+def validate_password(password):
+	special_chars = "!@#$%^&*-~`<>,./?\\|-=+"
+	if len(password) < 8:
+		return -1, "Password must have at least 8 characters!"
+	elif not any(char.isupper() for char in password):
+		return -1, "Password must have at least one uppercase letter!"
+	elif not any(char.islower() for char in password):
+		return -1, "Password must have at least one lowercase letter!"
+	elif not any(char in special_chars for char in password):
+		return -1, "Password must have at least one special character: " + special_chars
+	else:
+		return 0, ""
 def change_password(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
@@ -109,6 +121,11 @@ def change_password(request):
 			return render(request, "WebForm/ChangePassword.html", {"error": "Current Password is incorrect"})
 
 		new_password = request.POST["Password"]
+
+		validation = validate_password(new_password)
+		if validation[0] == -1:
+			return render(request, "WebForm/ChangePassword.html", {"error": validation[1]})
+
 		request.user.set_password(new_password)
 		return HttpResponseRedirect("/form/change-password-success/")
 	

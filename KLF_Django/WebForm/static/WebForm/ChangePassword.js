@@ -6,10 +6,14 @@ $(document).ready(function () {
 });
 
 function Check(){
+  console.log("checking equality!");
   const Ps = document.getElementById("NPassword").value;
   const CPs = document.getElementById("CPassword").value;
   if (Ps != CPs){
-    document.getElementById("warning").style.display = "block";
+    console.log("Not equal!");
+    var error = document.getElementById("error");
+    error.innerText = "New passwords do not match!"
+    error.style.display = "block";
     return false;
   }
 }
