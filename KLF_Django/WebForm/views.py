@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.QRCode import QRCode
-from .models import Location, Site, Submission, Field
+from .models import Location, Site, Submission, Field, Description
 import socket
 import datetime
 import os
@@ -358,7 +358,7 @@ def save_form_fields(request):
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
 	post_data = request.POST["fieldData"]
-	description = request.POST["description"]
+	new_description = request.POST["description"]
 
 	for settings in post_data:
 		settings = settings[1]
@@ -379,8 +379,8 @@ def save_form_fields(request):
 							tefap=False,
 							order_num=int(settings[7]))
 			new_field.save()
-	
 
+	Description.objects.all().first().update(description = new_description)
 	return JsonResponse(load_fields_from_db(), safe=False)
 
 
