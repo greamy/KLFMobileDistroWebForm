@@ -1,1 +1,4 @@
-Backend/githubtoken.txt
+KLF_Django/venv/
+KLF_Django/venv
+KLF_Django/db.sqlite3
+.DS_Store
