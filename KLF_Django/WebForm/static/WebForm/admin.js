@@ -16,14 +16,6 @@ $(document).ready(function () {
 
 			//2d Array for form
 			//format: id, placeholder, name, type, required?, min, max, hide?, TEFAP
-			// TODO: Replace this definition with server call on 'Edit form' button click.
-			const inputSettings = [
-                       ["First Name","First Name","First Name","text", 1,0,0,0,1],
-                       ["Last Name","Last Name","Last Name","text", 1,0,0,0,1],
-                       ["Email Address","Email Address","Email Address","email",0,0,0,0,1],
-                       ["Number in Household","Number in Household","Number in Household","number",1,1,50,0,1],
-                       ["Street Address","Street Address","Street Address","other",1,0,0,0,1],
-                       ["Zip Code","Zip Code","Zip Code","number",1,10000,99999,0,1]];
 			//populateFormSettings(inputSettings);
 		}
 	});
