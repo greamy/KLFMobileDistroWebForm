@@ -65,6 +65,9 @@ label{
 }
 input[type=number] {
   -moz-appearance: textfield;
+}
+#description {
+	text-align: center;
 }</style>
 
 	<head>
@@ -83,6 +86,7 @@ input[type=number] {
 			<button class="btn btn-block btn-danger" id="Submit" type="submit">Submit </button>
 
 		</form>
+		<p id="description"></p>
 	</div>
 	{% load static %}
 	<script src="{% static 'WebForm/form.js' %}" type="text/javascript"></script>

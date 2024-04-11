@@ -357,10 +357,13 @@ def save_form_fields(request):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-	post_data = request.POST["fieldData"]
-	new_description = request.POST["description"]
+	# post_data = request.POST["fieldData"]
+	# new_description = request.POST["description"]
+	post_data = request.POST.lists()
 
 	for settings in post_data:
+		if settings[0] == "description":
+			continue
 		settings = settings[1]
 
 		updated = Field.objects.filter(field_id__iexact=settings[0]) \
@@ -380,7 +383,7 @@ def save_form_fields(request):
 							order_num=int(settings[7]))
 			new_field.save()
 
-	Description.objects.all().first().update(description = new_description)
+	Description.objects.all().update(description=request.POST['description'])
 	return JsonResponse(load_fields_from_db(), safe=False)
 
 
@@ -401,7 +404,13 @@ def remove_form_field(request):
 
 	return JsonResponse(load_fields_from_db(), safe=False)
 
+def get_description(request):
+	if not request.user.is_authenticated:
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if not request.method == "GET":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
+	return JsonResponse(Description.objects.all().first().description, safe=False)
 
 
 

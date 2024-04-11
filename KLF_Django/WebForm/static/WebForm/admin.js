@@ -266,7 +266,7 @@ function FormSetting(settings, x, isLast) {
 	add.setAttribute("onclick", "addField()");
 	add.appendChild(document.createTextNode("Add Field"));
 
-	const Des = document.createElement("textarea");
+	const Des= document.createElement("textarea");
   	Des.setAttribute("id","description");
   	Des.setAttribute("rows","4");
   	Des.setAttribute("cols","8");
@@ -284,9 +284,24 @@ function FormSetting(settings, x, isLast) {
 	if (isLast) {
 		formSetting.appendChild(Des);
 		formSetting.appendChild(FormButtons);
+		setDescription();
 	}
+}
 
-	
+function setDescription() {
+	$.ajax({
+		type: "GET",
+		url: "/form/get-form-description/",
+		dataType: "text",
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
+			data = data.replaceAll('"', "");
+			document.getElementById("description").value = data;
+		}
+	});
 }
 
 function changeOrder(value, direction){
@@ -382,6 +397,9 @@ function saveFormFields() {
 		count++;
 	}
 
+	let description = document.getElementById("description").value;
+	fieldData['description'] = description;
+
 	$.ajax({
 		type: "POST",
 		url: "/form/post-form-settings/",
@@ -389,6 +407,7 @@ function saveFormFields() {
 		headers: {'X-CSRFToken': getCookie("csrftoken")},
 		mode: 'same-origin',
 		// Do not send CSRF token to another domain.
+		// data: {"fieldData": fieldData, "description": description},
 		data: fieldData,
 		success: function (data) {
 			if (data.redirect) {
@@ -785,6 +804,21 @@ function GenerateQR() {
 // Returns: None
 function ResetLocations() {
 	const sideBar = document.getElementById("loc");
+	document.getElementById("editForm").remove();
+
+	var sidenav = document.getElementById("sidenav");
+
+	var newEditFormFieldset = document.createElement("fieldset");
+	newEditFormFieldset.setAttribute("id", "editForm");
+
+	var newEditFormButton = document.createElement("button");
+	newEditFormButton.setAttribute("id", "form");
+	newEditFormButton.setAttribute("class", "PageB");
+	newEditFormButton.innerText="Edit Form";
+
+	newEditFormFieldset.appendChild(newEditFormButton);
+	sidenav.appendChild(newEditFormFieldset);
+
   	while (sideBar.firstChild) {
     		sideBar.removeChild(sideBar.lastChild);
   	}

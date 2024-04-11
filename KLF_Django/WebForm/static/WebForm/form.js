@@ -22,6 +22,20 @@ $(document).ready(function () {
 			}
 		}
 	});
+    console.log("about to add description");
+    $.ajax({
+        type: "GET",
+        url: "/form/get-form-description/",
+        success: function (data) {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+                return;
+            }
+            console.log(data);
+            console.log("adding description");
+            document.getElementById("description").innerText = data.replaceAll('"', "");
+        }
+    });
 });
 
 //2d Array for form
