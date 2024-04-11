@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.QRCode import QRCode
+from .Scripts.DiskUtility import DiskUtility
 from .models import Location, Site, Submission, Field, Description
 import socket
 import datetime
@@ -37,7 +38,12 @@ def index(request, site):
 
 @login_required
 def admin(request):
-	return render(request, "WebForm/admin.html", {})
+	utility = DiskUtility()
+	db_file_path = os.path.join(settings.BASE_DIR, "db.sqlite3")
+	db_size = utility.get_file_size(db_file_path)
+	server_size = utility.get_disk_usage(settings.BASE_DIR)[2]
+	return render(request, "WebForm/admin.html", {"db_size": db_size[0], "db_units": db_size[1],
+												"server_size": round(server_size[0]), "server_units": server_size[1]})
 
 
 def admin_login(request):
@@ -63,6 +69,7 @@ def logout_user(request):
 	if request.user.is_authenticated:
 		logout(request)
 	return JsonResponse(LOGIN_REDIRECT_JSON)
+
 
 def get_profile_info(request):
 	if not request.user.is_authenticated:
@@ -108,6 +115,8 @@ def validate_password(password):
 		return -1, "Password must have at least one special character: " + special_chars
 	else:
 		return 0, ""
+
+
 def change_password(request):
 	if not request.user.is_authenticated:
 		return HttpResponseRedirect(LOGIN_REDIRECT_URL)
@@ -129,10 +138,10 @@ def change_password(request):
 		request.user.set_password(new_password)
 		request.user.save()
 		return HttpResponseRedirect("/form/change-password-success/")
-	
+
 	else:
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
-	
+
 
 def change_password_success(request):
 	return render(request, "WebForm/ChangePasswordSuccess.html", {})
@@ -275,6 +284,7 @@ def get_submission_table(request):
 	unique_dates = list(Submission.objects.filter(site__name__iexact=site).dates("date", "day", "DESC"))
 	return JsonResponse(unique_dates, safe=False)
 
+
 # TODO Get headers from Fields Database
 def get_excel_file(request):
 	if not request.user.is_authenticated:
@@ -331,6 +341,18 @@ def get_excel_file(request):
 
 	return response
 
+def delete_old_entries(request):
+	if not request.user.is_authenticated:
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if request.method != "GET":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
+	old_submissions = Submission.objects.filter(date__lte=one_year_ago)
+	if old_submissions.exists():
+		old_submissions.delete()
+	return HttpResponse("Successfully deleted entries over a year old!!")
+
 
 def get_form_fields(request):
 	if request.method != "GET":
@@ -348,7 +370,9 @@ def load_fields_from_db():
 						 field.order_num])
 
 	return sorted(settings, key=lambda x: x[-1])
-	# return JsonResponse(settings, safe=False)
+
+
+# return JsonResponse(settings, safe=False)
 
 
 def save_form_fields(request):
@@ -375,12 +399,12 @@ def save_form_fields(request):
 
 		if updated == 0:
 			new_field = Field(field_id=settings[0], placeholder=settings[1], name=settings[0], field_type=settings[2],
-							required=True if settings[3] == "true" else False,
-							field_min=None if settings[4] == "" else settings[4],
-							field_max=None if settings[5] == "" else settings[5],
-							visible=True if settings[6] == "true" else False,
-							tefap=False,
-							order_num=int(settings[7]))
+							  required=True if settings[3] == "true" else False,
+							  field_min=None if settings[4] == "" else settings[4],
+							  field_max=None if settings[5] == "" else settings[5],
+							  visible=True if settings[6] == "true" else False,
+							  tefap=False,
+							  order_num=int(settings[7]))
 			new_field.save()
 
 	Description.objects.all().update(description=request.POST['description'])
@@ -404,6 +428,7 @@ def remove_form_field(request):
 
 	return JsonResponse(load_fields_from_db(), safe=False)
 
+
 def get_description(request):
 	if not request.user.is_authenticated:
 		return JsonResponse(LOGIN_REDIRECT_JSON)
@@ -411,14 +436,3 @@ def get_description(request):
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
 	return JsonResponse(Description.objects.all().first().description, safe=False)
-
-
-
-
-
-
-
-
-
-
-

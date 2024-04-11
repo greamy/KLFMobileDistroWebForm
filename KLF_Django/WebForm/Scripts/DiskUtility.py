@@ -5,7 +5,7 @@ class DiskUtility:
 	def __init__(self):
 		pass
 
-	def get_disk_udage(self, path):
+	def get_disk_usage(self, path):
 		stats = os.statvfs(path)
 		total_blocks = stats.f_blocks
 		free_blocks = stats.f_bfree
@@ -15,6 +15,10 @@ class DiskUtility:
 		total_size = total_blocks * block_size
 		return usage_percent, self.convert_to_logical_units(total_size), self.convert_to_logical_units(remaining_space)
 		# return usage_percent, stats
+
+	def get_file_size(self, path):
+		file_size = os.path.getsize(path)
+		return self.convert_to_logical_units(file_size)
 
 	def convert_to_logical_units(self, num_bytes):
 		units = ["B", "KB", "MB", "GB", "TB", "PB"]
@@ -27,4 +31,5 @@ class DiskUtility:
 
 if __name__ == "__main__":
 	disk = DiskUtility()
-	print(disk.get_disk_udage("/"))
+	print(disk.get_disk_usage("./"))
+	print(disk.get_file_size("../../db.sqlite3"))

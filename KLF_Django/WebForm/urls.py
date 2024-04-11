@@ -28,6 +28,7 @@ urlpatterns = [
 	path('post-form-settings/', views.save_form_fields, name='postFormSettings'),
 	path('get-form-description/', views.get_description, name='get-form-description'),
 	path('get-excel-file/', views.get_excel_file, name='getExcel'),
+	path('delete-old-entries', views.delete_old_entries, name='deleteOldEntries'),
 	path('get-profile-info/', views.get_profile_info, name='getProfileInfo'),
 	path('change-username/', views.change_username, name='changeUsername'),
 	path('change-password/', views.change_password, name='changePassword'),

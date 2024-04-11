@@ -511,6 +511,15 @@ tr{
   color: white;
   cursor: pointer;
 }
+#storageInfo {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 10px 10px;
+}
+.dbsize {
+  font-size: 14pt;
+}
 </style>
 
 
@@ -557,7 +566,7 @@ tr{
     </fieldset>
   </div>
   <div id="main">
-    <div id="homeP" class="page" style="display; block;">
+    <div id="homeP" class="page" style="display: block;">
       <div class="Top-Color"><h2>Welcome Home, Admin</h2></div>
       <a id="LocCreate">Create a New Location(s) &/or Site(s) <a class="CreateInfo"><b>&#9432</b><i class="info">To add a New Location, you must add a new Site. To add a new Site, type an existing Location and input the new Site.</i></a></a>
       <form action="javascript:createSite();">
@@ -567,6 +576,13 @@ tr{
       </form>
       <div id="error-create-site" style="display: none;">
           Error! This Location Already Exists
+      </div>
+      <div id="storageInfo">
+        <h4>Server Storage Status</h4>
+        <p class="dbsize">Database size: {{ db_size }} {{ db_units }}</p>
+        <p class="dbsize">Remaining space on server: {{ server_size }} {{ server_units }}</p>
+        <button onclick="DeleteOldSubmissions()" class="Create">Delete database entries >1 year old</button>
+        <label id="successDelete" style="color: green; display: none;">Success!</label>
       </div>
     </div>
     <div id="profileP" class="page">

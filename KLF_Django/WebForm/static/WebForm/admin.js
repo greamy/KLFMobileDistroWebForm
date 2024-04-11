@@ -881,7 +881,21 @@ function GetSubmissionDates(new_page) {
 		}
 	});
 }
+function DeleteOldSubmissions() {
+	document.getElementById("successDelete").style.display = "none";
+	$.ajax({
+		type: "GET",
+		url: "/form/delete-old-entries/",
+		success: function (data) {
+			if (data.redirect) {
+				window.location.href = data.redirect;
+				return;
+			}
 
+			document.getElementById("successDelete").style.display = "block";
+		}
+	});
+}
 function DownloadSubmissions(site, date) {
 	$.ajax({
 		type: "GET",
@@ -995,10 +1009,11 @@ function populateLocations(locations, sites) {
 	for (var i = 0; i < pages.length; i++){
 		pages[i].addEventListener("click", function (e){
 			var successLabel = document.getElementById("sucessLabel");
-			document.getElementById("userSuccess").style.display='none';
 			if (successLabel != null) {
 				successLabel.style.display = "none";
 			}
+			document.getElementById("userSuccess").style.display='none';
+			document.getElementById("successDelete").style.display = "none";
 
 			var Npage = document.getElementById(e.target.id + "P");
 			Cpage.style.display = "none";
