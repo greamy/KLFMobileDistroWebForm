@@ -399,25 +399,7 @@ def remove_form_field(request):
 
 	return JsonResponse(load_fields_from_db(), safe=False)
 
-def change_order(request):
-	if not request.user.is_authenticated:
-		return JsonResponse(LOGIN_REDIRECT_JSON)
-	if not request.method == "POST":
-		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-	to_change = int(request.POST['num'])
-	direction = request.POST['direction']
-	cur_fields = load_fields_from_db()
-
-	idx = [field[-1] for field in cur_fields].index(to_change)
-	if direction == "up":
-		cur_fields[idx][-1] -= 1
-		cur_fields[idx-1][-1] += 1
-	elif direction == "down":
-		cur_fields[idx][-1] += 1
-		cur_fields[idx+1][-1] -= 1
-
-	return JsonResponse(cur_fields, safe=False)
 
 
 

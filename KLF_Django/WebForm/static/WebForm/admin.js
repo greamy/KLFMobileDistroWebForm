@@ -22,6 +22,7 @@ $(document).ready(function () {
 });
 
 let Universal = "";
+var inputSettings = [];
 
 function createMinMax(minNum, maxNum, x) {
 	const info = document.createElement("b");
@@ -169,7 +170,8 @@ function FormSetting(settings, x, isLast) {
 
 	const up = document.createElement("button");
 	up.setAttribute("class","arrows");
-	up.setAttribute("id","up");
+	up.setAttribute("id","up"+x);
+	up.setAttribute("onclick", "changeOrder("+x+", 'up')");
 	up.appendChild(upA);
 
 	const downA = document.createElement("i");
@@ -177,7 +179,8 @@ function FormSetting(settings, x, isLast) {
 
 	const down = document.createElement("button");
 	down.setAttribute("class","arrows");
-	down.setAttribute("id","down");
+	down.setAttribute("id","down"+x);
+	down.setAttribute("onclick", "changeOrder("+x+", 'down')");
 	down.appendChild(downA);
 
 	const nOrder = document.createElement("div");
@@ -284,6 +287,34 @@ function FormSetting(settings, x, isLast) {
 	}
 
 	
+}
+
+function changeOrder(value, direction){
+	var count = 0;
+	while (document.getElementById("down"+count)){
+		count++;
+	}
+	count--;
+
+	if ((value == 0 && direction == "up") || (value == count && direction == "down")){
+		return;
+	}
+
+	var length = inputSettings[value].length;
+	if (direction == "up"){
+		inputSettings[value][length-1]--;
+		inputSettings[value-1][length-1]++;
+	}
+	else if (direction == "down"){
+		inputSettings[value][length-1]++;
+		inputSettings[value+1][length-1]--;
+	}
+	inputSettings = inputSettings.sort((a,b)=>{
+		return a[length-1] - b[length-1];
+	});
+	document.getElementById("formRemove").remove();
+	populateFormSettings(inputSettings);
+
 }
 
 function fieldTypeChange(value, id){
@@ -416,7 +447,7 @@ function getFormFields() {
 				window.location.href = data.redirect;
 				return;
 			}
-			let inputSettings = data;
+			inputSettings = data;
   			populateFormSettings(inputSettings);
 		}
 	});
