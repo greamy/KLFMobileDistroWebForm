@@ -127,6 +127,7 @@ def change_password(request):
 			return render(request, "WebForm/ChangePassword.html", {"error": validation[1]})
 
 		request.user.set_password(new_password)
+		request.user.save()
 		return HttpResponseRedirect("/form/change-password-success/")
 	
 	else:
