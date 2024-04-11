@@ -336,7 +336,7 @@ def get_form_fields(request):
 	if request.method != "GET":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-	return load_fields_from_db()
+	return JsonResponse(load_fields_from_db(), safe=False)
 
 
 def load_fields_from_db():
@@ -346,7 +346,9 @@ def load_fields_from_db():
 		settings.append([field.field_id, field.placeholder, field.name, field.field_type, 1 if field.required else 0,
 						 field.field_min, field.field_max, 1 if field.visible else 0, 1 if field.tefap else 0,
 						 field.order_num])
-	return JsonResponse(settings, safe=False)
+
+	return sorted(settings, key=lambda x: x[-1])
+	# return JsonResponse(settings, safe=False)
 
 
 def save_form_fields(request):
@@ -377,7 +379,7 @@ def save_form_fields(request):
 							order_num=int(settings[7]))
 			new_field.save()
 
-	return load_fields_from_db()
+	return JsonResponse(load_fields_from_db(), safe=False)
 
 
 def remove_form_field(request):
@@ -395,8 +397,27 @@ def remove_form_field(request):
 	else:
 		return JsonResponse({'error': 'Field object not found in database'}, status=404)
 
-	return load_fields_from_db()
+	return JsonResponse(load_fields_from_db(), safe=False)
 
+def change_order(request):
+	if not request.user.is_authenticated:
+		return JsonResponse(LOGIN_REDIRECT_JSON)
+	if not request.method == "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	to_change = int(request.POST['num'])
+	direction = request.POST['direction']
+	cur_fields = load_fields_from_db()
+
+	idx = [field[-1] for field in cur_fields].index(to_change)
+	if direction == "up":
+		cur_fields[idx][-1] -= 1
+		cur_fields[idx-1][-1] += 1
+	elif direction == "down":
+		cur_fields[idx][-1] += 1
+		cur_fields[idx+1][-1] -= 1
+
+	return JsonResponse(cur_fields, safe=False)
 
 
 
