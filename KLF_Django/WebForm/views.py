@@ -357,7 +357,8 @@ def save_form_fields(request):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-	post_data = request.POST.lists()
+	post_data = request.POST["fieldData"]
+	description = request.POST["description"]
 
 	for settings in post_data:
 		settings = settings[1]
@@ -378,6 +379,7 @@ def save_form_fields(request):
 							tefap=False,
 							order_num=int(settings[7]))
 			new_field.save()
+	
 
 	return JsonResponse(load_fields_from_db(), safe=False)
 

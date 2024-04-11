@@ -47,5 +47,6 @@ class Field(models.Model):
 
 
 
-
+class Description(models.Model):
+	description = models.TextField()
 
