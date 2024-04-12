@@ -41,13 +41,13 @@ def index(request, site):
 
 @login_required
 def admin(request):
-	utility = DiskUtility()
-	db_file_path = os.path.join(settings.BASE_DIR, "db.sqlite3")
-	db_size = utility.get_file_size(db_file_path)
-	server_size = utility.get_disk_usage(settings.BASE_DIR)[2]
-	return render(request, "WebForm/admin.html", {"db_size": db_size[0], "db_units": db_size[1],
-												  "server_size": round(server_size[0]), "server_units": server_size[1]})
-
+	# utility = DiskUtility()
+	# db_file_path = os.path.join(settings.BASE_DIR, "db.sqlite3")
+	# db_size = utility.get_file_size(db_file_path)
+	# server_size = utility.get_disk_usage(settings.BASE_DIR)[2]
+	# return render(request, "WebForm/admin.html", {"db_size": db_size[0], "db_units": db_size[1],
+	# 											  "server_size": round(server_size[0]), "server_units": server_size[1]})
+	return render(request, "WebForm/admin.html", {})
 
 def admin_login(request):
 	if request.user.is_authenticated:
