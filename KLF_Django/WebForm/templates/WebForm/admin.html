@@ -513,8 +513,12 @@ tr{
 }
 #storageInfo {
   position: fixed;
-  bottom: 0;
+  background-color: #111;
+  color: #818181;
+  border-radius: 12px;
+  padding: 7px;
   right: 0;
+  bottom: 5px;
   margin: 10px 10px;
 }
 .dbsize {
@@ -582,7 +586,7 @@ tr{
         <p class="dbsize">Database size: {{ db_size }} {{ db_units }}</p>
         <p class="dbsize">Remaining space on server: {{ server_size }} {{ server_units }}</p>
         <button onclick="DeleteOldSubmissions()" class="Create">Delete database entries >1 year old</button>
-        <label id="successDelete" style="color: green; display: none;">Success!</label>
+        <label id="successDelete" style="color: green; display: none; text-align:center; padding: 5px;">Success!</label>
       </div>
     </div>
     <div id="profileP" class="page">
