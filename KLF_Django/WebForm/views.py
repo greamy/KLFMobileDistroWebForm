@@ -89,16 +89,12 @@ def change_username(request):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
-	print(request.user)
-
 	new_username = request.POST["username"]
 	new_email = request.POST['email']
-	print(new_username, new_email)
+
 	request.user.username = new_username
 	request.user.email = new_email
 	request.user.save()
-
-	print(request.user.email)
 
 	return HttpResponse("Successfully changed username and email")
 
@@ -170,7 +166,6 @@ def generate_QR(request):
 def submit(request, site_name):
 	if request.method != "POST":
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
-	print(request.POST)
 	template = loader.get_template('WebForm/Sindex.html')
 
 	user_data = request.POST
@@ -180,8 +175,6 @@ def submit(request, site_name):
 	for header in headers_db:
 		if not header['tefap'] and header['visible']:
 			extra_fields[header['field_id']] = user_data.get(header['field_id'])
-
-	print(extra_fields)
 
 	# input validation
 	if '@' not in user_data['Email'] or '.' not in user_data['Email']:
@@ -315,7 +308,6 @@ def get_excel_file(request):
 	headers.append("Date")
 	headers.extend(extra_fields)
 
-	# print(headers)
 	excel_data = []
 	for row in model_data:
 		row = list(row.values())
@@ -323,7 +315,6 @@ def get_excel_file(request):
 			extra = row.pop()
 			for field in extra_fields:
 				row.append(extra.get(field))
-		print(row)
 		excel_data.append(row)
 
 	file_name = site + " " + date + ".xlsx"
@@ -418,7 +409,6 @@ def remove_form_field(request):
 		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
 
 	form_field = request.POST.get("field")
-	print(form_field)
 	field = Field.objects.filter(field_id__iexact=form_field)
 
 	if field.exists():

@@ -40,6 +40,7 @@ function createMinMax(minNum, maxNum, x) {
 	min.setAttribute("min","0");
 	min.setAttribute("style","width:50px");
 	min.setAttribute("placeholder", minNum);
+	min.value = minNum;
 
 	const xlabel = document.createElement("label");
 	xlabel.setAttribute("for", "max");
@@ -55,6 +56,7 @@ function createMinMax(minNum, maxNum, x) {
 	max.setAttribute("min","0");
 	max.setAttribute("style","width:50px");
 	max.setAttribute("placeholder", maxNum);
+	max.value = maxNum;
 
 	return [mlabel, min, xlabel, max]
 }
@@ -79,10 +81,11 @@ function FormSetting(settings, x, isLast) {
 		name.appendChild(TEFAP);
 		name.appendChild(document.createTextNode(" "));
 	}
+	idInput = document.createElement("input");
 	if (settings[0] == "") {
-		idInput = document.createElement("input");
 		idInput.setAttribute("type", "text");
 		idInput.setAttribute("id", "field_id_text"+x);
+		idInput.setAttribute("oninput", "enableButton(" + idInput + ")");
 		name.appendChild(document.createTextNode("Field Name: "));
 		name.appendChild(idInput);
 	}
@@ -160,10 +163,10 @@ function FormSetting(settings, x, isLast) {
 	type.appendChild(other);
 
 	var minMax = createMinMax(settings[5], settings[6], x);
-	mlabel = minMax[0];
-	min = minMax[1];
-	xlabel = minMax[2];
-	max = minMax[3];
+	let mlabel = minMax[0];
+	let min = minMax[1];
+	let xlabel = minMax[2];
+	let max = minMax[3];
 
 	const upA = document.createElement("i");
 	upA.setAttribute("class","arrow up");
@@ -200,7 +203,6 @@ function FormSetting(settings, x, isLast) {
 
 	const Remove = document.createElement("button");
 	Remove.setAttribute("id","Remove");
-	//Remove.setAttribute("onClick","removeFormField(" + x + ")");
 	Remove.setAttribute("onClick","DeleteOverlay('"+settings[0]+"','formP', " + x + ")");
 	if (settings[8]==1) { // Delete button is only enabled for non-tefap fields
 		Remove.setAttribute("Disabled",1);
@@ -260,6 +262,7 @@ function FormSetting(settings, x, isLast) {
 	Save.setAttribute("id","SaveForm");
 	Save.setAttribute("onclick", "saveFormFields()");
 	Save.appendChild(document.createTextNode("Save Form"));
+	disableButton(Save);
 
 	const add = document.createElement("button");
 	add.setAttribute("id","AddField");
@@ -270,6 +273,16 @@ function FormSetting(settings, x, isLast) {
   	Des.setAttribute("id","description");
   	Des.setAttribute("rows","4");
   	Des.setAttribute("cols","8");
+
+	  const enableButtonCall = "enableButton(document.getElementById('SaveForm'))"
+	idInput.setAttribute("oninput", enableButtonCall);
+	rename.setAttribute("oninput", enableButtonCall);
+	require.setAttribute("onChange", enableButtonCall);
+	Des.setAttribute("onchange", enableButtonCall);
+	Vcheck.setAttribute("onchange", enableButtonCall);
+	min.setAttribute("oninput", enableButtonCall);
+	max.setAttribute("oninput", enableButtonCall);
+	type.setAttribute("onchange", enableButtonCall);
 	
 	const FormButtons = document.createElement("div");
 	FormButtons.setAttribute("class","FormButton");
@@ -286,6 +299,16 @@ function FormSetting(settings, x, isLast) {
 		formSetting.appendChild(FormButtons);
 		setDescription();
 	}
+}
+
+function disableButton(button) {
+	button.disabled = true;
+	button.setAttribute("style","background-color:grey; cursor: default");
+}
+
+function enableButton(button) {
+	button.disabled = false;
+	button.setAttribute("style","background-color:rgb(50, 107, 90); cursor: pointer");
 }
 
 function setDescription() {
@@ -329,7 +352,7 @@ function changeOrder(value, direction){
 	});
 	document.getElementById("formRemove").remove();
 	populateFormSettings(inputSettings);
-
+	enableButton(document.getElementById("SaveForm"));
 }
 
 function fieldTypeChange(value, id){
@@ -363,6 +386,7 @@ function addField() {
 
 function saveFormFields() {
 	document.getElementById("sucessLabel").style.display="none";
+	disableButton(document.getElementById("SaveForm"));
 	var fieldData = {};
 	var count = 0;
 	while (document.getElementById("placeholder" + count) != null){
