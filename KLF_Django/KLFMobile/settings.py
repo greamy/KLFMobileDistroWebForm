@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+try:
+    from .email_host import my_EMAIL_HOST_USER, my_EMAIL_HOST_PASSWORD
+except ImportError:
+    my_EMAIL_HOST_USER = ""
+    my_EMAIL_HOST_PASSWORD = ""
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -127,3 +132,12 @@ LOGIN_REDIRECT_URL = "/form/admin/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = "587"
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = my_EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = my_EMAIL_HOST_PASSWORD
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

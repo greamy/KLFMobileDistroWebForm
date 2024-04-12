@@ -46,7 +46,11 @@ class Field(models.Model):
 	order_num = models.IntegerField()
 
 
-
 class Description(models.Model):
 	description = models.TextField()
 
+
+class PasswordCode(models.Model):
+	code = models.TextField()
+	email = models.EmailField()
+	generation_time = models.DateTimeField(auto_now=True)

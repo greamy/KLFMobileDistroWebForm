@@ -3,6 +3,12 @@ $(document).ready(function () {
   if (error.innerText === "") {
     error.style.display = "none";
   }
+  var redirect = document.getElementById("redirect");
+  if (redirect != null && redirect.innerText == 1) {
+    setTimeout(function() {
+      window.location.href = "/form/login";
+    }, 3000); // 3000 milliseconds = 5 seconds
+  }
 });
 
 function Check(){

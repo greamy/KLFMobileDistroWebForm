@@ -1,20 +1,23 @@
 from django.shortcuts import render
 from http import HTTPStatus
-from time import sleep
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.db.utils import IntegrityError
 from django.template import loader
 from django.conf import settings
+from django.core.mail import send_mail
 from django.db.models import F
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .Scripts.ExcelHandler import ExcelFile
 from .Scripts.QRCode import QRCode
 from .Scripts.DiskUtility import DiskUtility
-from .models import Location, Site, Submission, Field, Description
+from .models import Location, Site, Submission, Field, Description, PasswordCode
 import socket
 import datetime
 import os
+import random
+import string
 
 # create functions, urls,py calls these functions to handle urls like /admin, /about, etc
 # this will generate responses from these functions, for instance, calling the html file for the user form.
@@ -43,7 +46,7 @@ def admin(request):
 	db_size = utility.get_file_size(db_file_path)
 	server_size = utility.get_disk_usage(settings.BASE_DIR)[2]
 	return render(request, "WebForm/admin.html", {"db_size": db_size[0], "db_units": db_size[1],
-												"server_size": round(server_size[0]), "server_units": server_size[1]})
+												  "server_size": round(server_size[0]), "server_units": server_size[1]})
 
 
 def admin_login(request):
@@ -58,6 +61,7 @@ def admin_login(request):
 		user = authenticate(request, username=username, password=password)
 		if user is not None:
 			login(request, user)
+			PasswordCode.objects.all().delete()
 			return JsonResponse(LOGIN_REDIRECT_JSON)
 		else:
 			return HttpResponseUnauthorized("Username or Password was Incorrect. Please Try Again.")
@@ -91,6 +95,30 @@ def change_username(request):
 
 	new_username = request.POST["username"]
 	new_email = request.POST['email']
+
+	if request.user.email != new_email:
+		send_mail(
+			subject="Alert: KL&F Mobile Distribution System Email Change",
+			message="The email used for password recovery of the admin account has been changed.\n" +
+					"The new email for the admin account is: " + new_email + "\n" +
+					"If you were not aware of this change, change your password immediately.\n" +
+					"This can be done via the 'edit profile' dropdown in the top right of the admin panel.",
+			from_email=None,
+			recipient_list=[request.user.email, new_email],
+			fail_silently=True
+		)
+
+	if request.user.username != new_username:
+		send_mail(
+			subject="Alert: KL&F Mobile Distribution System Username Change",
+			message="The username used for the admin account login has been changed.\n" +
+					"The new username for the admin account is: " + new_username + "\n" +
+					"If you were not aware of this change, please change your password immediately.\n" +
+					"This can be done via the 'edit profile' dropdown in the top right of the admin panel.",
+			from_email=None,
+			recipient_list=[new_email],
+			fail_silently=True
+		)
 
 	request.user.username = new_username
 	request.user.email = new_email
@@ -141,6 +169,76 @@ def change_password(request):
 
 def change_password_success(request):
 	return render(request, "WebForm/ChangePasswordSuccess.html", {})
+
+
+def forgot_password(request):
+	if request.method == "GET":
+		return render(request, "WebForm/ForgotPassword.html", {})
+	if request.method == "POST":
+		email = request.POST['Email']
+		admin_users = User.objects.all()
+		for user in admin_users:
+			if user.email == email:
+				code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+				print(code)
+				# TODO: save code to database for later use
+				new_code = PasswordCode(code=code, email=email)
+				new_code.save()
+				send_mail(
+					subject="Forgot Password Request KL&F Mobile Distribution System",
+					message="A forgot password request for the admin page was sent.\n" +
+							"The code to reset your password is: " + code + ".\n" +
+							"If you did not request this code, disregard this email.",
+					from_email=None,
+					recipient_list=[email],
+					fail_silently=True
+				)
+		return render(request, "WebForm/ForgotPasswordCode.html", {})
+	else:
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+
+def forgot_password_code(request):
+	if request.method != "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	code_submitted = request.POST['Code']
+	# Forgot password code times out after 30 minutes
+	timeout = datetime.datetime.now() - datetime.timedelta(seconds=60 * 30)
+	print(timeout)
+	codes_db = PasswordCode.objects.filter(generation_time__gte=timeout)
+	if codes_db.exists():
+		code_db = codes_db.first()
+		if code_submitted == code_db.code:
+			return render(request, "WebForm/ForgotPasswordChange.html", {"email": code_db.email})
+
+	return render(request, "WebForm/ForgotPasswordCode.html",
+				  {"error": "Incorrect code. Check your spam folder for more recent codes."})
+
+
+def forgot_password_reset(request):
+	if request.method != "POST":
+		return HttpResponseBadRequest(INVALID_REQUEST_TYPE)
+
+	new_password = request.POST["Password"]
+	email = request.POST['Email']
+
+	validation = validate_password(new_password)
+	if validation[0] == -1:
+		return render(request, "WebForm/ForgotPasswordChange.html", {"error": validation[1], "email": email})
+
+	admin_users = User.objects.all()
+	success = False
+	for user in admin_users:
+		if user.email == email:
+			user.set_password(new_password)
+			user.save()
+			success = True
+	if success:
+		return HttpResponseRedirect("/form/change-password-success/")
+	else:
+		return render(request, "WebForm/ForgotPasswordChange.html", {"error": "Error Occurred. Please try again.",
+																	 "email": email, "redirect": 1})
 
 
 def generate_QR(request):
@@ -331,6 +429,7 @@ def get_excel_file(request):
 	handler.delete_file()
 
 	return response
+
 
 def delete_old_entries(request):
 	if not request.user.is_authenticated:
