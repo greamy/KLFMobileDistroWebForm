@@ -1,6 +1,9 @@
 WMU Senior Design Project Spring 2024
+
 Lead Developer - Grant Reamy
+
 Backend Developer - Ben Breadon
+
 Frontend Developer - Joseph Kocab 
 
 This is a senior design project completed at Western Michigan University, for a local food bank - Kalamazoo Loaves and Fishes.
